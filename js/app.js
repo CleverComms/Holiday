@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.4.4';
+const APP_VERSION = '2.4.5';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -34,10 +34,6 @@ let state = {
 // =============================================
 
 const elements = {
-  // Tabs
-  tabBtns: document.querySelectorAll('.tab-btn'),
-  tabContents: document.querySelectorAll('.tab-content'),
-
   // Destination header
   destHeaderBtn: document.getElementById('destHeaderBtn'),
   destHeaderFlag: document.getElementById('destHeaderFlag'),
@@ -82,10 +78,7 @@ const elements = {
   paymentTip: document.getElementById('paymentTip'),
   paymentTipText: document.getElementById('paymentTipText'),
 
-  // Scams
-  destinationBtn: document.getElementById('destinationBtn'),
-  destFlag: document.getElementById('destFlag'),
-  destName: document.getElementById('destName'),
+  // Scams/Safety
   generalScams: document.getElementById('generalScams'),
   destinationSection: document.getElementById('destinationSection'),
   destTitleFlag: document.getElementById('destTitleFlag'),
@@ -136,9 +129,6 @@ const elements = {
   a2hsDismiss: document.getElementById('a2hsDismiss'),
   iosA2hsModal: document.getElementById('iosA2hsModal'),
   closeIosModal: document.getElementById('closeIosModal'),
-
-  // Refresh rates
-  refreshRatesBtn: document.getElementById('refreshRatesBtn'),
 
   // Toast
   toast: document.getElementById('toast'),
@@ -346,11 +336,6 @@ async function loadDataFiles() {
 // =============================================
 
 function setupEventListeners() {
-  // Tab navigation
-  elements.tabBtns.forEach(btn => {
-    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-  });
-
   // Destination header button
   elements.destHeaderBtn.addEventListener('click', () => openDestinationModal('main'));
 
@@ -390,9 +375,6 @@ function setupEventListeners() {
       calculatePrices();
     }
   });
-
-  // Destination (Safety tab)
-  elements.destinationBtn.addEventListener('click', () => openDestinationModal('safety'));
 
   // Currency modal
   elements.closeCurrencyModal.addEventListener('click', closeCurrencyModal);
@@ -442,9 +424,6 @@ function setupEventListeners() {
   if (elements.qrCopyBtn) {
     elements.qrCopyBtn.addEventListener('click', copyShareUrl);
   }
-
-  // Refresh rates
-  elements.refreshRatesBtn.addEventListener('click', updateExchangeRates);
 
   // A2HS
   elements.a2hsInstall.addEventListener('click', installApp);
@@ -510,19 +489,6 @@ function setupEventListeners() {
   elements.surchargePlus.addEventListener('click', () => adjustSurcharge(1));
   elements.surchargePercent.addEventListener('click', () => setSurchargeType('percent'));
   elements.surchargeFixed.addEventListener('click', () => setSurchargeType('fixed'));
-}
-
-// =============================================
-// TAB NAVIGATION
-// =============================================
-
-function switchTab(tabId) {
-  elements.tabBtns.forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.tab === tabId);
-  });
-  elements.tabContents.forEach(content => {
-    content.classList.toggle('active', content.id === `${tabId}Tab`);
-  });
 }
 
 // =============================================
@@ -1128,11 +1094,6 @@ function renderScams() {
     elements.destinationSection.style.display = 'none';
   }
 
-  // Update safety tab destination button
-  if (state.destinationCountry) {
-    setCountryFlag(elements.destFlag, state.destinationCountry, 'lg');
-    elements.destName.textContent = state.destinationCountry;
-  }
 }
 
 function renderPaymentInfo() {
