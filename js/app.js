@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.3.0';
+const APP_VERSION = '2.3.1';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -54,6 +54,7 @@ const elements = {
   localHomeAmount: document.getElementById('localHomeAmount'),
   altHomeFlag: document.getElementById('altHomeFlag'),
   altHomeAmount: document.getElementById('altHomeAmount'),
+  surchargeIndicator: document.getElementById('surchargeIndicator'),
   dealIndicator: document.getElementById('dealIndicator'),
   dealText: document.getElementById('dealText'),
   quickAmounts: document.getElementById('quickAmounts'),
@@ -622,13 +623,14 @@ function calculatePrices() {
 
   // Update displays
   elements.localHomeAmount.textContent = `${homeSymbol}${formatNumber(localInHome, homeCurrency)}`;
+  elements.altHomeAmount.textContent = `${homeSymbol}${formatNumber(altInHome, homeCurrency)}`;
 
   // Show surcharge indication if applicable
   if (surchargeAmount > 0) {
-    const surchargeLabel = surchargeType === 'percent' ? `+${surchargeAmount}%` : `+${homeSymbol}${surchargeAmount}`;
-    elements.altHomeAmount.textContent = `${homeSymbol}${formatNumber(altInHome, homeCurrency)} (${surchargeLabel})`;
+    const surchargeLabel = surchargeType === 'percent' ? `+${surchargeAmount}% fee` : `+${homeSymbol}${surchargeAmount} fee`;
+    elements.surchargeIndicator.textContent = surchargeLabel;
   } else {
-    elements.altHomeAmount.textContent = `${homeSymbol}${formatNumber(altInHome, homeCurrency)}`;
+    elements.surchargeIndicator.textContent = '';
   }
 
   // Update deal indicator
