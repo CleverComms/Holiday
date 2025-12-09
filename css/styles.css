@@ -5,27 +5,28 @@
 
 /* CSS Variables */
 :root {
-  /* High Contrast Day Mode (default) - optimized for bright sunlight! */
-  --primary-gradient: linear-gradient(135deg, #4a5ad8 0%, #6b3fa0 100%);
-  --secondary-gradient: linear-gradient(135deg, #e060d0 0%, #e04050 100%);
+  /* High Contrast Day Mode (default) - sunny holiday vibes! */
+  --primary-gradient: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+  --secondary-gradient: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
   --accent-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
 
-  --primary-color: #4a5ad8;
-  --primary-dark: #3a4ac0;
-  --secondary-color: #6b3fa0;
-  --accent-color: #e04050;
+  --primary-color: #ff6b6b;
+  --primary-dark: #ee5a5a;
+  --secondary-color: #4ecdc4;
+  --accent-color: #ff8e53;
 
-  --bg-color: #ffffff;
-  --card-bg: #ffffff;
-  --text-primary: #000000;
-  --text-secondary: #333333;
-  --text-muted: #555555;
+  --bg-color: #fff9e6;
+  --bg-gradient: linear-gradient(180deg, #fff9e6 0%, #ffe4b8 50%, #ffd699 100%);
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --text-primary: #1a1a2e;
+  --text-secondary: #3d3d5c;
+  --text-muted: #6b6b8a;
 
-  --border-color: #cccccc;
-  --shadow-sm: 0 2px 4px rgba(0,0,0,0.15);
-  --shadow-md: 0 4px 8px rgba(0,0,0,0.15);
-  --shadow-lg: 0 10px 25px rgba(0,0,0,0.2);
-  --shadow-xl: 0 20px 40px rgba(0,0,0,0.25);
+  --border-color: rgba(255, 150, 100, 0.3);
+  --shadow-sm: 0 2px 8px rgba(255, 150, 100, 0.2);
+  --shadow-md: 0 4px 12px rgba(255, 150, 100, 0.25);
+  --shadow-lg: 0 10px 30px rgba(255, 100, 50, 0.2);
+  --shadow-xl: 0 20px 40px rgba(255, 100, 50, 0.25);
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -78,12 +79,55 @@ html {
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background: var(--bg-color);
+  background: var(--bg-gradient, var(--bg-color));
   color: var(--text-primary);
   line-height: 1.5;
   min-height: 100vh;
   min-height: -webkit-fill-available;
   overflow-x: hidden;
+  position: relative;
+}
+
+/* Tropical decorations - subtle waves at bottom */
+body::before {
+  content: '';
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background:
+    radial-gradient(ellipse 70% 50px at 50% 100%, rgba(64, 224, 208, 0.15) 0%, transparent 100%),
+    radial-gradient(ellipse 50% 40px at 30% 100%, rgba(255, 127, 80, 0.12) 0%, transparent 100%),
+    radial-gradient(ellipse 50% 40px at 70% 100%, rgba(255, 215, 0, 0.12) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Palm tree silhouette in corner */
+body::after {
+  content: '🌴';
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  font-size: 2.5rem;
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-theme="dark"] body {
+  background: var(--bg-color);
+}
+
+[data-theme="dark"] body::before {
+  background:
+    radial-gradient(ellipse 70% 50px at 50% 100%, rgba(102, 126, 234, 0.1) 0%, transparent 100%),
+    radial-gradient(ellipse 50% 40px at 30% 100%, rgba(118, 75, 162, 0.08) 0%, transparent 100%);
+}
+
+[data-theme="dark"] body::after {
+  opacity: 0.1;
 }
 
 input, button, select, textarea {
@@ -129,10 +173,18 @@ button {
   gap: 12px;
 }
 
-.header-logo {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-sm);
+.header-bob {
+  font-size: 2.2rem;
+  animation: bobWiggle 3s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+@keyframes bobWiggle {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
 }
 
 .app-header h1 {
@@ -1589,10 +1641,15 @@ button {
   margin-bottom: 12px;
 }
 
-.a2hs-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-md);
+.a2hs-bob {
+  font-size: 2.5rem;
+  animation: bobWave 2s ease-in-out infinite;
+}
+
+@keyframes bobWave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(15deg); }
+  75% { transform: rotate(-15deg); }
 }
 
 .a2hs-text {
@@ -1668,12 +1725,11 @@ button {
   right: 16px;
 }
 
-.ios-a2hs-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radius-lg);
+.ios-a2hs-bob {
+  font-size: 4rem;
+  display: block;
   margin-bottom: 16px;
-  box-shadow: var(--shadow-md);
+  animation: bobBounce 2s ease-in-out infinite;
 }
 
 .ios-a2hs-content h2 {

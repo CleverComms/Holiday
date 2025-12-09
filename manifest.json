@@ -1,7 +1,7 @@
 {
-  "name": "Holibobs Travel Money",
+  "name": "Holibobs - Bob's Travel Money",
   "short_name": "Holibobs",
-  "description": "Compare prices in local currency vs your home currency while on holiday.",
+  "description": "Bob the Raccoon helps you compare holiday prices! See if paying in local currency or USD is the better deal.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f6d365",
@@ -35,9 +35,9 @@
   ],
   "shortcuts": [
     {
-      "name": "Check Prices",
+      "name": "Ask Bob",
       "short_name": "Prices",
-      "description": "Compare holiday prices",
+      "description": "Let Bob compare prices for you",
       "url": "./",
       "icons": [
         {
