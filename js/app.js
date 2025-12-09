@@ -18,6 +18,9 @@ let state = {
   altCurrency: 'USD',
   localAmount: 500,
   altAmount: 30,
+  pricesLocked: false,
+  surchargeAmount: 0,
+  surchargeType: 'percent', // 'percent' or 'fixed'
   walletCountries: [],
   rates: {},
   currencies: {},
@@ -55,6 +58,16 @@ const elements = {
   dealText: document.getElementById('dealText'),
   quickAmounts: document.getElementById('quickAmounts'),
   altPriceCard: document.getElementById('altPriceCard'),
+
+  // Lock toggle and surcharge
+  lockToggleBtn: document.getElementById('lockToggleBtn'),
+  lockIcon: document.getElementById('lockIcon'),
+  lockText: document.getElementById('lockText'),
+  surchargeToggleBtn: document.getElementById('surchargeToggleBtn'),
+  surchargeRow: document.getElementById('surchargeRow'),
+  surchargeInput: document.getElementById('surchargeInput'),
+  surchargePercent: document.getElementById('surchargePercent'),
+  surchargeFixed: document.getElementById('surchargeFixed'),
 
   // Payment info
   paymentInfo: document.getElementById('paymentInfo'),
@@ -228,6 +241,9 @@ function saveState() {
     altCurrency: state.altCurrency,
     localAmount: state.localAmount,
     altAmount: state.altAmount,
+    pricesLocked: state.pricesLocked,
+    surchargeAmount: state.surchargeAmount,
+    surchargeType: state.surchargeType,
     walletCountries: state.walletCountries,
     rates: state.rates,
     lastRateUpdate: state.lastRateUpdate
@@ -273,11 +289,17 @@ function setupEventListeners() {
   // Price inputs
   elements.localAmountInput.addEventListener('input', (e) => {
     state.localAmount = parseFloat(e.target.value) || 0;
+    if (state.pricesLocked) {
+      syncLockedPrices('local');
+    }
     calculatePrices();
   });
 
   elements.altAmountInput.addEventListener('input', (e) => {
     state.altAmount = parseFloat(e.target.value) || 0;
+    if (state.pricesLocked) {
+      syncLockedPrices('alt');
+    }
     calculatePrices();
   });
 
@@ -379,6 +401,18 @@ function setupEventListeners() {
   // Location banner
   elements.locationYesBtn.addEventListener('click', acceptLocationSuggestion);
   elements.locationNoBtn.addEventListener('click', dismissLocationSuggestion);
+
+  // Lock toggle
+  elements.lockToggleBtn.addEventListener('click', togglePriceLock);
+
+  // Surcharge controls
+  elements.surchargeToggleBtn.addEventListener('click', toggleSurchargeRow);
+  elements.surchargeInput.addEventListener('input', (e) => {
+    state.surchargeAmount = parseFloat(e.target.value) || 0;
+    calculatePrices();
+  });
+  elements.surchargePercent.addEventListener('click', () => setSurchargeType('percent'));
+  elements.surchargeFixed.addEventListener('click', () => setSurchargeType('fixed'));
 }
 
 // =============================================
@@ -416,11 +450,80 @@ function adjustPrice(target, direction) {
     state.altAmount = newAmount;
     elements.altAmountInput.value = newAmount;
   }
+
+  if (state.pricesLocked) {
+    syncLockedPrices(target);
+  }
+  calculatePrices();
+}
+
+function togglePriceLock() {
+  state.pricesLocked = !state.pricesLocked;
+  updateLockUI();
+
+  if (state.pricesLocked) {
+    // Sync alt to local when locking
+    syncLockedPrices('local');
+    calculatePrices();
+    showToast('Prices linked at exchange rate');
+  } else {
+    showToast('Prices unlocked');
+  }
+}
+
+function updateLockUI() {
+  if (state.pricesLocked) {
+    elements.lockToggleBtn.classList.add('locked');
+    elements.lockText.textContent = 'Linked';
+    // Show locked icon
+    elements.lockIcon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>';
+  } else {
+    elements.lockToggleBtn.classList.remove('locked');
+    elements.lockText.textContent = 'Lock prices';
+    // Show unlocked icon
+    elements.lockIcon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 019.9-1"/>';
+  }
+}
+
+function syncLockedPrices(source) {
+  const { localCurrency, altCurrency, rates } = state;
+
+  if (!rates[localCurrency] || !rates[altCurrency]) return;
+
+  // Exchange rate from local to alt
+  const localToUsd = 1 / rates[localCurrency];
+  const usdToAlt = rates[altCurrency];
+  const localToAlt = localToUsd * usdToAlt;
+
+  if (source === 'local') {
+    // Calculate alt from local
+    state.altAmount = Math.round(state.localAmount * localToAlt * 100) / 100;
+    elements.altAmountInput.value = state.altAmount;
+  } else {
+    // Calculate local from alt
+    state.localAmount = Math.round(state.altAmount / localToAlt * 100) / 100;
+    elements.localAmountInput.value = state.localAmount;
+  }
+}
+
+function toggleSurchargeRow() {
+  elements.surchargeRow.classList.toggle('hidden');
+  if (elements.surchargeRow.classList.contains('hidden')) {
+    state.surchargeAmount = 0;
+    elements.surchargeInput.value = 0;
+    calculatePrices();
+  }
+}
+
+function setSurchargeType(type) {
+  state.surchargeType = type;
+  elements.surchargePercent.classList.toggle('active', type === 'percent');
+  elements.surchargeFixed.classList.toggle('active', type === 'fixed');
   calculatePrices();
 }
 
 function calculatePrices() {
-  const { localAmount, altAmount, localCurrency, altCurrency, homeCurrency, rates, currencies } = state;
+  const { localAmount, altAmount, localCurrency, altCurrency, homeCurrency, rates, currencies, surchargeAmount, surchargeType } = state;
 
   if (!rates[localCurrency] || !rates[altCurrency] || !rates[homeCurrency]) {
     return;
@@ -430,8 +533,21 @@ function calculatePrices() {
   const localInUsd = localAmount / rates[localCurrency];
   const localInHome = localInUsd * rates[homeCurrency];
 
+  // Calculate alt with surcharge applied
+  let altWithSurcharge = altAmount;
+  if (surchargeAmount > 0) {
+    if (surchargeType === 'percent') {
+      altWithSurcharge = altAmount * (1 + surchargeAmount / 100);
+    } else {
+      // Fixed surcharge in home currency - convert to alt currency
+      const surchargeInUsd = surchargeAmount / rates[homeCurrency];
+      const surchargeInAlt = surchargeInUsd * rates[altCurrency];
+      altWithSurcharge = altAmount + surchargeInAlt;
+    }
+  }
+
   // Convert alt price to home currency
-  const altInUsd = altAmount / rates[altCurrency];
+  const altInUsd = altWithSurcharge / rates[altCurrency];
   const altInHome = altInUsd * rates[homeCurrency];
 
   // Get currency info
@@ -440,7 +556,14 @@ function calculatePrices() {
 
   // Update displays
   elements.localHomeAmount.textContent = `${homeSymbol}${formatNumber(localInHome, homeCurrency)}`;
-  elements.altHomeAmount.textContent = `${homeSymbol}${formatNumber(altInHome, homeCurrency)}`;
+
+  // Show surcharge indication if applicable
+  if (surchargeAmount > 0) {
+    const surchargeLabel = surchargeType === 'percent' ? `+${surchargeAmount}%` : `+${homeSymbol}${surchargeAmount}`;
+    elements.altHomeAmount.textContent = `${homeSymbol}${formatNumber(altInHome, homeCurrency)} (${surchargeLabel})`;
+  } else {
+    elements.altHomeAmount.textContent = `${homeSymbol}${formatNumber(altInHome, homeCurrency)}`;
+  }
 
   // Update deal indicator
   const diff = Math.abs(localInHome - altInHome);
@@ -909,14 +1032,18 @@ function setupAddToHomeScreen() {
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
 
+  // Delay A2HS prompts by 30 seconds - don't annoy users immediately
   if (isIOS && isSafari && !navigator.standalone) {
-    setTimeout(() => elements.iosA2hsModal.classList.add('active'), 3000);
+    setTimeout(() => elements.iosA2hsModal.classList.add('active'), 30000);
   }
 }
 
 function showA2hsBanner() {
   if (!window.matchMedia('(display-mode: standalone)').matches) {
-    elements.a2hsBanner.classList.add('active');
+    // Delay by 30 seconds to not annoy users
+    setTimeout(() => {
+      elements.a2hsBanner.classList.add('active');
+    }, 30000);
   }
 }
 
@@ -1237,11 +1364,23 @@ function render() {
   elements.altPriceCard.style.display = hasAltCurrency || !state.destinationCountry ? 'block' : 'none';
 
   updateQuickAmounts();
+  updateLockUI();
+  updateSurchargeUI();
   calculatePrices();
   renderPaymentInfo();
   renderScams();
   updateRateStatus();
   updateSettingsDisplay();
+}
+
+function updateSurchargeUI() {
+  // Restore surcharge row visibility and values
+  if (state.surchargeAmount > 0) {
+    elements.surchargeRow.classList.remove('hidden');
+    elements.surchargeInput.value = state.surchargeAmount;
+  }
+  elements.surchargePercent.classList.toggle('active', state.surchargeType === 'percent');
+  elements.surchargeFixed.classList.toggle('active', state.surchargeType === 'fixed');
 }
 
 // =============================================
