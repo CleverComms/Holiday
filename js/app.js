@@ -1695,7 +1695,14 @@ function render() {
   // Show/hide alt card based on destination
   const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;
   const hasAltCurrency = countryInfo?.alsoAccepted && countryInfo.alsoAccepted.length > 0;
-  elements.altPriceCard.style.display = hasAltCurrency || !state.destinationCountry ? 'block' : 'none';
+  const showAltCard = hasAltCurrency || !state.destinationCountry;
+  elements.altPriceCard.style.display = showAltCard ? 'block' : 'none';
+
+  // Make local card full width when alt card is hidden
+  const localPriceCard = document.getElementById('localPriceCard');
+  if (localPriceCard) {
+    localPriceCard.classList.toggle('full-width', !showAltCard);
+  }
 
   updateQuickAmounts();
   updateLockUI();

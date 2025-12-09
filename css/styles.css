@@ -532,6 +532,10 @@ button {
   min-width: 0; /* Allow shrinking */
 }
 
+.price-card.full-width {
+  grid-column: span 2;
+}
+
 .price-card.local {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
