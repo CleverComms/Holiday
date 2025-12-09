@@ -395,14 +395,42 @@ button {
   height: 22px;
 }
 
-/* Result Card */
+/* Results Container */
+.results-container {
+  margin-top: 16px;
+}
+
+/* Primary Result Card */
 .result-card {
   background: var(--primary-gradient);
   border-radius: var(--radius-lg);
-  padding: 24px;
-  margin-top: 16px;
+  padding: 20px;
   text-align: center;
   box-shadow: var(--shadow-lg);
+}
+
+.result-card.primary {
+  padding: 24px;
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.result-flag {
+  font-size: 1.5rem;
+}
+
+.result-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .result-amount {
@@ -419,15 +447,68 @@ button {
   color: white;
 }
 
+.result-card.secondary .result-value {
+  font-size: 1.75rem;
+}
+
 .result-currency {
   font-size: 1.25rem;
   font-weight: 600;
   color: rgba(255,255,255,0.9);
 }
 
+.result-card.secondary .result-currency {
+  font-size: 1rem;
+}
+
 .result-rate {
   color: rgba(255,255,255,0.8);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+}
+
+/* Secondary Results */
+.secondary-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.result-card.secondary {
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+  padding: 16px;
+}
+
+.result-card.secondary .result-header {
+  margin-bottom: 6px;
+}
+
+.result-card.secondary .result-label {
+  font-size: 0.7rem;
+}
+
+.result-card.secondary .result-flag {
+  font-size: 1.25rem;
+}
+
+/* Currency Note */
+.currency-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: var(--primary-color);
+}
+
+.currency-note svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 /* Quick Amounts */
@@ -454,22 +535,34 @@ button {
   border-color: var(--primary-color);
 }
 
-/* Also in USD */
-.also-in-usd {
+/* Home Currency Equivalent */
+.home-equivalent {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 8px;
   margin-top: 16px;
-  padding: 12px;
+  padding: 12px 16px;
   background: var(--card-bg);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
 }
 
-.also-in-usd .label {
+.home-equivalent .label {
   color: var(--text-secondary);
   font-size: 0.9rem;
+}
+
+.home-equivalent .value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.home-equivalent .value span:first-child {
+  font-size: 1.1rem;
 }
 
 .also-in-usd .value {

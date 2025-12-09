@@ -42,12 +42,20 @@ const elements = {
   fromCurrencyBtn: document.getElementById('fromCurrencyBtn'),
   toCurrencyBtn: document.getElementById('toCurrencyBtn'),
   swapCurrencies: document.getElementById('swapCurrencies'),
-  resultValue: document.getElementById('resultValue'),
-  resultCurrency: document.getElementById('resultCurrency'),
-  rateDisplay: document.getElementById('rateDisplay'),
   quickBtns: document.querySelectorAll('.quick-btn'),
-  alsoInUsd: document.getElementById('alsoInUsd'),
-  usdEquivalent: document.getElementById('usdEquivalent'),
+
+  // Multi-currency results
+  primaryFlag: document.getElementById('primaryFlag'),
+  primaryValue: document.getElementById('primaryValue'),
+  primaryCurrency: document.getElementById('primaryCurrency'),
+  primaryRate: document.getElementById('primaryRate'),
+  secondaryResults: document.getElementById('secondaryResults'),
+  currencyNote: document.getElementById('currencyNote'),
+  currencyNoteText: document.getElementById('currencyNoteText'),
+  homeEquivalent: document.getElementById('homeEquivalent'),
+  homeFlag: document.getElementById('homeFlag'),
+  homeValue: document.getElementById('homeValue'),
+  homeCurrencySpan: document.getElementById('homeCurrency'),
 
   // From currency display
   fromFlag: document.getElementById('fromFlag'),
@@ -346,29 +354,117 @@ function handleCompareAmountChange(e) {
 }
 
 function convert() {
-  const { amount, fromCurrency, toCurrency, rates } = state;
+  const { amount, fromCurrency, toCurrency, rates, currencies, countries, destinationCountry } = state;
 
   if (!rates[fromCurrency] || !rates[toCurrency]) {
-    elements.resultValue.textContent = '--';
+    elements.primaryValue.textContent = '--';
     return;
   }
 
   // Convert via USD base
   const amountInUsd = amount / rates[fromCurrency];
-  const result = amountInUsd * rates[toCurrency];
+  const primaryResult = amountInUsd * rates[toCurrency];
 
-  // Update result display
-  elements.resultValue.textContent = formatNumber(result, toCurrency);
-  elements.resultCurrency.textContent = toCurrency;
+  // Get currency info
+  const toCurrencyInfo = currencies[toCurrency];
+
+  // Update primary result display
+  elements.primaryFlag.textContent = toCurrencyInfo?.flag || '💱';
+  elements.primaryValue.textContent = formatNumber(primaryResult, toCurrency);
+  elements.primaryCurrency.textContent = toCurrency;
 
   // Update rate display
   const rate = rates[toCurrency] / rates[fromCurrency];
-  elements.rateDisplay.textContent = `1 ${fromCurrency} = ${formatNumber(rate, toCurrency)} ${toCurrency}`;
+  elements.primaryRate.textContent = `1 ${fromCurrency} = ${formatNumber(rate, toCurrency)} ${toCurrency}`;
 
-  // Update USD equivalent
-  updateUsdEquivalent();
+  // Get destination country info for additional currencies
+  let countryInfo = null;
+  if (destinationCountry && countries[destinationCountry]) {
+    countryInfo = countries[destinationCountry];
+  } else {
+    // Try to find country by currency
+    for (const [country, info] of Object.entries(countries)) {
+      if (info.currency === toCurrency) {
+        countryInfo = info;
+        break;
+      }
+    }
+  }
+
+  // Render secondary currencies (also accepted)
+  renderSecondaryResults(amountInUsd, fromCurrency, toCurrency, countryInfo);
+
+  // Show currency acceptance note
+  if (countryInfo?.note) {
+    elements.currencyNote.style.display = 'flex';
+    elements.currencyNoteText.textContent = countryInfo.note;
+  } else {
+    elements.currencyNote.style.display = 'none';
+  }
+
+  // Show home currency equivalent when not converting from home
+  updateHomeEquivalent(amountInUsd);
 
   saveState();
+}
+
+function renderSecondaryResults(amountInUsd, fromCurrency, toCurrency, countryInfo) {
+  const { rates, currencies } = state;
+
+  // Get additional accepted currencies
+  let additionalCurrencies = [];
+  if (countryInfo?.alsoAccepted) {
+    additionalCurrencies = countryInfo.alsoAccepted.filter(code => {
+      // Don't show if it's the primary currency or the from currency
+      return code !== toCurrency && code !== fromCurrency && rates[code];
+    });
+  }
+
+  // Clear and populate secondary results
+  if (additionalCurrencies.length === 0) {
+    elements.secondaryResults.innerHTML = '';
+    elements.secondaryResults.style.display = 'none';
+    return;
+  }
+
+  elements.secondaryResults.style.display = 'grid';
+  elements.secondaryResults.innerHTML = additionalCurrencies.map(code => {
+    const currencyInfo = currencies[code];
+    const converted = amountInUsd * rates[code];
+    const rate = rates[code] / rates[state.fromCurrency];
+
+    return `
+      <div class="result-card secondary">
+        <div class="result-header">
+          <span class="result-flag">${currencyInfo?.flag || '💱'}</span>
+          <span class="result-label">Also Accepted</span>
+        </div>
+        <div class="result-amount">
+          <span class="result-value">${formatNumber(converted, code)}</span>
+          <span class="result-currency">${code}</span>
+        </div>
+        <div class="result-rate">1 ${state.fromCurrency} = ${formatNumber(rate, code)}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function updateHomeEquivalent(amountInUsd) {
+  const { fromCurrency, homeCurrency, currencies, rates } = state;
+
+  // Don't show if converting from home currency or if home currency is the same
+  if (fromCurrency === homeCurrency) {
+    elements.homeEquivalent.style.display = 'none';
+    return;
+  }
+
+  const homeInfo = currencies[homeCurrency];
+  const homeAmount = amountInUsd * rates[homeCurrency];
+
+  elements.homeEquivalent.style.display = 'flex';
+  elements.homeFlag.textContent = homeInfo?.flag || '🏠';
+  elements.homeValue.textContent = `${homeInfo?.symbol || ''}${formatNumber(homeAmount, homeCurrency)}`;
+  elements.homeCurrencySpan.textContent = homeCurrency;
 }
 
 function swapCurrencies() {
@@ -402,17 +498,6 @@ function updateCurrencyDisplay() {
     elements.compareFlag.textContent = home.flag;
     elements.compareCode.textContent = state.homeCurrency;
   }
-}
-
-function updateUsdEquivalent() {
-  if (!state.showUsdEquivalent || state.fromCurrency === 'USD') {
-    elements.alsoInUsd.style.display = 'none';
-    return;
-  }
-
-  elements.alsoInUsd.style.display = 'flex';
-  const amountInUsd = state.amount / state.rates[state.fromCurrency];
-  elements.usdEquivalent.textContent = `$${formatNumber(amountInUsd, 'USD')}`;
 }
 
 function formatNumber(num, currency) {

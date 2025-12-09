@@ -118,14 +118,33 @@
           </div>
         </div>
 
-        <!-- Conversion Result -->
-        <div class="result-card" id="conversionResult">
-          <div class="result-amount">
-            <span class="result-value" id="resultValue">0.00</span>
-            <span class="result-currency" id="resultCurrency">MXN</span>
+        <!-- Multi-Currency Conversion Results -->
+        <div class="results-container" id="resultsContainer">
+          <!-- Primary result (destination currency) -->
+          <div class="result-card primary" id="primaryResult">
+            <div class="result-header">
+              <span class="result-flag" id="primaryFlag">🇲🇽</span>
+              <span class="result-label">Local Currency</span>
+            </div>
+            <div class="result-amount">
+              <span class="result-value" id="primaryValue">0.00</span>
+              <span class="result-currency" id="primaryCurrency">MXN</span>
+            </div>
+            <div class="result-rate" id="primaryRate">1 USD = 17.25 MXN</div>
           </div>
-          <div class="result-rate">
-            <span id="rateDisplay">1 USD = 17.25 MXN</span>
+
+          <!-- Additional accepted currencies (shown when applicable) -->
+          <div class="secondary-results" id="secondaryResults">
+            <!-- Dynamically populated -->
+          </div>
+
+          <!-- Currency acceptance note -->
+          <div class="currency-note" id="currencyNote" style="display: none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 16v-4M12 8h.01"/>
+            </svg>
+            <span id="currencyNoteText"></span>
           </div>
         </div>
 
@@ -139,10 +158,14 @@
           <button class="quick-btn" data-amount="1000">1000</button>
         </div>
 
-        <!-- Also Show in USD -->
-        <div class="also-in-usd" id="alsoInUsd">
-          <span class="label">Also in USD:</span>
-          <span class="value" id="usdEquivalent">$100.00</span>
+        <!-- Home currency equivalent (when not converting from home) -->
+        <div class="home-equivalent" id="homeEquivalent" style="display: none;">
+          <span class="label">In your home currency:</span>
+          <span class="value">
+            <span id="homeFlag">🏠</span>
+            <span id="homeValue">$100.00</span>
+            <span id="homeCurrency">USD</span>
+          </span>
         </div>
       </section>
 
