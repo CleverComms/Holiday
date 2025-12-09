@@ -10,56 +10,70 @@
   <rect width="512" height="512" rx="100" fill="url(#bg)"/>
 
   <!-- Raccoon Face -->
-  <g transform="translate(256, 280)">
+  <g transform="translate(256, 270)">
     <!-- Ears -->
-    <ellipse cx="-95" cy="-140" rx="45" ry="55" fill="#6b6b6b"/>
-    <ellipse cx="95" cy="-140" rx="45" ry="55" fill="#6b6b6b"/>
-    <ellipse cx="-95" cy="-140" rx="30" ry="40" fill="#f5e6d3"/>
-    <ellipse cx="95" cy="-140" rx="30" ry="40" fill="#f5e6d3"/>
+    <ellipse cx="-90" cy="-130" rx="42" ry="52" fill="#6b6b6b"/>
+    <ellipse cx="90" cy="-130" rx="42" ry="52" fill="#6b6b6b"/>
+    <ellipse cx="-90" cy="-130" rx="28" ry="36" fill="#f5e6d3"/>
+    <ellipse cx="90" cy="-130" rx="28" ry="36" fill="#f5e6d3"/>
 
     <!-- Head shape -->
-    <ellipse cx="0" cy="-30" rx="140" ry="120" fill="#8c8c8c"/>
+    <ellipse cx="0" cy="-25" rx="130" ry="110" fill="#8c8c8c"/>
 
     <!-- White face markings -->
-    <ellipse cx="0" cy="10" rx="100" ry="85" fill="#f5f5f5"/>
+    <ellipse cx="0" cy="5" rx="95" ry="80" fill="#f5f5f5"/>
 
     <!-- Dark mask around eyes -->
-    <path d="M-110 -60 Q-80 -80 -40 -60 Q-20 -40 -40 -20 Q-80 0 -110 -20 Q-130 -40 -110 -60" fill="#2d2d2d"/>
-    <path d="M110 -60 Q80 -80 40 -60 Q20 -40 40 -20 Q80 0 110 -20 Q130 -40 110 -60" fill="#2d2d2d"/>
+    <path d="M-105 -55 Q-75 -72 -38 -55 Q-20 -38 -38 -18 Q-75 2 -105 -18 Q-122 -38 -105 -55" fill="#2d2d2d"/>
+    <path d="M105 -55 Q75 -72 38 -55 Q20 -38 38 -18 Q75 2 105 -18 Q122 -38 105 -55" fill="#2d2d2d"/>
 
     <!-- Eyes -->
-    <ellipse cx="-65" cy="-45" rx="22" ry="25" fill="#fff"/>
-    <ellipse cx="65" cy="-45" rx="22" ry="25" fill="#fff"/>
-    <ellipse cx="-60" cy="-42" rx="12" ry="14" fill="#1a1a1a"/>
-    <ellipse cx="60" cy="-42" rx="12" ry="14" fill="#1a1a1a"/>
+    <ellipse cx="-62" cy="-42" rx="20" ry="23" fill="#fff"/>
+    <ellipse cx="62" cy="-42" rx="20" ry="23" fill="#fff"/>
+    <ellipse cx="-57" cy="-39" rx="11" ry="13" fill="#1a1a1a"/>
+    <ellipse cx="57" cy="-39" rx="11" ry="13" fill="#1a1a1a"/>
     <!-- Eye shine -->
-    <circle cx="-55" cy="-48" r="5" fill="#fff"/>
-    <circle cx="55" cy="-48" r="5" fill="#fff"/>
+    <circle cx="-52" cy="-45" r="5" fill="#fff"/>
+    <circle cx="52" cy="-45" r="5" fill="#fff"/>
 
     <!-- Nose -->
-    <ellipse cx="0" cy="25" rx="20" ry="15" fill="#2d2d2d"/>
-    <ellipse cx="0" cy="22" rx="8" ry="5" fill="#4a4a4a"/>
+    <ellipse cx="0" cy="22" rx="18" ry="14" fill="#2d2d2d"/>
+    <ellipse cx="0" cy="19" rx="7" ry="4" fill="#4a4a4a"/>
 
     <!-- Mouth -->
-    <path d="M0 40 Q-15 55 -25 50" stroke="#2d2d2d" stroke-width="4" fill="none" stroke-linecap="round"/>
-    <path d="M0 40 Q15 55 25 50" stroke="#2d2d2d" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M0 36 Q-14 50 -22 46" stroke="#2d2d2d" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M0 36 Q14 50 22 46" stroke="#2d2d2d" stroke-width="4" fill="none" stroke-linecap="round"/>
 
     <!-- Cheek stripes -->
-    <path d="M-100 20 Q-85 30 -70 25" stroke="#6b6b6b" stroke-width="6" fill="none" stroke-linecap="round"/>
-    <path d="M-105 35 Q-90 45 -75 40" stroke="#6b6b6b" stroke-width="5" fill="none" stroke-linecap="round"/>
-    <path d="M100 20 Q85 30 70 25" stroke="#6b6b6b" stroke-width="6" fill="none" stroke-linecap="round"/>
-    <path d="M105 35 Q90 45 75 40" stroke="#6b6b6b" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M-95 18 Q-82 27 -68 23" stroke="#6b6b6b" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M-100 32 Q-87 40 -73 36" stroke="#6b6b6b" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M95 18 Q82 27 68 23" stroke="#6b6b6b" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M100 32 Q87 40 73 36" stroke="#6b6b6b" stroke-width="4" fill="none" stroke-linecap="round"/>
   </g>
 
-  <!-- Sunglasses on forehead (holiday vibe!) -->
-  <g transform="translate(256, 105)">
-    <ellipse cx="-45" cy="0" rx="38" ry="28" fill="#1a1a1a" opacity="0.9"/>
-    <ellipse cx="45" cy="0" rx="38" ry="28" fill="#1a1a1a" opacity="0.9"/>
-    <rect x="-10" y="-5" width="20" height="10" rx="3" fill="#1a1a1a"/>
-    <path d="M-83 -5 Q-100 -15 -110 -10" stroke="#1a1a1a" stroke-width="6" fill="none" stroke-linecap="round"/>
-    <path d="M83 -5 Q100 -15 110 -10" stroke="#1a1a1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <!-- Currency symbols in sunglasses lenses -->
+  <g transform="translate(256, 100)">
+    <!-- Sunglasses frames -->
+    <ellipse cx="-42" cy="0" rx="36" ry="26" fill="#1a1a1a" opacity="0.92"/>
+    <ellipse cx="42" cy="0" rx="36" ry="26" fill="#1a1a1a" opacity="0.92"/>
+    <rect x="-8" y="-4" width="16" height="8" rx="2" fill="#1a1a1a"/>
+    <path d="M-78 -4 Q-92 -12 -100 -8" stroke="#1a1a1a" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M78 -4 Q92 -12 100 -8" stroke="#1a1a1a" stroke-width="5" fill="none" stroke-linecap="round"/>
+
+    <!-- Currency symbols reflected in lenses -->
+    <text x="-42" y="8" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#fff" opacity="0.4" text-anchor="middle">$</text>
+    <text x="42" y="8" font-family="Arial, sans-serif" font-size="28" font-weight="bold" fill="#fff" opacity="0.4" text-anchor="middle">€</text>
+
     <!-- Lens shine -->
-    <ellipse cx="-55" cy="-8" rx="12" ry="8" fill="#fff" opacity="0.2"/>
-    <ellipse cx="35" cy="-8" rx="12" ry="8" fill="#fff" opacity="0.2"/>
+    <ellipse cx="-52" cy="-8" rx="10" ry="6" fill="#fff" opacity="0.15"/>
+    <ellipse cx="32" cy="-8" rx="10" ry="6" fill="#fff" opacity="0.15"/>
+  </g>
+
+  <!-- Small currency badge in corner -->
+  <g transform="translate(410, 410)">
+    <circle cx="0" cy="0" r="52" fill="#fff" opacity="0.95"/>
+    <circle cx="0" cy="0" r="46" fill="#2d2d2d"/>
+    <text x="-18" y="8" font-family="Arial, sans-serif" font-size="26" font-weight="bold" fill="#fff">$</text>
+    <text x="4" y="8" font-family="Arial, sans-serif" font-size="26" font-weight="bold" fill="#ffd700">€</text>
   </g>
 </svg>
