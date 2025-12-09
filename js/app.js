@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.2.0';
+const APP_VERSION = '2.3.0';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -65,6 +65,8 @@ const elements = {
   lockText: document.getElementById('lockText'),
   surchargeToggleBtn: document.getElementById('surchargeToggleBtn'),
   surchargeRow: document.getElementById('surchargeRow'),
+  surchargePresets: document.getElementById('surchargePresets'),
+  surchargeCustom: document.getElementById('surchargeCustom'),
   surchargeInput: document.getElementById('surchargeInput'),
   surchargeMinus: document.getElementById('surchargeMinus'),
   surchargePlus: document.getElementById('surchargePlus'),
@@ -428,6 +430,11 @@ function setupEventListeners() {
 
   // Surcharge controls
   elements.surchargeToggleBtn.addEventListener('click', toggleSurchargeRow);
+  elements.surchargePresets.addEventListener('click', (e) => {
+    const btn = e.target.closest('.surcharge-preset');
+    if (!btn) return;
+    selectSurchargePreset(btn.dataset.value);
+  });
   elements.surchargeInput.addEventListener('input', (e) => {
     state.surchargeAmount = parseFloat(e.target.value) || 0;
     calculatePrices();
@@ -534,8 +541,35 @@ function toggleSurchargeRow() {
   if (elements.surchargeRow.classList.contains('hidden')) {
     state.surchargeAmount = 0;
     elements.surchargeInput.value = 0;
+    // Reset to 0% preset
+    updateSurchargePresetUI('0');
+    elements.surchargeCustom.classList.add('hidden');
     calculatePrices();
   }
+}
+
+function selectSurchargePreset(value) {
+  // Update UI
+  updateSurchargePresetUI(value);
+
+  if (value === 'custom') {
+    // Show custom input
+    elements.surchargeCustom.classList.remove('hidden');
+    elements.surchargeInput.focus();
+  } else {
+    // Hide custom input and set the preset value
+    elements.surchargeCustom.classList.add('hidden');
+    state.surchargeAmount = parseFloat(value);
+    state.surchargeType = 'percent';
+    elements.surchargeInput.value = value;
+    calculatePrices();
+  }
+}
+
+function updateSurchargePresetUI(activeValue) {
+  elements.surchargePresets.querySelectorAll('.surcharge-preset').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.value === activeValue);
+  });
 }
 
 function setSurchargeType(type) {
@@ -1529,6 +1563,18 @@ function updateSurchargeUI() {
   if (state.surchargeAmount > 0) {
     elements.surchargeRow.classList.remove('hidden');
     elements.surchargeInput.value = state.surchargeAmount;
+
+    // Check if it matches a preset
+    const presetValues = ['0', '3', '5', '10'];
+    const amountStr = String(state.surchargeAmount);
+    if (state.surchargeType === 'percent' && presetValues.includes(amountStr)) {
+      updateSurchargePresetUI(amountStr);
+      elements.surchargeCustom.classList.add('hidden');
+    } else {
+      // Custom value
+      updateSurchargePresetUI('custom');
+      elements.surchargeCustom.classList.remove('hidden');
+    }
   }
   elements.surchargePercent.classList.toggle('active', state.surchargeType === 'percent');
   elements.surchargeFixed.classList.toggle('active', state.surchargeType === 'fixed');

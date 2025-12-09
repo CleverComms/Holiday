@@ -418,17 +418,55 @@ button {
 /* Surcharge Controls */
 .surcharge-row {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  gap: 10px;
   margin-bottom: 10px;
-  padding: 8px 12px;
+  padding: 12px;
   background: var(--card-bg);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
 }
 
 .surcharge-row.hidden {
+  display: none;
+}
+
+.surcharge-presets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.surcharge-preset {
+  padding: 8px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--bg-color);
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.surcharge-preset.active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.surcharge-preset:active {
+  transform: scale(0.95);
+}
+
+.surcharge-custom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.surcharge-custom.hidden {
   display: none;
 }
 

@@ -139,12 +139,20 @@
 
         <!-- Surcharge Controls (hidden by default) -->
         <div class="surcharge-row hidden" id="surchargeRow">
-          <span class="surcharge-label">Add</span>
-          <button class="surcharge-adjust minus" id="surchargeMinus">−</button>
-          <input type="number" class="surcharge-input" id="surchargeInput" value="0" inputmode="decimal">
-          <button class="surcharge-adjust plus" id="surchargePlus">+</button>
-          <button class="surcharge-type-btn active" id="surchargePercent" data-type="percent">%</button>
-          <button class="surcharge-type-btn" id="surchargeFixed" data-type="fixed">Fixed</button>
+          <div class="surcharge-presets" id="surchargePresets">
+            <button class="surcharge-preset active" data-value="0">0%</button>
+            <button class="surcharge-preset" data-value="3">3%</button>
+            <button class="surcharge-preset" data-value="5">5%</button>
+            <button class="surcharge-preset" data-value="10">10%</button>
+            <button class="surcharge-preset" data-value="custom">Custom</button>
+          </div>
+          <div class="surcharge-custom hidden" id="surchargeCustom">
+            <button class="surcharge-adjust minus" id="surchargeMinus">−</button>
+            <input type="number" class="surcharge-input" id="surchargeInput" value="0" inputmode="decimal">
+            <button class="surcharge-adjust plus" id="surchargePlus">+</button>
+            <button class="surcharge-type-btn active" id="surchargePercent" data-type="percent">%</button>
+            <button class="surcharge-type-btn" id="surchargeFixed" data-type="fixed">Fixed</button>
+          </div>
         </div>
 
         <!-- Better Deal Indicator -->
