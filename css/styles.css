@@ -1719,6 +1719,8 @@ button {
 
 .qr-code-container canvas {
   border-radius: var(--radius-sm);
+  width: 200px !important;
+  height: 200px !important;
 }
 
 .qr-url {
@@ -2003,6 +2005,9 @@ button {
   transition: all 0.3s ease;
   z-index: 1200;
   box-shadow: var(--shadow-lg);
+  max-width: calc(100vw - 32px);
+  width: auto;
+  text-align: center;
 }
 
 .toast.active {

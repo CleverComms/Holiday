@@ -203,7 +203,12 @@ function setFlagElement(element, currencyCode, size = 'md') {
 function setCountryFlag(element, countryName, size = 'md') {
   if (!element) return;
   const countryData = state.countries[countryName];
-  if (countryData) {
+  if (countryData && countryData.code) {
+    // Use country code directly for the flag (e.g., "ZW" -> "zw" for Zimbabwe)
+    const sizeClass = size === 'lg' ? 'fi-lg' : (size === 'sm' ? 'fi-sm' : '');
+    element.innerHTML = `<span class="fi fi-${countryData.code.toLowerCase()} ${sizeClass}"></span>`;
+  } else if (countryData) {
+    // Fallback to currency flag if no country code
     setFlagElement(element, countryData.currency, size);
   } else {
     element.innerHTML = '';
@@ -757,10 +762,10 @@ function renderDestinationList(filter = '') {
   renderWalletSection(filter);
 
   elements.destinationList.innerHTML = filtered.map(([country, data]) => {
-    const currency = state.currencies[data.currency];
-    const flagHtml = currency?.code
-      ? `<span class="fi fi-${currency.code} fi-lg"></span>`
-      : (currency?.flag || '🌍');
+    // Use country code for flag (e.g., "ZW" -> "zw" for Zimbabwe)
+    const flagHtml = data.code
+      ? `<span class="fi fi-${data.code.toLowerCase()} fi-lg"></span>`
+      : (state.currencies[data.currency]?.flag || '🌍');
     const inWallet = state.walletCountries.includes(country);
     return `
       <div class="destination-item" data-country="${country}">
@@ -804,10 +809,10 @@ function renderWalletSection(filter = '') {
   elements.walletList.innerHTML = walletFiltered.map(country => {
     const data = state.countries[country];
     if (!data) return '';
-    const currency = state.currencies[data.currency];
-    const flagHtml = currency?.code
-      ? `<span class="fi fi-${currency.code} fi-lg"></span>`
-      : (currency?.flag || '🌍');
+    // Use country code for flag (e.g., "ZW" -> "zw" for Zimbabwe)
+    const flagHtml = data.code
+      ? `<span class="fi fi-${data.code.toLowerCase()} fi-lg"></span>`
+      : (state.currencies[data.currency]?.flag || '🌍');
     return `
       <div class="wallet-item" data-country="${country}">
         <span class="flag">${flagHtml}</span>
