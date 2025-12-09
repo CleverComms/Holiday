@@ -3,7 +3,8 @@
  * Enables offline functionality and caching
  */
 
-const CACHE_NAME = 'holiday-v1.0.0';
+const CACHE_VERSION = '1.1.0';
+const CACHE_NAME = `holiday-v${CACHE_VERSION}`;
 const RUNTIME_CACHE = 'holiday-runtime';
 
 // Files to cache immediately on install (relative paths for GitHub Pages compatibility)
@@ -38,7 +39,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up old caches and notify clients
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
@@ -53,9 +54,15 @@ self.addEventListener('activate', (event) => {
         );
       })
       .then(() => {
-        console.log('[SW] Activated');
-        return self.clients.claim();
+        console.log('[SW] Activated v' + CACHE_VERSION);
+        // Notify all clients that a new version is active
+        return self.clients.matchAll().then(clients => {
+          clients.forEach(client => {
+            client.postMessage({ type: 'SW_ACTIVATED', version: CACHE_VERSION });
+          });
+        });
       })
+      .then(() => self.clients.claim())
   );
 });
 
@@ -164,6 +171,9 @@ async function updateCache(request) {
 self.addEventListener('message', (event) => {
   if (event.data === 'skipWaiting') {
     self.skipWaiting();
+  }
+  if (event.data === 'getVersion') {
+    event.source.postMessage({ type: 'VERSION', version: CACHE_VERSION });
   }
 });
 

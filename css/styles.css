@@ -1819,6 +1819,71 @@ button {
 }
 
 /* =============================================
+   UPDATE AVAILABLE BANNER
+   ============================================= */
+.update-banner {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-lg);
+  z-index: 600;
+  max-width: calc(100% - 32px);
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.update-banner.active {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.update-bob {
+  font-size: 1.8rem;
+  animation: bobExcited 0.5s ease-in-out infinite;
+}
+
+@keyframes bobExcited {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.1) rotate(10deg); }
+}
+
+.update-text {
+  flex: 1;
+  color: white;
+}
+
+.update-text strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.update-text span {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.update-btn {
+  padding: 8px 16px;
+  background: white;
+  color: #38a169;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+}
+
+.update-btn:active {
+  transform: scale(0.95);
+}
+
+/* =============================================
    RESPONSIVE DESIGN
    ============================================= */
 

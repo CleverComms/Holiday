@@ -153,13 +153,18 @@ const elements = {
   locationBannerTitle: document.getElementById('locationBannerTitle'),
   locationBannerFlag: document.getElementById('locationBannerFlag'),
   locationYesBtn: document.getElementById('locationYesBtn'),
-  locationNoBtn: document.getElementById('locationNoBtn')
+  locationNoBtn: document.getElementById('locationNoBtn'),
+
+  // Update banner
+  updateBanner: document.getElementById('updateBanner'),
+  updateBtn: document.getElementById('updateBtn')
 };
 
 let currentModalContext = null;
 let deferredPrompt = null;
 let isFirstLoad = false;
 let detectedCountry = null;
+let waitingServiceWorker = null;
 
 // =============================================
 // INITIALIZATION
@@ -403,6 +408,9 @@ function setupEventListeners() {
   // Location banner
   elements.locationYesBtn.addEventListener('click', acceptLocationSuggestion);
   elements.locationNoBtn.addEventListener('click', dismissLocationSuggestion);
+
+  // Update banner
+  elements.updateBtn.addEventListener('click', applyUpdate);
 
   // Lock toggle
   elements.lockToggleBtn.addEventListener('click', togglePriceLock);
@@ -1314,17 +1322,62 @@ async function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     try {
       const registration = await navigator.serviceWorker.register('./sw.js');
+
+      // Check for updates on launch
+      registration.update();
+
+      // Listen for new service worker installing
       registration.addEventListener('updatefound', () => {
         const newWorker = registration.installing;
         newWorker.addEventListener('statechange', () => {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            showToast('New version available! Refresh to update.');
+            // New version available!
+            waitingServiceWorker = newWorker;
+            showUpdateBanner();
           }
         });
       });
+
+      // If there's already a waiting worker (from previous visit)
+      if (registration.waiting) {
+        waitingServiceWorker = registration.waiting;
+        showUpdateBanner();
+      }
+
+      // Listen for messages from service worker
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data.type === 'SW_ACTIVATED') {
+          console.log('Service Worker activated, version:', event.data.version);
+        }
+        if (event.data.type === 'RATES_UPDATED') {
+          checkRateUpdates();
+        }
+      });
+
+      // Handle controller change (new SW took over)
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        // Reload to get the new version
+        window.location.reload();
+      });
+
     } catch (error) {
       console.error('Service Worker registration failed:', error);
     }
+  }
+}
+
+function showUpdateBanner() {
+  elements.updateBanner.classList.add('active');
+}
+
+function applyUpdate() {
+  if (waitingServiceWorker) {
+    // Tell the waiting service worker to take over
+    waitingServiceWorker.postMessage('skipWaiting');
+    elements.updateBanner.classList.remove('active');
+  } else {
+    // Fallback: just reload
+    window.location.reload();
   }
 }
 
