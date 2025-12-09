@@ -481,7 +481,9 @@ function setupEventListeners() {
   elements.setupDone.addEventListener('click', completeSetup);
 
   // Theme toggle
-  elements.themeToggleBtn.addEventListener('click', toggleTheme);
+  if (elements.themeToggleBtn) {
+    elements.themeToggleBtn.addEventListener('click', toggleTheme);
+  }
 
   // Location banner
   elements.locationYesBtn.addEventListener('click', acceptLocationSuggestion);

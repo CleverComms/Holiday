@@ -2248,6 +2248,7 @@ button {
 .theme-toggle .moon-icon {
   position: absolute;
   transition: transform 0.3s ease, opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .theme-toggle .sun-icon {
