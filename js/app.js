@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.4.1';
+const APP_VERSION = '2.4.2';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -538,6 +538,9 @@ function adjustPrice(target, direction) {
   let newAmount = currentAmount + (direction * step);
   if (newAmount < 0) newAmount = 0;
 
+  // Round to the nearest step for clean numbers
+  newAmount = Math.round(newAmount / step) * step;
+
   if (target === 'local') {
     state.localAmount = newAmount;
     elements.localAmountInput.value = newAmount;
@@ -591,12 +594,14 @@ function syncLockedPrices(source) {
   const localToAlt = localToUsd * usdToAlt;
 
   if (source === 'local') {
-    // Calculate alt from local
-    state.altAmount = Math.round(state.localAmount * localToAlt * 100) / 100;
+    // Calculate alt from local - round to whole number for cleaner display
+    let altAmount = state.localAmount * localToAlt;
+    state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 10) / 10;
     elements.altAmountInput.value = state.altAmount;
   } else {
-    // Calculate local from alt
-    state.localAmount = Math.round(state.altAmount / localToAlt * 100) / 100;
+    // Calculate local from alt - round to whole number for cleaner display
+    let localAmount = state.altAmount / localToAlt;
+    state.localAmount = localAmount >= 10 ? Math.round(localAmount) : Math.round(localAmount * 10) / 10;
     elements.localAmountInput.value = state.localAmount;
   }
 }
