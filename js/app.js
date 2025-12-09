@@ -116,24 +116,81 @@ const elements = {
 
   // Toast
   toast: document.getElementById('toast'),
-  toastMessage: document.getElementById('toastMessage')
+  toastMessage: document.getElementById('toastMessage'),
+
+  // Setup wizard
+  setupModal: document.getElementById('setupModal'),
+  setupHomeCurrencyBtn: document.getElementById('setupHomeCurrencyBtn'),
+  setupHomeFlag: document.getElementById('setupHomeFlag'),
+  setupHomeCode: document.getElementById('setupHomeCode'),
+  setupHomeName: document.getElementById('setupHomeName'),
+  setupDestBtn: document.getElementById('setupDestBtn'),
+  setupDestFlag: document.getElementById('setupDestFlag'),
+  setupDestName: document.getElementById('setupDestName'),
+  setupSkip: document.getElementById('setupSkip'),
+  setupDone: document.getElementById('setupDone')
 };
 
 let currentModalContext = null;
 let deferredPrompt = null;
+let isFirstLoad = false;
 
 // =============================================
 // INITIALIZATION
 // =============================================
 
 async function init() {
+  checkFirstLoad();
   loadState();
   await loadDataFiles();
   setupEventListeners();
-  render();
+
+  if (isFirstLoad) {
+    showSetupWizard();
+  } else {
+    render();
+  }
+
   checkRateUpdates();
   registerServiceWorker();
   setupAddToHomeScreen();
+}
+
+function checkFirstLoad() {
+  const hasVisited = localStorage.getItem('holibobsSetupComplete');
+  isFirstLoad = !hasVisited;
+}
+
+function showSetupWizard() {
+  elements.setupModal.classList.add('active');
+  updateSetupDisplay();
+}
+
+function updateSetupDisplay() {
+  const home = state.currencies[state.homeCurrency];
+  if (home) {
+    elements.setupHomeFlag.textContent = home.flag;
+    elements.setupHomeCode.textContent = state.homeCurrency;
+    elements.setupHomeName.textContent = home.name;
+  }
+
+  if (state.destinationCountry) {
+    const countryData = state.countries[state.destinationCountry];
+    const currency = state.currencies[countryData?.currency];
+    elements.setupDestFlag.textContent = currency?.flag || '🌍';
+    elements.setupDestName.textContent = state.destinationCountry;
+  } else {
+    elements.setupDestFlag.textContent = '🌍';
+    elements.setupDestName.textContent = 'Tap to select destination';
+  }
+}
+
+function completeSetup() {
+  localStorage.setItem('holibobsSetupComplete', 'true');
+  elements.setupModal.classList.remove('active');
+  saveState();
+  render();
+  showToast('Welcome to Holibobs! 🦝');
 }
 
 function loadState() {
@@ -290,6 +347,16 @@ function setupEventListeners() {
       elements.iosA2hsModal.classList.remove('active');
     }
   });
+
+  // Setup wizard
+  elements.setupHomeCurrencyBtn.addEventListener('click', () => {
+    openCurrencyModal('setupHome');
+  });
+  elements.setupDestBtn.addEventListener('click', () => {
+    openDestinationModal('setup');
+  });
+  elements.setupSkip.addEventListener('click', completeSetup);
+  elements.setupDone.addEventListener('click', completeSetup);
 }
 
 // =============================================
@@ -541,7 +608,12 @@ function selectDestination(country) {
 
   saveState();
   closeDestinationModal();
-  render();
+
+  if (currentModalContext === 'setup') {
+    updateSetupDisplay();
+  } else {
+    render();
+  }
 }
 
 // =============================================
@@ -596,12 +668,17 @@ function filterCurrencies(e) {
 }
 
 function selectCurrency(code) {
-  if (currentModalContext === 'home') {
+  if (currentModalContext === 'home' || currentModalContext === 'setupHome') {
     state.homeCurrency = code;
   }
   saveState();
   closeCurrencyModal();
-  render();
+
+  if (currentModalContext === 'setupHome') {
+    updateSetupDisplay();
+  } else {
+    render();
+  }
 }
 
 // =============================================

@@ -376,6 +376,47 @@
       </div>
     </div>
 
+    <!-- Setup Wizard Modal (First Load) -->
+    <div class="setup-modal" id="setupModal">
+      <div class="setup-content">
+        <div class="setup-header">
+          <div class="bob-mascot">🦝</div>
+          <h2>Hi, I'm Bob!</h2>
+          <p>Let me help you with your holiday money</p>
+        </div>
+
+        <!-- Step 1: Home Currency -->
+        <div class="setup-step active" id="setupStep1">
+          <label>What's your home currency?</label>
+          <button class="setup-currency-btn" id="setupHomeCurrencyBtn">
+            <span class="flag" id="setupHomeFlag">🇬🇧</span>
+            <span class="code" id="setupHomeCode">GBP</span>
+            <span class="name" id="setupHomeName">British Pound</span>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Step 2: Destination -->
+        <div class="setup-step" id="setupStep2">
+          <label>Where are you heading? <span class="optional">(optional)</span></label>
+          <button class="setup-dest-btn" id="setupDestBtn">
+            <span class="flag" id="setupDestFlag">🌍</span>
+            <span class="name" id="setupDestName">Tap to select destination</span>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="setup-actions">
+          <button class="setup-btn secondary" id="setupSkip">Skip for now</button>
+          <button class="setup-btn primary" id="setupDone">Let's go! 🎉</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Toast Notification -->
     <div class="toast" id="toast">
       <span class="toast-message" id="toastMessage">Message</span>
