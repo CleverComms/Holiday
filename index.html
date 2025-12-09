@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#667eea">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Holiday">
+  <meta name="description" content="Holiday - Your offline currency converter and travel companion">
+
+  <title>Holiday - Currency Converter</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-content">
+        <img src="icons/icon.svg" alt="Holiday Logo" class="header-logo">
+        <h1>Holiday</h1>
+      </div>
+      <div class="header-actions">
+        <button id="refreshRatesBtn" class="icon-btn" title="Refresh exchange rates" aria-label="Refresh rates">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 4v6h-6M1 20v-6h6"/>
+            <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+          </svg>
+        </button>
+        <button id="settingsBtn" class="icon-btn" title="Settings" aria-label="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Rate Status Bar -->
+    <div class="rate-status" id="rateStatus">
+      <span class="status-indicator online"></span>
+      <span class="status-text">Rates updated: <span id="lastUpdated">--</span></span>
+    </div>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="converter">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+        </svg>
+        <span>Convert</span>
+      </button>
+      <button class="tab-btn" data-tab="compare">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
+        </svg>
+        <span>Compare</span>
+      </button>
+      <button class="tab-btn" data-tab="scams">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M12 8v4M12 16h.01"/>
+        </svg>
+        <span>Safety</span>
+      </button>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Converter Tab -->
+      <section class="tab-content active" id="converterTab">
+        <div class="converter-card">
+          <div class="currency-input-group">
+            <label for="amountInput">Amount</label>
+            <div class="amount-input-wrapper">
+              <input type="number" id="amountInput" inputmode="decimal" placeholder="0.00" value="100">
+              <button id="clearAmount" class="clear-btn" aria-label="Clear amount">&times;</button>
+            </div>
+          </div>
+
+          <div class="currency-selector">
+            <label>From</label>
+            <button class="currency-select-btn" id="fromCurrencyBtn">
+              <span class="currency-flag" id="fromFlag">🏠</span>
+              <span class="currency-code" id="fromCode">USD</span>
+              <span class="currency-name" id="fromName">US Dollar</span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
+            </button>
+          </div>
+
+          <button class="swap-btn" id="swapCurrencies" aria-label="Swap currencies">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7 16V4M7 4L3 8M7 4l4 4M17 8v12M17 20l4-4M17 20l-4-4"/>
+            </svg>
+          </button>
+
+          <div class="currency-selector">
+            <label>To</label>
+            <button class="currency-select-btn" id="toCurrencyBtn">
+              <span class="currency-flag" id="toFlag">🇲🇽</span>
+              <span class="currency-code" id="toCode">MXN</span>
+              <span class="currency-name" id="toName">Mexican Peso</span>
+              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Conversion Result -->
+        <div class="result-card" id="conversionResult">
+          <div class="result-amount">
+            <span class="result-value" id="resultValue">0.00</span>
+            <span class="result-currency" id="resultCurrency">MXN</span>
+          </div>
+          <div class="result-rate">
+            <span id="rateDisplay">1 USD = 17.25 MXN</span>
+          </div>
+        </div>
+
+        <!-- Quick Amount Buttons -->
+        <div class="quick-amounts">
+          <button class="quick-btn" data-amount="10">10</button>
+          <button class="quick-btn" data-amount="20">20</button>
+          <button class="quick-btn" data-amount="50">50</button>
+          <button class="quick-btn" data-amount="100">100</button>
+          <button class="quick-btn" data-amount="500">500</button>
+          <button class="quick-btn" data-amount="1000">1000</button>
+        </div>
+
+        <!-- Also Show in USD -->
+        <div class="also-in-usd" id="alsoInUsd">
+          <span class="label">Also in USD:</span>
+          <span class="value" id="usdEquivalent">$100.00</span>
+        </div>
+      </section>
+
+      <!-- Compare Tab -->
+      <section class="tab-content" id="compareTab">
+        <div class="compare-header">
+          <div class="compare-input-group">
+            <input type="number" id="compareAmount" inputmode="decimal" placeholder="100" value="100">
+            <button class="currency-pill" id="compareCurrencyBtn">
+              <span id="compareFlag">🏠</span>
+              <span id="compareCode">USD</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="compare-list" id="compareList">
+          <!-- Comparison cards will be generated here -->
+        </div>
+
+        <button class="add-currency-btn" id="addCompareBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 8v8M8 12h8"/>
+          </svg>
+          Add Currency
+        </button>
+      </section>
+
+      <!-- Scams/Safety Tab -->
+      <section class="tab-content" id="scamsTab">
+        <div class="scams-destination">
+          <label>Your Destination</label>
+          <button class="destination-select-btn" id="destinationBtn">
+            <span class="destination-flag" id="destFlag">🌍</span>
+            <span class="destination-name" id="destName">Select Destination</span>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="scams-content" id="scamsContent">
+          <!-- General Safety Tips -->
+          <div class="safety-section">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 16v-4M12 8h.01"/>
+              </svg>
+              General Safety Tips
+            </h3>
+            <div class="scam-cards" id="generalScams">
+              <!-- General scams loaded here -->
+            </div>
+          </div>
+
+          <!-- Destination-Specific -->
+          <div class="safety-section destination-section" id="destinationSection" style="display: none;">
+            <h3 id="destinationTitle">
+              <span id="destTitleFlag"></span>
+              <span id="destTitleText">Country Scams</span>
+            </h3>
+            <div class="tips-box" id="countryTips">
+              <!-- Country tips loaded here -->
+            </div>
+            <div class="scam-cards" id="countryScams">
+              <!-- Country-specific scams loaded here -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Currency Selector Modal -->
+    <div class="modal" id="currencyModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Select Currency</h2>
+          <button class="modal-close" id="closeCurrencyModal">&times;</button>
+        </div>
+        <div class="modal-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="text" id="currencySearch" placeholder="Search currency...">
+        </div>
+        <div class="currency-list" id="currencyList">
+          <!-- Currency items will be generated here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Destination Selector Modal -->
+    <div class="modal" id="destinationModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Select Destination</h2>
+          <button class="modal-close" id="closeDestinationModal">&times;</button>
+        </div>
+        <div class="modal-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="text" id="destinationSearch" placeholder="Search country...">
+        </div>
+        <div class="destination-list" id="destinationList">
+          <!-- Destination items will be generated here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Settings</h2>
+          <button class="modal-close" id="closeSettingsModal">&times;</button>
+        </div>
+        <div class="settings-content">
+          <div class="setting-group">
+            <label>Home Currency</label>
+            <p class="setting-description">Your base currency for conversions</p>
+            <button class="setting-btn" id="homeSettingBtn">
+              <span id="homeSettingFlag">🏠</span>
+              <span id="homeSettingCode">USD</span>
+              <span id="homeSettingName">US Dollar</span>
+            </button>
+          </div>
+
+          <div class="setting-group">
+            <label>Holiday Destination</label>
+            <p class="setting-description">Where you're traveling to</p>
+            <button class="setting-btn" id="destSettingBtn">
+              <span id="destSettingFlag">🌍</span>
+              <span id="destSettingName">Select destination</span>
+            </button>
+          </div>
+
+          <div class="setting-group">
+            <label>Always Show USD</label>
+            <p class="setting-description">Show USD equivalent when converting</p>
+            <label class="toggle">
+              <input type="checkbox" id="showUsdToggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-group">
+            <label>Exchange Rates</label>
+            <p class="setting-description">Last updated: <span id="settingsLastUpdated">--</span></p>
+            <button class="setting-action-btn" id="updateRatesBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 4v6h-6M1 20v-6h6"/>
+                <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+              </svg>
+              Update Rates Now
+            </button>
+          </div>
+
+          <div class="setting-group">
+            <label>About</label>
+            <p class="about-text">Holiday Currency Converter v1.0<br>Works offline - your data stays on your device.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add to Home Screen Banner -->
+    <div class="a2hs-banner" id="a2hsBanner">
+      <div class="a2hs-content">
+        <img src="icons/icon.svg" alt="Holiday" class="a2hs-icon">
+        <div class="a2hs-text">
+          <strong>Add Holiday to Home Screen</strong>
+          <span>Quick access, works offline!</span>
+        </div>
+      </div>
+      <div class="a2hs-actions">
+        <button class="a2hs-btn primary" id="a2hsInstall">Add</button>
+        <button class="a2hs-btn secondary" id="a2hsDismiss">Later</button>
+      </div>
+    </div>
+
+    <!-- iOS Add to Home Screen Instructions -->
+    <div class="ios-a2hs-modal" id="iosA2hsModal">
+      <div class="ios-a2hs-content">
+        <button class="modal-close" id="closeIosModal">&times;</button>
+        <img src="icons/icon.svg" alt="Holiday" class="ios-a2hs-icon">
+        <h2>Add to Home Screen</h2>
+        <p>Install Holiday for quick access and offline use:</p>
+        <ol class="ios-instructions">
+          <li>
+            <span class="step-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M16 5l-1.42 1.42-1.59-1.59V16h-1.98V4.83L9.42 6.42 8 5l4-4 4 4zm4 5v11c0 1.1-.9 2-2 2H6c-1.11 0-2-.9-2-2V10c0-1.11.89-2 2-2h3v2H6v11h12V10h-3V8h3c1.1 0 2 .89 2 2z"/>
+              </svg>
+            </span>
+            Tap the <strong>Share</strong> button in Safari
+          </li>
+          <li>
+            <span class="step-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+              </svg>
+            </span>
+            Scroll and tap <strong>"Add to Home Screen"</strong>
+          </li>
+          <li>
+            <span class="step-icon">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+              </svg>
+            </span>
+            Tap <strong>"Add"</strong> to confirm
+          </li>
+        </ol>
+        <div class="ios-arrow">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+      <span class="toast-message" id="toastMessage">Message</span>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

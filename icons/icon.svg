@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffecd2"/>
+      <stop offset="100%" style="stop-color:#fcb69f"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="100" fill="url(#bg)"/>
+
+  <!-- Sun/Coin -->
+  <circle cx="256" cy="200" r="100" fill="url(#sun)"/>
+
+  <!-- Currency symbols -->
+  <text x="220" y="215" font-family="Arial" font-size="50" font-weight="bold" fill="#764ba2">$</text>
+  <text x="260" y="215" font-family="Arial" font-size="50" font-weight="bold" fill="#764ba2">€</text>
+
+  <!-- Wave/Beach -->
+  <path d="M0 350 Q128 300 256 350 Q384 400 512 350 L512 512 L0 512 Z" fill="#fff" opacity="0.2"/>
+  <path d="M0 380 Q128 330 256 380 Q384 430 512 380 L512 512 L0 512 Z" fill="#fff" opacity="0.3"/>
+
+  <!-- Palm tree -->
+  <g fill="#fff" opacity="0.95">
+    <path d="M120 450 Q125 380 128 340 Q130 330 126 330 Q122 330 124 340 Q118 380 113 450 Z"/>
+    <ellipse cx="95" cy="325" rx="40" ry="10" transform="rotate(-30 95 325)"/>
+    <ellipse cx="155" cy="325" rx="40" ry="10" transform="rotate(30 155 325)"/>
+    <ellipse cx="85" cy="310" rx="35" ry="8" transform="rotate(-60 85 310)"/>
+    <ellipse cx="165" cy="310" rx="35" ry="8" transform="rotate(60 165 310)"/>
+    <ellipse cx="125" cy="300" rx="30" ry="8"/>
+  </g>
+
+  <!-- Airplane -->
+  <g fill="#fff" transform="translate(340, 100) rotate(20) scale(1.2)">
+    <path d="M0 12 L50 12 L60 5 L60 19 L50 12 L0 12 Z"/>
+    <path d="M15 12 L25 0 L28 0 L23 12 Z"/>
+    <path d="M15 12 L25 24 L28 24 L23 12 Z"/>
+  </g>
+</svg>

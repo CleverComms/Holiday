@@ -1,0 +1,960 @@
+{
+  "general": [
+    {
+      "name": "ATM Skimming",
+      "description": "Criminals attach devices to ATMs to steal card data. Always use ATMs inside banks, cover your PIN, and check for loose card slots.",
+      "severity": "high",
+      "icon": "💳"
+    },
+    {
+      "name": "Fake WiFi Networks",
+      "description": "Scammers create WiFi hotspots with names similar to hotels/cafes to intercept your data. Use VPN and verify network names with staff.",
+      "severity": "high",
+      "icon": "📶"
+    },
+    {
+      "name": "Pickpocketing",
+      "description": "Thieves work in groups to distract and steal. Keep valuables in front pockets, use money belts, stay alert in crowds.",
+      "severity": "medium",
+      "icon": "👛"
+    },
+    {
+      "name": "Taxi Overcharging",
+      "description": "Drivers take longer routes or tamper with meters. Use ride-sharing apps, agree on price beforehand, or insist on meter.",
+      "severity": "medium",
+      "icon": "🚕"
+    },
+    {
+      "name": "Currency Exchange Scams",
+      "description": "Poor exchange rates or 'commission-free' exchanges that hide fees. Use banks or reputable exchange offices, check rates beforehand.",
+      "severity": "medium",
+      "icon": "💱"
+    },
+    {
+      "name": "Fake Police",
+      "description": "Scammers pose as police demanding to see your wallet/documents. Real police won't ask to check your wallet. Ask for ID and go to a police station.",
+      "severity": "high",
+      "icon": "👮"
+    },
+    {
+      "name": "Distraction Theft",
+      "description": "Someone spills something on you, asks for directions, or creates a scene while an accomplice steals from you. Stay alert and secure belongings.",
+      "severity": "medium",
+      "icon": "🎭"
+    },
+    {
+      "name": "Restaurant Bill Padding",
+      "description": "Extra charges added to bills for items not ordered. Always check your bill carefully and keep menus with prices.",
+      "severity": "low",
+      "icon": "🧾"
+    }
+  ],
+  "countries": {
+    "Mexico": {
+      "flag": "🇲🇽",
+      "scams": [
+        {
+          "name": "Taxi Meter Scams",
+          "description": "Taxis with rigged meters or drivers who claim the meter is broken. Use Uber/DiDi or agree on price before getting in. At airports, use official taxi booths only.",
+          "severity": "high",
+          "icon": "🚕"
+        },
+        {
+          "name": "Timeshare Presentations",
+          "description": "Aggressive salespeople offer 'free' tours, gifts, or discounts in exchange for attending a presentation. Very high-pressure sales tactics follow.",
+          "severity": "medium",
+          "icon": "🏨"
+        },
+        {
+          "name": "Fake Police Bribes",
+          "description": "Fake or corrupt police demand bribes for fabricated violations. Ask for badge numbers, say you'll pay at the station, or ask to call your embassy.",
+          "severity": "high",
+          "icon": "👮"
+        },
+        {
+          "name": "ATM Theft",
+          "description": "ATM skimming is common. Use ATMs inside banks during business hours. Cover your PIN and be wary of strangers offering 'help'.",
+          "severity": "high",
+          "icon": "💳"
+        },
+        {
+          "name": "Overpriced Handicrafts",
+          "description": "Tourist markets often have inflated prices. Bargain firmly - starting at 50% of asking price is acceptable. Compare prices at multiple stalls.",
+          "severity": "low",
+          "icon": "🛍️"
+        },
+        {
+          "name": "Water Scams",
+          "description": "Ensure bottled water seals are intact. Some vendors refill bottles with tap water. Buy from convenience stores.",
+          "severity": "medium",
+          "icon": "💧"
+        }
+      ],
+      "tips": [
+        "Use official taxi booths at airports",
+        "Download offline maps before arriving",
+        "Keep copies of important documents",
+        "Use ride-sharing apps in cities",
+        "Don't flash expensive jewelry or electronics"
+      ]
+    },
+    "Thailand": {
+      "flag": "🇹🇭",
+      "scams": [
+        {
+          "name": "Tuk-Tuk Commission Scams",
+          "description": "Drivers offer cheap rides then take you to gem shops, tailors, or other stores where they earn commission. Politely decline detours.",
+          "severity": "medium",
+          "icon": "🛺"
+        },
+        {
+          "name": "Jet Ski Damage Scams",
+          "description": "Renters claim you damaged the jet ski and demand huge payments. Take photos/video before renting. Use reputable companies or skip jet skis entirely.",
+          "severity": "high",
+          "icon": "🚤"
+        },
+        {
+          "name": "Temple/Palace 'Closed' Scam",
+          "description": "Strangers near attractions say it's closed and offer alternative tours. Verify at the entrance - these places rarely close unexpectedly.",
+          "severity": "medium",
+          "icon": "🛕"
+        },
+        {
+          "name": "Gem Store Scams",
+          "description": "Locals claim there's a special government sale or once-a-year event. Gems are worthless or vastly overpriced. Never buy gems from tour referrals.",
+          "severity": "high",
+          "icon": "💎"
+        },
+        {
+          "name": "Ping Pong Show Overcharging",
+          "description": "Touts promise low prices then present outrageous bills with threats. Avoid these establishments entirely.",
+          "severity": "high",
+          "icon": "🎪"
+        },
+        {
+          "name": "Bird Seed Scam",
+          "description": "Someone puts bird seed in your hand for 'free', then birds land on you and they demand payment for photos/cleaning.",
+          "severity": "low",
+          "icon": "🐦"
+        },
+        {
+          "name": "Fake Monks",
+          "description": "People dressed as monks ask for donations. Real monks don't solicit money on streets. Politely decline.",
+          "severity": "low",
+          "icon": "🧘"
+        }
+      ],
+      "tips": [
+        "Use Grab (ride-sharing app) instead of tuk-tuks",
+        "Never rent jet skis in Phuket",
+        "Book tours through reputable agencies",
+        "Verify attraction hours online before visiting",
+        "Keep calm - Thai culture values composure"
+      ]
+    },
+    "Spain": {
+      "flag": "🇪🇸",
+      "scams": [
+        {
+          "name": "Pickpocketing (Barcelona)",
+          "description": "Barcelona has some of Europe's highest pickpocket rates, especially on Las Ramblas, in metro stations, and near Sagrada Familia.",
+          "severity": "high",
+          "icon": "👛"
+        },
+        {
+          "name": "Petition Scam",
+          "description": "Someone asks you to sign a petition (often claiming to be deaf), then demands money or an accomplice picks your pocket while distracted.",
+          "severity": "medium",
+          "icon": "📋"
+        },
+        {
+          "name": "Three Card Monte",
+          "description": "Street gambling games are always rigged. 'Winners' are part of the scam to lure victims. Walking away is the only winning move.",
+          "severity": "medium",
+          "icon": "🃏"
+        },
+        {
+          "name": "Flower/Rosemary Gift Scam",
+          "description": "Someone gives you a 'gift' flower or rosemary sprig (for 'luck'), then demands payment. Keep hands in pockets when approaching.",
+          "severity": "low",
+          "icon": "🌹"
+        },
+        {
+          "name": "Restaurant Overcharging",
+          "description": "Some tourist-area restaurants charge for bread, water, or have different prices for tourists. Check prices on menu before ordering.",
+          "severity": "medium",
+          "icon": "🍽️"
+        },
+        {
+          "name": "Soccer Ticket Scams",
+          "description": "Fake tickets for FC Barcelona or Real Madrid games. Only buy from official channels or authorized resellers.",
+          "severity": "medium",
+          "icon": "⚽"
+        }
+      ],
+      "tips": [
+        "Use cross-body bags in Barcelona",
+        "Don't put phones on restaurant tables",
+        "Be extra vigilant on La Rambla",
+        "Use hotel safes for valuables",
+        "Avoid accepting anything 'free' from strangers"
+      ]
+    },
+    "France": {
+      "flag": "🇫🇷",
+      "scams": [
+        {
+          "name": "Gold Ring Scam",
+          "description": "Someone 'finds' a gold ring near you and offers to share it for cash. The ring is worthless brass. Walk away immediately.",
+          "severity": "medium",
+          "icon": "💍"
+        },
+        {
+          "name": "Friendship Bracelet Scam",
+          "description": "In Montmartre, men tie bracelets on your wrist claiming it's free, then demand payment. Keep hands in pockets, say 'Non' firmly.",
+          "severity": "medium",
+          "icon": "📿"
+        },
+        {
+          "name": "Petition Scam",
+          "description": "Common near Eiffel Tower and tourist areas. Groups distract you with clipboards while others pickpocket you.",
+          "severity": "high",
+          "icon": "📋"
+        },
+        {
+          "name": "Fake Charity Workers",
+          "description": "People with official-looking badges collect 'donations' for fake charities. Never give cash to street collectors.",
+          "severity": "medium",
+          "icon": "🏥"
+        },
+        {
+          "name": "Metro Pickpockets",
+          "description": "Teams work together on crowded metro cars and stations. Be especially alert when doors open/close.",
+          "severity": "high",
+          "icon": "🚇"
+        },
+        {
+          "name": "Cafe Receipt Swap",
+          "description": "Servers bring a bill for someone else's more expensive order. Always verify itemization matches what you ordered.",
+          "severity": "low",
+          "icon": "☕"
+        }
+      ],
+      "tips": [
+        "Ignore anyone approaching with rings or bracelets",
+        "Use inside pockets for valuables",
+        "Book tours through official museum websites",
+        "Avoid Sacré-Cœur steps after dark",
+        "Keep bags zipped and in front of you"
+      ]
+    },
+    "Italy": {
+      "flag": "🇮🇹",
+      "scams": [
+        {
+          "name": "Gladiator Photo Scam",
+          "description": "People in Roman costumes pose for photos then demand large payments (€50+). Decline photos or agree on price first.",
+          "severity": "medium",
+          "icon": "⚔️"
+        },
+        {
+          "name": "Rose Sellers",
+          "description": "Sellers give flowers to women, then demand payment from their companions. Refuse to accept anything.",
+          "severity": "low",
+          "icon": "🌹"
+        },
+        {
+          "name": "Restaurant Scams",
+          "description": "Tourist-trap restaurants near attractions have hidden charges (coperto, service fees) and inflated prices. Walk a few blocks away for better value.",
+          "severity": "medium",
+          "icon": "🍝"
+        },
+        {
+          "name": "Fake Designer Goods",
+          "description": "Street vendors sell counterfeit goods. Buying is illegal and can result in fines for tourists. Police conduct regular sweeps.",
+          "severity": "medium",
+          "icon": "👜"
+        },
+        {
+          "name": "Taxi Scams",
+          "description": "Rigged meters, scenic routes, or 'broken' meters. Use official taxi stands, insist on meter, or use apps like Free Now.",
+          "severity": "medium",
+          "icon": "🚕"
+        },
+        {
+          "name": "Bracelet Scam",
+          "description": "Similar to France - string or bracelet forcibly tied to wrist with demands for payment. Keep moving, don't engage.",
+          "severity": "medium",
+          "icon": "📿"
+        },
+        {
+          "name": "Bird Poop Scam",
+          "description": "Someone squirts fake bird droppings on you, then an 'helpful' person cleans it while pickpocketing you. Decline help, go to bathroom.",
+          "severity": "medium",
+          "icon": "🐦"
+        }
+      ],
+      "tips": [
+        "Eat where locals eat, away from monuments",
+        "Book Vatican tours in advance",
+        "Use official taxi stands at stations",
+        "Keep wallet in front pocket",
+        "Check restaurant prices before sitting"
+      ]
+    },
+    "United Kingdom": {
+      "flag": "🇬🇧",
+      "scams": [
+        {
+          "name": "Ticket Touts",
+          "description": "Scalpers outside venues sell fake or overpriced tickets. Only buy from official box offices or authorized resellers.",
+          "severity": "medium",
+          "icon": "🎫"
+        },
+        {
+          "name": "Shell Games",
+          "description": "Street gambling near tourist areas is always a scam. Apparent winners are accomplices. Never play.",
+          "severity": "medium",
+          "icon": "🎲"
+        },
+        {
+          "name": "Pickpocketing",
+          "description": "Common in crowded areas like Oxford Street, tube stations, and markets. Use secure bags and stay alert.",
+          "severity": "medium",
+          "icon": "👛"
+        },
+        {
+          "name": "Minicab Overcharging",
+          "description": "Unlicensed minicabs charge excessive rates. Only use black cabs or pre-booked licensed minicabs/Uber.",
+          "severity": "medium",
+          "icon": "🚕"
+        },
+        {
+          "name": "ATM Shoulder Surfing",
+          "description": "Criminals watch you enter PIN or distract you while stealing card. Use indoor ATMs, cover PIN, be aware of surroundings.",
+          "severity": "medium",
+          "icon": "💳"
+        }
+      ],
+      "tips": [
+        "Use contactless payment when possible",
+        "Only use licensed black cabs or Uber",
+        "Keep bag zipped on public transport",
+        "Book theatre tickets from official sites",
+        "Be wary of 'helpful' strangers at ATMs"
+      ]
+    },
+    "Japan": {
+      "flag": "🇯🇵",
+      "scams": [
+        {
+          "name": "Bar/Club Overcharging",
+          "description": "Rare but exists in areas like Kabukicho, Roppongi. Touts invite you to clubs with outrageous hidden fees. Avoid tout-promoted venues.",
+          "severity": "high",
+          "icon": "🍸"
+        },
+        {
+          "name": "Fake Monks",
+          "description": "People dressed as monks solicit donations aggressively. Real Japanese monks rarely solicit on streets. Politely decline.",
+          "severity": "low",
+          "icon": "🧘"
+        },
+        {
+          "name": "Photo Service Scams",
+          "description": "Someone offers to take your photo, then demands payment or runs off with your camera. Only ask obvious tourists or staff.",
+          "severity": "low",
+          "icon": "📸"
+        }
+      ],
+      "tips": [
+        "Japan is generally very safe",
+        "Avoid touts in entertainment districts",
+        "Check prices before ordering at izakayas",
+        "Use IC cards for transport",
+        "Most 'scams' are misunderstandings"
+      ]
+    },
+    "India": {
+      "flag": "🇮🇳",
+      "scams": [
+        {
+          "name": "Taxi/Auto-Rickshaw Meters",
+          "description": "Drivers claim meters are broken or use rigged meters. Use Uber/Ola or agree on price beforehand. Know approximate distances.",
+          "severity": "high",
+          "icon": "🛺"
+        },
+        {
+          "name": "Hotel Commission Scam",
+          "description": "Drivers claim your hotel is closed/bad and take you to one paying them commission. Book directly and insist on your destination.",
+          "severity": "medium",
+          "icon": "🏨"
+        },
+        {
+          "name": "Fake Government Tourist Office",
+          "description": "Scam offices near stations pose as official tourism bureaus selling overpriced tours. Only use verified government tourism offices.",
+          "severity": "high",
+          "icon": "🏛️"
+        },
+        {
+          "name": "Gem/Carpet Scams",
+          "description": "Stories about reselling items at huge profit in your home country. These items are worthless or unsellable. Never buy to resell.",
+          "severity": "high",
+          "icon": "💎"
+        },
+        {
+          "name": "Train Ticket Scams",
+          "description": "Touts say your train is cancelled or sell fake tickets. Book through official IRCTC website/app or at station counters.",
+          "severity": "medium",
+          "icon": "🚂"
+        },
+        {
+          "name": "Short-Changing",
+          "description": "Vendors give wrong change quickly. Count your change carefully, especially with similar-colored notes.",
+          "severity": "medium",
+          "icon": "💵"
+        },
+        {
+          "name": "Free Tours Leading to Shops",
+          "description": "Friendly locals offer free city tours that end at high-pressure shops. Set clear boundaries or use verified guides.",
+          "severity": "medium",
+          "icon": "🚶"
+        }
+      ],
+      "tips": [
+        "Use ride-sharing apps exclusively",
+        "Book trains on official IRCTC only",
+        "Use verified tourism offices",
+        "Don't accept food/drinks from strangers on trains",
+        "Carry small denominations for exact change"
+      ]
+    },
+    "Vietnam": {
+      "flag": "🇻🇳",
+      "scams": [
+        {
+          "name": "Motorbike Damage Scam",
+          "description": "Rental shops claim you damaged the bike and demand payment. Take detailed photos before renting. Use reputable shops.",
+          "severity": "high",
+          "icon": "🏍️"
+        },
+        {
+          "name": "Cyclo Overcharging",
+          "description": "Cyclo drivers quote low prices then demand much more, claiming per person or per minute. Write down agreed total price.",
+          "severity": "medium",
+          "icon": "🚲"
+        },
+        {
+          "name": "Shoe Cleaning Scam",
+          "description": "Someone squirts dirt on your shoes then offers to clean them for exorbitant fees. Decline firmly and walk away.",
+          "severity": "low",
+          "icon": "👟"
+        },
+        {
+          "name": "Wrong Change",
+          "description": "Similar-looking notes are given as change. The 20,000 and 500,000 dong notes look similar. Check carefully.",
+          "severity": "medium",
+          "icon": "💵"
+        },
+        {
+          "name": "Fake Xe Om Apps",
+          "description": "Fake motorbike taxi drivers claim to be Grab drivers. Only get rides through the official app.",
+          "severity": "medium",
+          "icon": "📱"
+        }
+      ],
+      "tips": [
+        "Use Grab for all transportation",
+        "Know your Vietnamese dong denominations",
+        "Take photos of everything you rent",
+        "Cross streets slowly and steadily",
+        "Agree on total prices in writing"
+      ]
+    },
+    "Egypt": {
+      "flag": "🇪🇬",
+      "scams": [
+        {
+          "name": "Pyramid Area Scams",
+          "description": "People offer 'free' camel rides, photos, or guides then demand huge payments. Agree on prices before anything, or decline.",
+          "severity": "high",
+          "icon": "🐫"
+        },
+        {
+          "name": "Perfume/Papyrus Shop Scams",
+          "description": "Tours include mandatory shopping stops with commission. Products are often overpriced or fake. Don't feel pressured to buy.",
+          "severity": "medium",
+          "icon": "🛍️"
+        },
+        {
+          "name": "Baksheesh Demands",
+          "description": "Everyone expects tips (baksheesh), but some demands are excessive. Carry small bills, tip appropriately (5-10 EGP for small services).",
+          "severity": "low",
+          "icon": "💵"
+        },
+        {
+          "name": "Fake Antiques",
+          "description": "Vendors sell 'ancient' artifacts that are modern fakes. Real antiquities can't legally be sold. Assume everything is reproduction.",
+          "severity": "medium",
+          "icon": "🏺"
+        },
+        {
+          "name": "Hotel/Restaurant Commission",
+          "description": "Taxi drivers get paid to take you to specific places. Insist on your chosen destination, use Uber/Careem.",
+          "severity": "medium",
+          "icon": "🏨"
+        }
+      ],
+      "tips": [
+        "Use Uber or Careem for transport",
+        "Book tours through reputable agencies",
+        "Agree on all prices in advance",
+        "Carry small bills for tips",
+        "Be firm but polite when declining"
+      ]
+    },
+    "Turkey": {
+      "flag": "🇹🇷",
+      "scams": [
+        {
+          "name": "Shoe Shine Scam",
+          "description": "Someone drops a brush, you pick it up, they 'thank' you with a shoe shine then demand payment. Decline politely and walk away.",
+          "severity": "low",
+          "icon": "👞"
+        },
+        {
+          "name": "Friendly Local Bar Scam",
+          "description": "New 'friends' invite you to a bar where women appear, drinks are ordered, and you get a massive bill. Only go to bars you chose.",
+          "severity": "high",
+          "icon": "🍸"
+        },
+        {
+          "name": "Carpet Shop Scams",
+          "description": "High-pressure sales in carpet shops, often combined with taxi kickbacks. Prices are highly inflated. Research and compare prices.",
+          "severity": "medium",
+          "icon": "🧶"
+        },
+        {
+          "name": "Taxi Long Routes",
+          "description": "Drivers take circuitous routes, especially from airports. Use BiTaksi app, agree on price beforehand, or use metro.",
+          "severity": "medium",
+          "icon": "🚕"
+        },
+        {
+          "name": "Grand Bazaar Overpricing",
+          "description": "Initial prices can be 5-10x the real value. Bargaining is expected. Start at 25-30% of asking price.",
+          "severity": "low",
+          "icon": "🛒"
+        }
+      ],
+      "tips": [
+        "Use BiTaksi or official taxi apps",
+        "Be skeptical of overly friendly strangers",
+        "Research prices before shopping",
+        "Learn basic Turkish numbers",
+        "Bargain confidently in markets"
+      ]
+    },
+    "Brazil": {
+      "flag": "🇧🇷",
+      "scams": [
+        {
+          "name": "Express Kidnapping",
+          "description": "Criminals force victims to withdraw cash from ATMs. Use ATMs inside banks/malls during day. Don't resist if confronted.",
+          "severity": "high",
+          "icon": "⚠️"
+        },
+        {
+          "name": "Fake Police",
+          "description": "Scammers pose as police demanding to check your wallet. Real police won't do this. Ask for ID and offer to go to a station.",
+          "severity": "high",
+          "icon": "👮"
+        },
+        {
+          "name": "Distraction Theft",
+          "description": "Groups distract you (kids, spilled drinks) while accomplices steal. Keep valuables hidden and secure.",
+          "severity": "high",
+          "icon": "🎭"
+        },
+        {
+          "name": "Beach Theft",
+          "description": "Belongings stolen while swimming. Never leave valuables unattended. Use waterproof pouches for essentials.",
+          "severity": "high",
+          "icon": "🏖️"
+        },
+        {
+          "name": "Taxi Meter Scams",
+          "description": "Rigged meters or scenic routes. Use 99 or Uber apps. From airports, use official taxi booths.",
+          "severity": "medium",
+          "icon": "🚕"
+        }
+      ],
+      "tips": [
+        "Don't wear flashy jewelry or watches",
+        "Use ride-sharing apps exclusively",
+        "Avoid walking with visible phones",
+        "Stay in well-lit, populated areas",
+        "Keep copies of documents, leave originals in safe"
+      ]
+    },
+    "Morocco": {
+      "flag": "🇲🇦",
+      "scams": [
+        {
+          "name": "False Guides",
+          "description": "People offer to guide you through medinas then demand payment or lead you to shops for commission. Hire official guides only.",
+          "severity": "medium",
+          "icon": "🧭"
+        },
+        {
+          "name": "Closed Attraction Scam",
+          "description": "Someone says your destination is closed and offers alternatives. Verify yourself - places are rarely closed unexpectedly.",
+          "severity": "medium",
+          "icon": "🚫"
+        },
+        {
+          "name": "Hennas Artists",
+          "description": "Women offer henna then demand high prices or give you black henna that can burn skin. Agree on price first, avoid black henna.",
+          "severity": "medium",
+          "icon": "✋"
+        },
+        {
+          "name": "Snake Charmers/Photo Scams",
+          "description": "Snakes placed on you, monkeys thrust at you for photos, then payment demanded. Keep distance, don't engage.",
+          "severity": "medium",
+          "icon": "🐍"
+        },
+        {
+          "name": "Aggressive Bargaining",
+          "description": "Merchants may be very persistent. It's OK to walk away. Start bargaining at 20-30% of asking price.",
+          "severity": "low",
+          "icon": "🛒"
+        },
+        {
+          "name": "Currency Switch",
+          "description": "Merchants switch between dirhams and euros mid-negotiation. Always clarify currency and write down final price.",
+          "severity": "medium",
+          "icon": "💱"
+        }
+      ],
+      "tips": [
+        "Hire official guides through hotels",
+        "Learn to say 'La shukran' (No thank you)",
+        "Keep small notes for purchases",
+        "Download offline maps of medinas",
+        "Dress conservatively, especially women"
+      ]
+    },
+    "China": {
+      "flag": "🇨🇳",
+      "scams": [
+        {
+          "name": "Tea House Scam",
+          "description": "Friendly students invite you for tea/coffee, then you're presented with an enormous bill. Never accept invitations from strangers.",
+          "severity": "high",
+          "icon": "🍵"
+        },
+        {
+          "name": "Art Student Scam",
+          "description": "Students ask you to visit their 'exhibition' then pressure you to buy overpriced art. Politely decline invitations.",
+          "severity": "medium",
+          "icon": "🎨"
+        },
+        {
+          "name": "Fake Monks",
+          "description": "People in monk robes solicit donations. Real monks don't beg. Decline and keep walking.",
+          "severity": "low",
+          "icon": "🧘"
+        },
+        {
+          "name": "Black Taxi Overcharging",
+          "description": "Unlicensed taxis charge much more than metered rates. Only use official taxis or DiDi app.",
+          "severity": "medium",
+          "icon": "🚕"
+        },
+        {
+          "name": "Massage Parlor Scams",
+          "description": "Additional services charged without consent. Only use hotel-recommended or verified establishments.",
+          "severity": "medium",
+          "icon": "💆"
+        }
+      ],
+      "tips": [
+        "Download DiDi for transportation",
+        "Use WeChat Pay/Alipay where possible",
+        "Be skeptical of overly friendly English speakers",
+        "Verify prices before services",
+        "Use official tourism channels"
+      ]
+    },
+    "Greece": {
+      "flag": "🇬🇷",
+      "scams": [
+        {
+          "name": "Restaurant Touts",
+          "description": "Aggressive restaurant staff in tourist areas lure you with promises, then overcharge. Walk further from main squares for better value.",
+          "severity": "medium",
+          "icon": "🍽️"
+        },
+        {
+          "name": "Taxi Scams",
+          "description": "Meters 'broken' or scenic routes taken. Insist on meter, use BEAT app, or agree on price first.",
+          "severity": "medium",
+          "icon": "🚕"
+        },
+        {
+          "name": "Rental Vehicle Damage",
+          "description": "Claims of pre-existing damage on return. Take detailed photos of entire vehicle before leaving lot.",
+          "severity": "medium",
+          "icon": "🚗"
+        },
+        {
+          "name": "ATM Charges",
+          "description": "ATMs may offer poor exchange rates with 'conversion services'. Always decline conversion and use your bank's rate.",
+          "severity": "low",
+          "icon": "💳"
+        }
+      ],
+      "tips": [
+        "Eat where locals eat",
+        "Use BEAT taxi app",
+        "Photograph rental vehicles thoroughly",
+        "Decline ATM currency conversion",
+        "Book ferries through official sites"
+      ]
+    },
+    "Portugal": {
+      "flag": "🇵🇹",
+      "scams": [
+        {
+          "name": "Drug Dealers (Lisbon)",
+          "description": "People in certain areas offer drugs that are actually bay leaves or other harmless substances. Decline and walk away.",
+          "severity": "medium",
+          "icon": "🚫"
+        },
+        {
+          "name": "Pickpocketing",
+          "description": "Common in Lisbon's trams (especially Tram 28), Bairro Alto, and tourist areas. Keep valuables secure.",
+          "severity": "medium",
+          "icon": "👛"
+        },
+        {
+          "name": "Restaurant Appetizers",
+          "description": "Bread, olives, and snacks brought to table aren't free. Ask price or decline if you don't want them.",
+          "severity": "low",
+          "icon": "🫒"
+        },
+        {
+          "name": "Tuk-Tuk Overpricing",
+          "description": "Tuk-tuks in Lisbon can charge excessive rates. Agree on total price for entire tour beforehand.",
+          "severity": "low",
+          "icon": "🛺"
+        }
+      ],
+      "tips": [
+        "Be especially alert on Tram 28",
+        "Ask about appetizer costs",
+        "Book tours through verified providers",
+        "Use Bolt or Uber for transport",
+        "Carry bags in front in crowded areas"
+      ]
+    },
+    "Indonesia": {
+      "flag": "🇮🇩",
+      "scams": [
+        {
+          "name": "Motorbike Rental Scams",
+          "description": "Similar to Vietnam - claims of damage, or bike 'stolen' while you have it. Use reputable shops, take extensive photos.",
+          "severity": "high",
+          "icon": "🏍️"
+        },
+        {
+          "name": "Money Changer Scams",
+          "description": "Rigged calculators, sleight of hand, or distraction while counting. Use banks or ATMs instead.",
+          "severity": "high",
+          "icon": "💱"
+        },
+        {
+          "name": "Fake Tour Operators",
+          "description": "Unlicensed operators with poor safety standards. Book diving, hiking, and tours through verified operators.",
+          "severity": "medium",
+          "icon": "🏄"
+        },
+        {
+          "name": "Bali Taxi Mafia",
+          "description": "In some areas, app-based taxis are blocked. Official Blue Bird taxis are safe. Use apps where available.",
+          "severity": "medium",
+          "icon": "🚕"
+        },
+        {
+          "name": "Temple Donation Scams",
+          "description": "Demands for large 'donations' at temples. Normal donation is 10,000-20,000 IDR. Don't feel pressured for more.",
+          "severity": "low",
+          "icon": "🛕"
+        }
+      ],
+      "tips": [
+        "Use Blue Bird taxis or Gojek/Grab",
+        "Exchange money at banks only",
+        "Get international driving permit for motorbikes",
+        "Book activities through hotels or Tripadvisor-reviewed operators",
+        "Carry small denomination notes"
+      ]
+    },
+    "South Africa": {
+      "flag": "🇿🇦",
+      "scams": [
+        {
+          "name": "Car Break-ins",
+          "description": "Valuables visible in parked cars invite break-ins. Never leave anything visible, use secure parking.",
+          "severity": "high",
+          "icon": "🚗"
+        },
+        {
+          "name": "ATM Scams",
+          "description": "Shoulder surfing, card trapping, or 'helpful' strangers. Use ATMs inside banks/malls, refuse all help.",
+          "severity": "high",
+          "icon": "💳"
+        },
+        {
+          "name": "Township Tour Scams",
+          "description": "Unlicensed operators may be unsafe or exploitative. Book through reputable, community-supporting operators.",
+          "severity": "medium",
+          "icon": "🚐"
+        },
+        {
+          "name": "Fake Police",
+          "description": "Criminals impersonate police. Ask for ID, offer to go to a station, call 10111 if suspicious.",
+          "severity": "high",
+          "icon": "👮"
+        },
+        {
+          "name": "Smash and Grab",
+          "description": "At traffic lights, criminals smash windows to grab phones/bags. Keep valuables out of sight, windows up.",
+          "severity": "high",
+          "icon": "⚠️"
+        }
+      ],
+      "tips": [
+        "Don't display valuables in vehicles",
+        "Use Uber instead of metered taxis",
+        "Stay alert at traffic lights",
+        "Avoid walking alone at night",
+        "Use accredited tour operators"
+      ]
+    },
+    "Australia": {
+      "flag": "🇦🇺",
+      "scams": [
+        {
+          "name": "Rental Bond Scams",
+          "description": "Fake rental listings take deposits for non-existent properties. Verify properties exist before transferring money.",
+          "severity": "medium",
+          "icon": "🏠"
+        },
+        {
+          "name": "Backpacker Job Scams",
+          "description": "Fake job ads take fees for non-existent farm work. Use verified job boards and never pay for job placements.",
+          "severity": "medium",
+          "icon": "👷"
+        },
+        {
+          "name": "SIM Card Overcharging",
+          "description": "Airport SIM card sellers may charge much more. Buy from Woolworths, Coles, or official carrier stores.",
+          "severity": "low",
+          "icon": "📱"
+        }
+      ],
+      "tips": [
+        "Australia is generally very safe",
+        "Use official tourism operators",
+        "Protect yourself from sun/wildlife",
+        "Tap water is safe everywhere",
+        "Verify rental properties before paying"
+      ]
+    },
+    "United States": {
+      "flag": "🇺🇸",
+      "scams": [
+        {
+          "name": "Times Square Characters",
+          "description": "Costumed characters demand large tips for photos. Agree on price first or decline photos.",
+          "severity": "low",
+          "icon": "🎭"
+        },
+        {
+          "name": "CD/Mixtape Scam",
+          "description": "Someone gives you a 'free' CD then demands payment. Don't accept anything handed to you.",
+          "severity": "low",
+          "icon": "💿"
+        },
+        {
+          "name": "Ticket Scalpers",
+          "description": "Fake or overpriced tickets outside venues. Use official ticket sources only.",
+          "severity": "medium",
+          "icon": "🎫"
+        },
+        {
+          "name": "Petition Scams",
+          "description": "Similar to Europe - distraction technique for pickpockets or demanding donations. Decline and walk away.",
+          "severity": "medium",
+          "icon": "📋"
+        },
+        {
+          "name": "Fake WiFi",
+          "description": "Unsecured networks in airports/cafes can steal data. Use VPN, verify network names with staff.",
+          "severity": "medium",
+          "icon": "📶"
+        }
+      ],
+      "tips": [
+        "Don't accept anything 'free' on streets",
+        "Use official ticket vendors",
+        "Be cautious in very touristy areas",
+        "Tip 15-20% at restaurants",
+        "Use tap-to-pay when possible"
+      ]
+    },
+    "Cambodia": {
+      "flag": "🇰🇭",
+      "scams": [
+        {
+          "name": "Orphanage Tourism",
+          "description": "Fake orphanages exploit children for donations. Never visit orphanages - it harms children. Support verified charities instead.",
+          "severity": "high",
+          "icon": "⚠️"
+        },
+        {
+          "name": "Tuk-Tuk Commission Scams",
+          "description": "Drivers take you to shops/restaurants for commission. Be clear about destinations, don't accept detours.",
+          "severity": "medium",
+          "icon": "🛺"
+        },
+        {
+          "name": "Milk/Rice Scam",
+          "description": "Children or women ask you to buy milk/rice from specific shops. Shop owners resell items after you leave. Give to verified charities.",
+          "severity": "medium",
+          "icon": "🍼"
+        },
+        {
+          "name": "Fake Temple Fees",
+          "description": "People claim extra fees at Angkor Wat. Only official ticket counters charge fees. Show your pass if confronted.",
+          "severity": "medium",
+          "icon": "🛕"
+        },
+        {
+          "name": "Money Exchange",
+          "description": "USD widely accepted but change may be in weak Cambodian riel. Know exchange rates, count your change.",
+          "severity": "low",
+          "icon": "💱"
+        }
+      ],
+      "tips": [
+        "Buy Angkor pass from official counter only",
+        "Support ethical tour operators",
+        "Never visit orphanages",
+        "Use PassApp or Grab for transport",
+        "Carry small USD bills"
+      ]
+    }
+  }
+}

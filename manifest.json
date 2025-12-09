@@ -1,0 +1,83 @@
+{
+  "name": "Holiday Currency Converter",
+  "short_name": "Holiday",
+  "description": "Your offline currency converter and travel safety companion. Convert currencies, compare rates, and stay safe on your travels.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["finance", "travel", "utilities"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icons/logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "Holiday Currency Converter"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Convert Currency",
+      "short_name": "Convert",
+      "description": "Quick currency conversion",
+      "url": "/?tab=converter",
+      "icons": [
+        {
+          "src": "icons/icon.svg",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Compare Rates",
+      "short_name": "Compare",
+      "description": "Compare multiple currencies",
+      "url": "/?tab=compare",
+      "icons": [
+        {
+          "src": "icons/icon.svg",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Safety Tips",
+      "short_name": "Safety",
+      "description": "Travel safety information",
+      "url": "/?tab=scams",
+      "icons": [
+        {
+          "src": "icons/icon.svg",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}
