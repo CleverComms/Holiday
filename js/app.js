@@ -758,8 +758,8 @@ function renderDestinationList(filter = '') {
 
   elements.destinationList.innerHTML = filtered.map(([country, data]) => {
     const currency = state.currencies[data.currency];
-    const flagHtml = currency?.code
-      ? `<span class="fi fi-${currency.code} fi-lg"></span>`
+    const flagHtml = data.code
+      ? `<span class="fi fi-${data.code.toLowerCase()} fi-lg"></span>`
       : (currency?.flag || '🌍');
     const inWallet = state.walletCountries.includes(country);
     return `
@@ -805,8 +805,8 @@ function renderWalletSection(filter = '') {
     const data = state.countries[country];
     if (!data) return '';
     const currency = state.currencies[data.currency];
-    const flagHtml = currency?.code
-      ? `<span class="fi fi-${currency.code} fi-lg"></span>`
+    const flagHtml = data.code
+      ? `<span class="fi fi-${data.code.toLowerCase()} fi-lg"></span>`
       : (currency?.flag || '🌍');
     return `
       <div class="wallet-item" data-country="${country}">
