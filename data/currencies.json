@@ -66,107 +66,676 @@
     "KWD": { "name": "Kuwaiti Dinar", "symbol": "د.ك", "flag": "🇰🇼" },
     "BHD": { "name": "Bahraini Dinar", "symbol": ".د.ب", "flag": "🇧🇭" },
     "OMR": { "name": "Omani Rial", "symbol": "﷼", "flag": "🇴🇲" },
-    "JOD": { "name": "Jordanian Dinar", "symbol": "د.ا", "flag": "🇯🇴" }
+    "JOD": { "name": "Jordanian Dinar", "symbol": "د.ا", "flag": "🇯🇴" },
+    "MUR": { "name": "Mauritian Rupee", "symbol": "₨", "flag": "🇲🇺" },
+    "SCR": { "name": "Seychellois Rupee", "symbol": "₨", "flag": "🇸🇨" },
+    "CUP": { "name": "Cuban Peso", "symbol": "$", "flag": "🇨🇺" },
+    "BSD": { "name": "Bahamian Dollar", "symbol": "B$", "flag": "🇧🇸" },
+    "BBD": { "name": "Barbadian Dollar", "symbol": "Bds$", "flag": "🇧🇧" },
+    "AWG": { "name": "Aruban Florin", "symbol": "ƒ", "flag": "🇦🇼" },
+    "ANG": { "name": "Antillean Guilder", "symbol": "ƒ", "flag": "🇨🇼" },
+    "BMD": { "name": "Bermudian Dollar", "symbol": "$", "flag": "🇧🇲" },
+    "KYD": { "name": "Cayman Dollar", "symbol": "$", "flag": "🇰🇾" },
+    "TZS": { "name": "Tanzanian Shilling", "symbol": "TSh", "flag": "🇹🇿" },
+    "RWF": { "name": "Rwandan Franc", "symbol": "FRw", "flag": "🇷🇼" },
+    "ETB": { "name": "Ethiopian Birr", "symbol": "Br", "flag": "🇪🇹" },
+    "BWP": { "name": "Botswana Pula", "symbol": "P", "flag": "🇧🇼" },
+    "NAD": { "name": "Namibian Dollar", "symbol": "N$", "flag": "🇳🇦" },
+    "ZMW": { "name": "Zambian Kwacha", "symbol": "ZK", "flag": "🇿🇲" },
+    "UGX": { "name": "Ugandan Shilling", "symbol": "USh", "flag": "🇺🇬" },
+    "MZN": { "name": "Mozambican Metical", "symbol": "MT", "flag": "🇲🇿" },
+    "MGA": { "name": "Malagasy Ariary", "symbol": "Ar", "flag": "🇲🇬" },
+    "TND": { "name": "Tunisian Dinar", "symbol": "د.ت", "flag": "🇹🇳" },
+    "DZD": { "name": "Algerian Dinar", "symbol": "د.ج", "flag": "🇩🇿" }
   },
   "countries": {
-    "Mexico": { "currency": "MXN", "code": "MX", "alsoAccepted": ["USD"], "note": "USD widely accepted in tourist areas" },
-    "Thailand": { "currency": "THB", "code": "TH", "alsoAccepted": ["USD"], "note": "USD accepted in tourist areas" },
-    "Spain": { "currency": "EUR", "code": "ES" },
-    "France": { "currency": "EUR", "code": "FR" },
-    "Italy": { "currency": "EUR", "code": "IT" },
-    "Germany": { "currency": "EUR", "code": "DE" },
-    "Japan": { "currency": "JPY", "code": "JP" },
-    "United Kingdom": { "currency": "GBP", "code": "GB", "alsoAccepted": ["EUR"], "note": "EUR sometimes accepted" },
-    "Australia": { "currency": "AUD", "code": "AU" },
-    "Canada": { "currency": "CAD", "code": "CA", "alsoAccepted": ["USD"], "note": "USD often accepted near US border" },
-    "United States": { "currency": "USD", "code": "US" },
-    "China": { "currency": "CNY", "code": "CN" },
-    "India": { "currency": "INR", "code": "IN" },
-    "Brazil": { "currency": "BRL", "code": "BR" },
-    "South Africa": { "currency": "ZAR", "code": "ZA", "alsoAccepted": ["USD"], "note": "USD accepted at tourist spots" },
-    "South Korea": { "currency": "KRW", "code": "KR" },
-    "Singapore": { "currency": "SGD", "code": "SG" },
-    "Hong Kong": { "currency": "HKD", "code": "HK" },
-    "New Zealand": { "currency": "NZD", "code": "NZ" },
-    "Switzerland": { "currency": "CHF", "code": "CH", "alsoAccepted": ["EUR"], "note": "EUR widely accepted" },
-    "Norway": { "currency": "NOK", "code": "NO", "alsoAccepted": ["EUR"], "note": "EUR sometimes accepted" },
-    "Sweden": { "currency": "SEK", "code": "SE", "alsoAccepted": ["EUR"], "note": "EUR sometimes accepted" },
-    "Denmark": { "currency": "DKK", "code": "DK", "alsoAccepted": ["EUR"], "note": "EUR sometimes accepted" },
-    "Philippines": { "currency": "PHP", "code": "PH", "alsoAccepted": ["USD"], "note": "USD widely accepted" },
-    "Indonesia": { "currency": "IDR", "code": "ID", "alsoAccepted": ["USD"], "note": "USD accepted in tourist areas" },
-    "Malaysia": { "currency": "MYR", "code": "MY" },
-    "Vietnam": { "currency": "VND", "code": "VN", "alsoAccepted": ["USD"], "note": "USD accepted in tourist areas" },
-    "Turkey": { "currency": "TRY", "code": "TR", "alsoAccepted": ["USD", "EUR"], "note": "USD & EUR widely accepted" },
-    "Russia": { "currency": "RUB", "code": "RU" },
-    "Poland": { "currency": "PLN", "code": "PL", "alsoAccepted": ["EUR"], "note": "EUR sometimes accepted" },
-    "Czech Republic": { "currency": "CZK", "code": "CZ", "alsoAccepted": ["EUR"], "note": "EUR accepted in Prague" },
-    "Hungary": { "currency": "HUF", "code": "HU", "alsoAccepted": ["EUR"], "note": "EUR accepted in tourist areas" },
-    "Israel": { "currency": "ILS", "code": "IL", "alsoAccepted": ["USD"], "note": "USD often accepted" },
-    "UAE": { "currency": "AED", "code": "AE", "alsoAccepted": ["USD"], "note": "USD widely accepted" },
-    "Saudi Arabia": { "currency": "SAR", "code": "SA", "alsoAccepted": ["USD"], "note": "USD accepted" },
-    "Egypt": { "currency": "EGP", "code": "EG", "alsoAccepted": ["USD", "EUR"], "note": "USD & EUR widely accepted" },
-    "Chile": { "currency": "CLP", "code": "CL" },
-    "Colombia": { "currency": "COP", "code": "CO", "alsoAccepted": ["USD"], "note": "USD accepted in tourist areas" },
-    "Peru": { "currency": "PEN", "code": "PE", "alsoAccepted": ["USD"], "note": "USD widely accepted" },
-    "Argentina": { "currency": "ARS", "code": "AR", "alsoAccepted": ["USD"], "note": "USD highly valued, often preferred" },
-    "Taiwan": { "currency": "TWD", "code": "TW" },
-    "Morocco": { "currency": "MAD", "code": "MA", "alsoAccepted": ["EUR"], "note": "EUR widely accepted" },
-    "Croatia": { "currency": "EUR", "code": "HR" },
-    "Romania": { "currency": "RON", "code": "RO", "alsoAccepted": ["EUR"], "note": "EUR sometimes accepted" },
-    "Bulgaria": { "currency": "BGN", "code": "BG", "alsoAccepted": ["EUR"], "note": "EUR sometimes accepted" },
-    "Iceland": { "currency": "ISK", "code": "IS" },
-    "Jamaica": { "currency": "JMD", "code": "JM", "alsoAccepted": ["USD"], "note": "USD widely accepted" },
-    "Kenya": { "currency": "KES", "code": "KE", "alsoAccepted": ["USD"], "note": "USD accepted in tourism" },
-    "Nigeria": { "currency": "NGN", "code": "NG", "alsoAccepted": ["USD"], "note": "USD accepted in major cities" },
-    "Ghana": { "currency": "GHS", "code": "GH", "alsoAccepted": ["USD"], "note": "USD sometimes accepted" },
-    "Dominican Republic": { "currency": "DOP", "code": "DO", "alsoAccepted": ["USD"], "note": "USD widely accepted in resorts" },
-    "Costa Rica": { "currency": "CRC", "code": "CR", "alsoAccepted": ["USD"], "note": "USD widely accepted" },
-    "Guatemala": { "currency": "GTQ", "code": "GT", "alsoAccepted": ["USD"], "note": "USD accepted in tourist areas" },
-    "Panama": { "currency": "USD", "code": "PA", "note": "Uses USD as official currency" },
-    "Sri Lanka": { "currency": "LKR", "code": "LK", "alsoAccepted": ["USD"], "note": "USD accepted in tourist areas" },
-    "Nepal": { "currency": "NPR", "code": "NP", "alsoAccepted": ["USD"], "note": "USD accepted in tourist areas" },
-    "Pakistan": { "currency": "PKR", "code": "PK" },
-    "Bangladesh": { "currency": "BDT", "code": "BD" },
-    "Cambodia": { "currency": "KHR", "code": "KH", "alsoAccepted": ["USD"], "note": "USD is dual currency, widely used" },
-    "Laos": { "currency": "LAK", "code": "LA", "alsoAccepted": ["USD", "THB"], "note": "USD and Thai Baht accepted" },
-    "Fiji": { "currency": "FJD", "code": "FJ", "alsoAccepted": ["USD"], "note": "USD accepted in resorts" },
-    "French Polynesia": { "currency": "XPF", "code": "PF", "alsoAccepted": ["EUR"], "note": "EUR sometimes accepted" },
-    "Qatar": { "currency": "QAR", "code": "QA", "alsoAccepted": ["USD"], "note": "USD widely accepted" },
-    "Kuwait": { "currency": "KWD", "code": "KW", "alsoAccepted": ["USD"], "note": "USD accepted" },
-    "Bahrain": { "currency": "BHD", "code": "BH", "alsoAccepted": ["USD"], "note": "USD widely accepted" },
-    "Oman": { "currency": "OMR", "code": "OM", "alsoAccepted": ["USD"], "note": "USD accepted" },
-    "Jordan": { "currency": "JOD", "code": "JO", "alsoAccepted": ["USD"], "note": "USD accepted in tourist areas" },
-    "Greece": { "currency": "EUR", "code": "GR" },
-    "Portugal": { "currency": "EUR", "code": "PT" },
-    "Netherlands": { "currency": "EUR", "code": "NL" },
-    "Belgium": { "currency": "EUR", "code": "BE" },
-    "Austria": { "currency": "EUR", "code": "AT" },
-    "Ireland": { "currency": "EUR", "code": "IE" },
-    "Finland": { "currency": "EUR", "code": "FI" },
-    "Bali": { "currency": "IDR", "code": "ID", "alsoAccepted": ["USD"], "note": "USD widely accepted in tourist areas" },
-    "Maldives": { "currency": "USD", "code": "MV", "note": "USD is the main tourist currency" },
-    "Mauritius": { "currency": "MUR", "code": "MU", "alsoAccepted": ["USD", "EUR"], "note": "USD & EUR accepted in resorts" },
-    "Seychelles": { "currency": "SCR", "code": "SC", "alsoAccepted": ["USD", "EUR"], "note": "USD & EUR accepted" },
-    "Cuba": { "currency": "CUP", "code": "CU", "alsoAccepted": ["EUR"], "note": "EUR preferred over USD" },
-    "Puerto Rico": { "currency": "USD", "code": "PR" },
-    "Bahamas": { "currency": "BSD", "code": "BS", "alsoAccepted": ["USD"], "note": "USD accepted everywhere (1:1 with BSD)" },
-    "Barbados": { "currency": "BBD", "code": "BB", "alsoAccepted": ["USD"], "note": "USD widely accepted" },
-    "Aruba": { "currency": "AWG", "code": "AW", "alsoAccepted": ["USD"], "note": "USD widely accepted" },
-    "Curacao": { "currency": "ANG", "code": "CW", "alsoAccepted": ["USD"], "note": "USD widely accepted" },
-    "Bermuda": { "currency": "BMD", "code": "BM", "alsoAccepted": ["USD"], "note": "USD accepted everywhere (1:1 with BMD)" },
-    "Cayman Islands": { "currency": "KYD", "code": "KY", "alsoAccepted": ["USD"], "note": "USD widely accepted" },
-    "Tanzania": { "currency": "TZS", "code": "TZ", "alsoAccepted": ["USD"], "note": "USD preferred for safaris/tourism" },
-    "Rwanda": { "currency": "RWF", "code": "RW", "alsoAccepted": ["USD"], "note": "USD accepted in tourism" },
-    "Ethiopia": { "currency": "ETB", "code": "ET", "alsoAccepted": ["USD"], "note": "USD accepted in tourist areas" },
-    "Botswana": { "currency": "BWP", "code": "BW", "alsoAccepted": ["USD", "ZAR"], "note": "USD & ZAR accepted in tourism" },
-    "Namibia": { "currency": "NAD", "code": "NA", "alsoAccepted": ["ZAR"], "note": "ZAR accepted (1:1 with NAD)" },
-    "Zimbabwe": { "currency": "USD", "code": "ZW", "alsoAccepted": ["ZAR"], "note": "Uses USD, ZAR also accepted" },
-    "Zambia": { "currency": "ZMW", "code": "ZM", "alsoAccepted": ["USD"], "note": "USD accepted in tourism" },
-    "Uganda": { "currency": "UGX", "code": "UG", "alsoAccepted": ["USD"], "note": "USD accepted in tourism" },
-    "Mozambique": { "currency": "MZN", "code": "MZ", "alsoAccepted": ["USD", "ZAR"], "note": "USD & ZAR accepted" },
-    "Madagascar": { "currency": "MGA", "code": "MG", "alsoAccepted": ["EUR"], "note": "EUR sometimes accepted" },
-    "Senegal": { "currency": "XOF", "code": "SN", "alsoAccepted": ["EUR"], "note": "EUR sometimes accepted" },
-    "Tunisia": { "currency": "TND", "code": "TN", "alsoAccepted": ["EUR"], "note": "EUR widely accepted" },
-    "Algeria": { "currency": "DZD", "code": "DZ" }
+    "Mexico": {
+      "currency": "MXN",
+      "code": "MX",
+      "alsoAccepted": ["USD"],
+      "note": "USD widely accepted in tourist areas",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards work in cities/resorts, cash needed in rural areas and for tips" }
+    },
+    "Thailand": {
+      "currency": "THB",
+      "code": "TH",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted in tourist areas",
+      "payments": { "cash": "essential", "cards": "common", "contactless": "limited", "tip": "Cash preferred outside malls/hotels. 7-Eleven takes cards" }
+    },
+    "Spain": {
+      "currency": "EUR",
+      "code": "ES",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "widespread", "tip": "Apple Pay/Google Pay widely accepted. Some small bars cash-only" }
+    },
+    "France": {
+      "currency": "EUR",
+      "code": "FR",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "widespread", "tip": "Contactless very common. Some markets/bakeries prefer cash" }
+    },
+    "Italy": {
+      "currency": "EUR",
+      "code": "IT",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards widely accepted but some trattorias prefer cash" }
+    },
+    "Germany": {
+      "currency": "EUR",
+      "code": "DE",
+      "payments": { "cash": "common", "cards": "common", "contactless": "common", "tip": "Germans love cash! Many places don't take cards. Always carry cash" }
+    },
+    "Japan": {
+      "currency": "JPY",
+      "code": "JP",
+      "payments": { "cash": "essential", "cards": "common", "contactless": "widespread", "tip": "Cash society! IC cards (Suica/Pasmo) essential. Many places cash-only" }
+    },
+    "United Kingdom": {
+      "currency": "GBP",
+      "code": "GB",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR sometimes accepted in tourist areas",
+      "payments": { "cash": "rare", "cards": "widespread", "contactless": "widespread", "tip": "Tap-to-pay everywhere. Many places don't accept cash anymore" }
+    },
+    "Australia": {
+      "currency": "AUD",
+      "code": "AU",
+      "payments": { "cash": "rare", "cards": "widespread", "contactless": "widespread", "tip": "Very card-friendly. Tap-and-go is standard. Cash rarely needed" }
+    },
+    "Canada": {
+      "currency": "CAD",
+      "code": "CA",
+      "alsoAccepted": ["USD"],
+      "note": "USD often accepted near US border",
+      "payments": { "cash": "rare", "cards": "widespread", "contactless": "widespread", "tip": "Tap payment standard. Apple Pay/Google Pay everywhere" }
+    },
+    "United States": {
+      "currency": "USD",
+      "code": "US",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards everywhere but cash useful for tips. Chip+signature still common" }
+    },
+    "China": {
+      "currency": "CNY",
+      "code": "CN",
+      "payments": { "cash": "rare", "cards": "limited", "contactless": "limited", "tip": "WeChat Pay/Alipay dominate. Foreign cards rarely work. Bring cash or link to local apps" }
+    },
+    "India": {
+      "currency": "INR",
+      "code": "IN",
+      "payments": { "cash": "essential", "cards": "common", "contactless": "limited", "tip": "UPI payments popular locally. Tourists need cash for most places" }
+    },
+    "Brazil": {
+      "currency": "BRL",
+      "code": "BR",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted at airports and some hotels",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards work well in cities. Pix is popular locally" }
+    },
+    "South Africa": {
+      "currency": "ZAR",
+      "code": "ZA",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted at tourist spots and safari lodges",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards widely accepted in cities. Cash for tips and markets" }
+    },
+    "South Korea": {
+      "currency": "KRW",
+      "code": "KR",
+      "payments": { "cash": "rare", "cards": "widespread", "contactless": "widespread", "tip": "Very card-friendly. T-money cards for transit. Samsung Pay popular" }
+    },
+    "Singapore": {
+      "currency": "SGD",
+      "code": "SG",
+      "payments": { "cash": "rare", "cards": "widespread", "contactless": "widespread", "tip": "Extremely card-friendly. PayNow/GrabPay common. Some hawkers cash-only" }
+    },
+    "Hong Kong": {
+      "currency": "HKD",
+      "code": "HK",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "widespread", "tip": "Octopus card essential. Cards accepted widely. Some small shops cash-only" }
+    },
+    "New Zealand": {
+      "currency": "NZD",
+      "code": "NZ",
+      "payments": { "cash": "rare", "cards": "widespread", "contactless": "widespread", "tip": "Tap-and-go standard. EFTPOS everywhere. Cash rarely needed" }
+    },
+    "Switzerland": {
+      "currency": "CHF",
+      "code": "CH",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR widely accepted (change given in CHF)",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "widespread", "tip": "Cards/contactless widely accepted. Swiss love cash too" }
+    },
+    "Norway": {
+      "currency": "NOK",
+      "code": "NO",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR sometimes accepted",
+      "payments": { "cash": "rare", "cards": "widespread", "contactless": "widespread", "tip": "Almost cashless society. Cards/Vipps everywhere" }
+    },
+    "Sweden": {
+      "currency": "SEK",
+      "code": "SE",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR sometimes accepted",
+      "payments": { "cash": "rare", "cards": "widespread", "contactless": "widespread", "tip": "World's most cashless country. Swish app popular. Many refuse cash" }
+    },
+    "Denmark": {
+      "currency": "DKK",
+      "code": "DK",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR sometimes accepted",
+      "payments": { "cash": "rare", "cards": "widespread", "contactless": "widespread", "tip": "Very cashless. MobilePay popular locally. Cards everywhere" }
+    },
+    "Philippines": {
+      "currency": "PHP",
+      "code": "PH",
+      "alsoAccepted": ["USD"],
+      "note": "USD widely accepted",
+      "payments": { "cash": "essential", "cards": "common", "contactless": "limited", "tip": "Cash dominant. Cards work in malls/hotels. GCash growing locally" }
+    },
+    "Indonesia": {
+      "currency": "IDR",
+      "code": "ID",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted in tourist areas",
+      "payments": { "cash": "essential", "cards": "common", "contactless": "limited", "tip": "Cash needed for most places. Cards in hotels/malls. GoPay/OVO local" }
+    },
+    "Malaysia": {
+      "currency": "MYR",
+      "code": "MY",
+      "alsoAccepted": ["SGD"],
+      "note": "SGD sometimes accepted near Singapore border",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards widely accepted. Touch 'n Go popular. Cash for hawkers" }
+    },
+    "Vietnam": {
+      "currency": "VND",
+      "code": "VN",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted in tourist areas",
+      "payments": { "cash": "essential", "cards": "common", "contactless": "limited", "tip": "Very cash-heavy. Cards in hotels/restaurants. ATMs widespread" }
+    },
+    "Turkey": {
+      "currency": "TRY",
+      "code": "TR",
+      "alsoAccepted": ["USD", "EUR"],
+      "note": "USD & EUR widely accepted",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards widely accepted. Cash for bazaars and small shops" }
+    },
+    "Russia": {
+      "currency": "RUB",
+      "code": "RU",
+      "payments": { "cash": "common", "cards": "common", "contactless": "common", "tip": "Mir cards work. Western cards may not work due to sanctions. Bring cash" }
+    },
+    "Poland": {
+      "currency": "PLN",
+      "code": "PL",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR sometimes accepted in tourist areas",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "widespread", "tip": "Cards/contactless very common. BLIK popular locally" }
+    },
+    "Czech Republic": {
+      "currency": "CZK",
+      "code": "CZ",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR accepted in Prague tourist areas",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "widespread", "tip": "Cards widely accepted. Some small places prefer cash" }
+    },
+    "Hungary": {
+      "currency": "HUF",
+      "code": "HU",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR accepted in tourist areas",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards common in Budapest. Cash for markets and outside capital" }
+    },
+    "Israel": {
+      "currency": "ILS",
+      "code": "IL",
+      "alsoAccepted": ["USD"],
+      "note": "USD often accepted",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "widespread", "tip": "Cards/Apple Pay widely accepted. Cash for markets" }
+    },
+    "UAE": {
+      "currency": "AED",
+      "code": "AE",
+      "alsoAccepted": ["USD"],
+      "note": "USD widely accepted",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "widespread", "tip": "Very card-friendly. Apple Pay common. Cash for souks" }
+    },
+    "Saudi Arabia": {
+      "currency": "SAR",
+      "code": "SA",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted in some places",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards widely accepted. Apple Pay works. Mada cards local" }
+    },
+    "Egypt": {
+      "currency": "EGP",
+      "code": "EG",
+      "alsoAccepted": ["USD", "EUR"],
+      "note": "USD & EUR widely accepted (often preferred)",
+      "payments": { "cash": "essential", "cards": "common", "contactless": "limited", "tip": "Cash dominant. Bring USD/EUR. Cards work in hotels/upscale venues" }
+    },
+    "Chile": {
+      "currency": "CLP",
+      "code": "CL",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted in tourist areas",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards widely accepted. Some small places cash-only" }
+    },
+    "Colombia": {
+      "currency": "COP",
+      "code": "CO",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted in tourist areas",
+      "payments": { "cash": "common", "cards": "common", "contactless": "limited", "tip": "Cards in cities/hotels. Cash needed for local shops/taxis" }
+    },
+    "Peru": {
+      "currency": "PEN",
+      "code": "PE",
+      "alsoAccepted": ["USD"],
+      "note": "USD widely accepted",
+      "payments": { "cash": "essential", "cards": "common", "contactless": "limited", "tip": "Cash preferred. Cards in hotels/restaurants. Bring small bills" }
+    },
+    "Argentina": {
+      "currency": "ARS",
+      "code": "AR",
+      "alsoAccepted": ["USD"],
+      "note": "USD highly valued, often preferred (blue dollar rate)",
+      "payments": { "cash": "essential", "cards": "common", "contactless": "limited", "tip": "Bring USD cash! Better exchange at 'blue' rate. Card rates unfavorable" }
+    },
+    "Taiwan": {
+      "currency": "TWD",
+      "code": "TW",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards in shops/restaurants. Cash for night markets. EasyCard for transit" }
+    },
+    "Morocco": {
+      "currency": "MAD",
+      "code": "MA",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR widely accepted",
+      "payments": { "cash": "essential", "cards": "common", "contactless": "limited", "tip": "Cash essential for souks/markets. Cards in hotels/riads" }
+    },
+    "Croatia": {
+      "currency": "EUR",
+      "code": "HR",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards widely accepted. Some small konobas prefer cash" }
+    },
+    "Romania": {
+      "currency": "RON",
+      "code": "RO",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR sometimes accepted",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards widely accepted in cities. Cash for rural areas" }
+    },
+    "Bulgaria": {
+      "currency": "BGN",
+      "code": "BG",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR sometimes accepted",
+      "payments": { "cash": "common", "cards": "common", "contactless": "common", "tip": "Cards work in cities. Cash for small shops/rural" }
+    },
+    "Iceland": {
+      "currency": "ISK",
+      "code": "IS",
+      "payments": { "cash": "rare", "cards": "widespread", "contactless": "widespread", "tip": "Almost fully cashless. Cards accepted everywhere, even remote areas" }
+    },
+    "Jamaica": {
+      "currency": "JMD",
+      "code": "JM",
+      "alsoAccepted": ["USD"],
+      "note": "USD widely accepted",
+      "payments": { "cash": "common", "cards": "common", "contactless": "limited", "tip": "USD preferred in resorts. Cash for local vendors" }
+    },
+    "Kenya": {
+      "currency": "KES",
+      "code": "KE",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted in tourism, safaris",
+      "payments": { "cash": "common", "cards": "common", "contactless": "limited", "tip": "M-Pesa dominant locally. Cash or USD for safaris. Cards in Nairobi" }
+    },
+    "Nigeria": {
+      "currency": "NGN",
+      "code": "NG",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted in major cities",
+      "payments": { "cash": "essential", "cards": "common", "contactless": "limited", "tip": "Cash needed. Cards work in hotels/malls. Bank transfers common locally" }
+    },
+    "Ghana": {
+      "currency": "GHS",
+      "code": "GH",
+      "alsoAccepted": ["USD"],
+      "note": "USD sometimes accepted",
+      "payments": { "cash": "essential", "cards": "limited", "contactless": "limited", "tip": "Cash dominant. Mobile money (MTN) popular locally" }
+    },
+    "Dominican Republic": {
+      "currency": "DOP",
+      "code": "DO",
+      "alsoAccepted": ["USD"],
+      "note": "USD widely accepted in resorts",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "All-inclusive resorts take cards. Cash for local areas" }
+    },
+    "Costa Rica": {
+      "currency": "CRC",
+      "code": "CR",
+      "alsoAccepted": ["USD"],
+      "note": "USD widely accepted (prices often in USD)",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards widely accepted. USD and colones both used. Cash for small vendors" }
+    },
+    "Guatemala": {
+      "currency": "GTQ",
+      "code": "GT",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted in tourist areas",
+      "payments": { "cash": "essential", "cards": "common", "contactless": "limited", "tip": "Cash preferred. Cards in hotels/restaurants in tourist areas" }
+    },
+    "Panama": {
+      "currency": "USD",
+      "code": "PA",
+      "note": "Uses USD as official currency (Balboa pegged 1:1)",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "USD is the currency. Cards widely accepted" }
+    },
+    "Sri Lanka": {
+      "currency": "LKR",
+      "code": "LK",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted in tourist areas",
+      "payments": { "cash": "essential", "cards": "common", "contactless": "limited", "tip": "Cash dominant. Cards work in hotels/restaurants. Bring USD" }
+    },
+    "Nepal": {
+      "currency": "NPR",
+      "code": "NP",
+      "alsoAccepted": ["USD", "INR"],
+      "note": "USD and INR accepted in tourist areas",
+      "payments": { "cash": "essential", "cards": "limited", "contactless": "rare", "tip": "Very cash-based. Cards only in Kathmandu hotels. Bring USD" }
+    },
+    "Pakistan": {
+      "currency": "PKR",
+      "code": "PK",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted at hotels",
+      "payments": { "cash": "essential", "cards": "limited", "contactless": "rare", "tip": "Cash essential. Cards only at major hotels in cities" }
+    },
+    "Bangladesh": {
+      "currency": "BDT",
+      "code": "BD",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted at hotels",
+      "payments": { "cash": "essential", "cards": "limited", "contactless": "rare", "tip": "Very cash-based. Cards at upscale hotels only. bKash local" }
+    },
+    "Cambodia": {
+      "currency": "KHR",
+      "code": "KH",
+      "alsoAccepted": ["USD"],
+      "note": "USD is dual currency, widely used (often preferred)",
+      "payments": { "cash": "essential", "cards": "common", "contactless": "limited", "tip": "USD widely used! Many prices in USD. Cards in tourist areas" }
+    },
+    "Laos": {
+      "currency": "LAK",
+      "code": "LA",
+      "alsoAccepted": ["USD", "THB"],
+      "note": "USD and Thai Baht accepted",
+      "payments": { "cash": "essential", "cards": "limited", "contactless": "rare", "tip": "Cash essential. Thai Baht and USD useful. Cards rare outside Vientiane" }
+    },
+    "Myanmar": {
+      "currency": "MMK",
+      "code": "MM",
+      "alsoAccepted": ["USD"],
+      "note": "USD widely accepted (crisp notes required)",
+      "payments": { "cash": "essential", "cards": "limited", "contactless": "rare", "tip": "Cash essential. Bring crisp USD bills. Cards rarely work" }
+    },
+    "Fiji": {
+      "currency": "FJD",
+      "code": "FJ",
+      "alsoAccepted": ["USD", "AUD", "NZD"],
+      "note": "USD/AUD/NZD accepted in resorts",
+      "payments": { "cash": "common", "cards": "common", "contactless": "limited", "tip": "Cards at resorts. Cash for villages/markets" }
+    },
+    "French Polynesia": {
+      "currency": "XPF",
+      "code": "PF",
+      "alsoAccepted": ["EUR", "USD"],
+      "note": "EUR sometimes accepted, USD at resorts",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "French banking system. Cards widely accepted" }
+    },
+    "Qatar": {
+      "currency": "QAR",
+      "code": "QA",
+      "alsoAccepted": ["USD"],
+      "note": "USD widely accepted",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "widespread", "tip": "Very card-friendly. Apple Pay works. Cash for souks" }
+    },
+    "Kuwait": {
+      "currency": "KWD",
+      "code": "KW",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards widely accepted. Cash for small shops" }
+    },
+    "Bahrain": {
+      "currency": "BHD",
+      "code": "BH",
+      "alsoAccepted": ["USD", "SAR"],
+      "note": "USD and Saudi Riyal widely accepted",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards widely accepted. BenefitPay local app" }
+    },
+    "Oman": {
+      "currency": "OMR",
+      "code": "OM",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards work well. Cash for souks/small towns" }
+    },
+    "Jordan": {
+      "currency": "JOD",
+      "code": "JO",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted in tourist areas",
+      "payments": { "cash": "common", "cards": "common", "contactless": "limited", "tip": "Cards in hotels/restaurants. Cash for Petra vendors/taxis" }
+    },
+    "Greece": {
+      "currency": "EUR",
+      "code": "GR",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards widely accepted. Some tavernas/islands prefer cash" }
+    },
+    "Portugal": {
+      "currency": "EUR",
+      "code": "PT",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "widespread", "tip": "Cards/contactless widely accepted. MB Way popular locally" }
+    },
+    "Netherlands": {
+      "currency": "EUR",
+      "code": "NL",
+      "payments": { "cash": "rare", "cards": "widespread", "contactless": "widespread", "tip": "Very card-friendly. iDEAL and Maestro dominant. Some places no cash" }
+    },
+    "Belgium": {
+      "currency": "EUR",
+      "code": "BE",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "widespread", "tip": "Cards widely accepted. Bancontact popular locally" }
+    },
+    "Austria": {
+      "currency": "EUR",
+      "code": "AT",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "widespread", "tip": "Cards/contactless widely accepted. Some prefer cash" }
+    },
+    "Ireland": {
+      "currency": "EUR",
+      "code": "IE",
+      "payments": { "cash": "rare", "cards": "widespread", "contactless": "widespread", "tip": "Very card-friendly. Tap-to-pay standard. Many places card-only" }
+    },
+    "Finland": {
+      "currency": "EUR",
+      "code": "FI",
+      "payments": { "cash": "rare", "cards": "widespread", "contactless": "widespread", "tip": "Almost cashless. Cards/mobile payments everywhere" }
+    },
+    "Bali": {
+      "currency": "IDR",
+      "code": "ID",
+      "alsoAccepted": ["USD", "AUD"],
+      "note": "USD and AUD widely accepted in tourist areas",
+      "payments": { "cash": "essential", "cards": "common", "contactless": "limited", "tip": "Cash preferred. ATM fees high. Cards in hotels/villas" }
+    },
+    "Maldives": {
+      "currency": "USD",
+      "code": "MV",
+      "note": "USD is the main tourist currency (MVR rarely needed)",
+      "payments": { "cash": "rare", "cards": "widespread", "contactless": "common", "tip": "Resorts all take cards/USD. Cash rarely needed" }
+    },
+    "Mauritius": {
+      "currency": "MUR",
+      "code": "MU",
+      "alsoAccepted": ["USD", "EUR"],
+      "note": "USD & EUR accepted in resorts",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards at hotels/restaurants. Cash for markets/local" }
+    },
+    "Seychelles": {
+      "currency": "SCR",
+      "code": "SC",
+      "alsoAccepted": ["USD", "EUR"],
+      "note": "USD & EUR widely accepted",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards at resorts. EUR/USD often preferred" }
+    },
+    "Cuba": {
+      "currency": "CUP",
+      "code": "CU",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR preferred over USD (USD has 10% penalty)",
+      "payments": { "cash": "essential", "cards": "rare", "contactless": "rare", "tip": "Cash essential! US cards don't work. Bring EUR cash" }
+    },
+    "Puerto Rico": {
+      "currency": "USD",
+      "code": "PR",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "widespread", "tip": "US territory - same as mainland USA" }
+    },
+    "Bahamas": {
+      "currency": "BSD",
+      "code": "BS",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted everywhere (1:1 with BSD)",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "USD and BSD interchangeable. Cards widely accepted" }
+    },
+    "Barbados": {
+      "currency": "BBD",
+      "code": "BB",
+      "alsoAccepted": ["USD"],
+      "note": "USD widely accepted (2:1 rate)",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards widely accepted. USD common" }
+    },
+    "Aruba": {
+      "currency": "AWG",
+      "code": "AW",
+      "alsoAccepted": ["USD"],
+      "note": "USD widely accepted (most prices in USD)",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "USD is de facto currency. Cards widely accepted" }
+    },
+    "Curacao": {
+      "currency": "ANG",
+      "code": "CW",
+      "alsoAccepted": ["USD"],
+      "note": "USD widely accepted",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards widely accepted. USD common" }
+    },
+    "Bermuda": {
+      "currency": "BMD",
+      "code": "BM",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted everywhere (1:1 with BMD)",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "USD and BMD interchangeable. Cards widely accepted" }
+    },
+    "Cayman Islands": {
+      "currency": "KYD",
+      "code": "KY",
+      "alsoAccepted": ["USD"],
+      "note": "USD widely accepted",
+      "payments": { "cash": "common", "cards": "widespread", "contactless": "common", "tip": "Cards widely accepted. USD common" }
+    },
+    "Tanzania": {
+      "currency": "TZS",
+      "code": "TZ",
+      "alsoAccepted": ["USD"],
+      "note": "USD preferred for safaris/tourism",
+      "payments": { "cash": "essential", "cards": "limited", "contactless": "rare", "tip": "Cash essential. USD best for safaris. Cards at lodges only" }
+    },
+    "Rwanda": {
+      "currency": "RWF",
+      "code": "RW",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted in tourism",
+      "payments": { "cash": "essential", "cards": "limited", "contactless": "rare", "tip": "Cash needed. USD for gorilla permits. Mobile money growing" }
+    },
+    "Ethiopia": {
+      "currency": "ETB",
+      "code": "ET",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted in tourist areas",
+      "payments": { "cash": "essential", "cards": "limited", "contactless": "rare", "tip": "Cash essential. Cards only at major hotels. ATMs unreliable" }
+    },
+    "Botswana": {
+      "currency": "BWP",
+      "code": "BW",
+      "alsoAccepted": ["USD", "ZAR"],
+      "note": "USD & ZAR accepted in tourism",
+      "payments": { "cash": "common", "cards": "common", "contactless": "limited", "tip": "Cards at lodges. Cash for local use. USD for safaris" }
+    },
+    "Namibia": {
+      "currency": "NAD",
+      "code": "NA",
+      "alsoAccepted": ["ZAR", "USD"],
+      "note": "ZAR accepted (1:1 with NAD), USD at lodges",
+      "payments": { "cash": "common", "cards": "common", "contactless": "limited", "tip": "Cards work in towns. Cash for rural. ZAR interchangeable" }
+    },
+    "Zimbabwe": {
+      "currency": "USD",
+      "code": "ZW",
+      "alsoAccepted": ["ZAR"],
+      "note": "Uses USD, ZAR also accepted",
+      "payments": { "cash": "essential", "cards": "limited", "contactless": "rare", "tip": "USD cash essential! EcoCash local. Card machines unreliable" }
+    },
+    "Zambia": {
+      "currency": "ZMW",
+      "code": "ZM",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted in tourism",
+      "payments": { "cash": "common", "cards": "common", "contactless": "limited", "tip": "USD preferred for lodges. Cards work in cities" }
+    },
+    "Uganda": {
+      "currency": "UGX",
+      "code": "UG",
+      "alsoAccepted": ["USD"],
+      "note": "USD accepted in tourism",
+      "payments": { "cash": "essential", "cards": "limited", "contactless": "rare", "tip": "Cash needed. Mobile money popular locally. USD for safaris" }
+    },
+    "Mozambique": {
+      "currency": "MZN",
+      "code": "MZ",
+      "alsoAccepted": ["USD", "ZAR"],
+      "note": "USD & ZAR accepted",
+      "payments": { "cash": "essential", "cards": "limited", "contactless": "rare", "tip": "Cash essential. Cards at upscale places only" }
+    },
+    "Madagascar": {
+      "currency": "MGA",
+      "code": "MG",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR sometimes accepted",
+      "payments": { "cash": "essential", "cards": "limited", "contactless": "rare", "tip": "Cash essential. Cards only at major hotels. Bring EUR" }
+    },
+    "Senegal": {
+      "currency": "XOF",
+      "code": "SN",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR sometimes accepted (CFA pegged to EUR)",
+      "payments": { "cash": "essential", "cards": "limited", "contactless": "rare", "tip": "Cash dominant. Orange Money local. EUR useful" }
+    },
+    "Tunisia": {
+      "currency": "TND",
+      "code": "TN",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR widely accepted in tourist areas",
+      "payments": { "cash": "common", "cards": "common", "contactless": "limited", "tip": "Cash preferred. Cards in hotels/restaurants. EUR useful" }
+    },
+    "Algeria": {
+      "currency": "DZD",
+      "code": "DZ",
+      "alsoAccepted": ["EUR"],
+      "note": "EUR accepted informally",
+      "payments": { "cash": "essential", "cards": "limited", "contactless": "rare", "tip": "Cash society. Very few card facilities. Bring EUR" }
+    }
   }
 }

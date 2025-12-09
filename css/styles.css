@@ -511,6 +511,123 @@ button {
   flex-shrink: 0;
 }
 
+/* Payment Info */
+.payment-info {
+  margin-top: 16px;
+  background: var(--card-bg);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.payment-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.payment-header svg {
+  width: 18px;
+  height: 18px;
+  color: var(--primary-color);
+}
+
+.payment-methods {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.payment-method {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 8px;
+  background: var(--bg-color);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.payment-icon {
+  font-size: 1.25rem;
+}
+
+.payment-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.payment-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.payment-status.essential,
+.payment-status.widespread {
+  background: #c6f6d5;
+  color: #276749;
+}
+
+.payment-status.common {
+  background: #bee3f8;
+  color: #2b6cb0;
+}
+
+.payment-status.limited {
+  background: #fefcbf;
+  color: #b7791f;
+}
+
+.payment-status.rare {
+  background: #fed7d7;
+  color: #c53030;
+}
+
+.payment-tip {
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: rgba(102, 126, 234, 0.08);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+@media (prefers-color-scheme: dark) {
+  .payment-status.essential,
+  .payment-status.widespread {
+    background: #22543d;
+    color: #9ae6b4;
+  }
+
+  .payment-status.common {
+    background: #2a4365;
+    color: #90cdf4;
+  }
+
+  .payment-status.limited {
+    background: #744210;
+    color: #faf089;
+  }
+
+  .payment-status.rare {
+    background: #742a2a;
+    color: #feb2b2;
+  }
+}
+
 /* Quick Amounts */
 .quick-amounts {
   display: grid;
@@ -1000,6 +1117,103 @@ button {
 .currency-item .name, .destination-item .name {
   flex: 1;
   color: var(--text-secondary);
+}
+
+/* Wallet Section */
+.wallet-section {
+  padding: 0 20px;
+  margin-bottom: 8px;
+}
+
+.wallet-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 4px;
+}
+
+.wallet-icon {
+  font-size: 1rem;
+}
+
+.wallet-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.wallet-item {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(102, 126, 234, 0.08);
+  border-radius: var(--radius-md);
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wallet-item:hover {
+  background: rgba(102, 126, 234, 0.15);
+}
+
+.wallet-item .flag {
+  font-size: 1.5rem;
+}
+
+.wallet-item .name {
+  flex: 1;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.wallet-item .remove-wallet {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.wallet-item .remove-wallet:hover {
+  background: #fed7d7;
+  color: #c53030;
+}
+
+.destination-item .add-wallet {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.destination-item .add-wallet:hover {
+  background: rgba(102, 126, 234, 0.15);
+  color: var(--primary-color);
+}
+
+.destination-item .add-wallet.in-wallet {
+  color: var(--primary-color);
+}
+
+.destination-item .add-wallet.in-wallet:hover {
+  background: #fed7d7;
+  color: #c53030;
 }
 
 /* =============================================

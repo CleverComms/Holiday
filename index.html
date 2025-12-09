@@ -146,6 +146,37 @@
             </svg>
             <span id="currencyNoteText"></span>
           </div>
+
+          <!-- Payment Methods Info -->
+          <div class="payment-info" id="paymentInfo" style="display: none;">
+            <div class="payment-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                <path d="M1 10h22"/>
+              </svg>
+              <span>Payment Methods</span>
+            </div>
+            <div class="payment-methods">
+              <div class="payment-method" id="paymentCash">
+                <span class="payment-icon">💵</span>
+                <span class="payment-label">Cash</span>
+                <span class="payment-status" id="cashStatus">--</span>
+              </div>
+              <div class="payment-method" id="paymentCards">
+                <span class="payment-icon">💳</span>
+                <span class="payment-label">Cards</span>
+                <span class="payment-status" id="cardsStatus">--</span>
+              </div>
+              <div class="payment-method" id="paymentContactless">
+                <span class="payment-icon">📱</span>
+                <span class="payment-label">Contactless</span>
+                <span class="payment-status" id="contactlessStatus">--</span>
+              </div>
+            </div>
+            <div class="payment-tip" id="paymentTip" style="display: none;">
+              <span id="paymentTipText"></span>
+            </div>
+          </div>
         </div>
 
         <!-- Quick Amount Buttons -->
@@ -272,6 +303,16 @@
             <path d="M21 21l-4.35-4.35"/>
           </svg>
           <input type="text" id="destinationSearch" placeholder="Search country...">
+        </div>
+        <!-- Wallet Section -->
+        <div class="wallet-section" id="walletSection" style="display: none;">
+          <div class="wallet-header">
+            <span class="wallet-icon">💼</span>
+            <span>My Wallet</span>
+          </div>
+          <div class="wallet-list" id="walletList">
+            <!-- Wallet items will be generated here -->
+          </div>
         </div>
         <div class="destination-list" id="destinationList">
           <!-- Destination items will be generated here -->

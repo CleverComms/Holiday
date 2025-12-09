@@ -20,6 +20,7 @@ let state = {
   amount: 100,
   showUsdEquivalent: true,
   compareCurrencies: ['EUR', 'GBP', 'MXN', 'JPY'],
+  walletCountries: [], // Favorite destinations
   rates: {},
   currencies: {},
   countries: {},
@@ -56,6 +57,14 @@ const elements = {
   homeFlag: document.getElementById('homeFlag'),
   homeValue: document.getElementById('homeValue'),
   homeCurrencySpan: document.getElementById('homeCurrency'),
+
+  // Payment info
+  paymentInfo: document.getElementById('paymentInfo'),
+  cashStatus: document.getElementById('cashStatus'),
+  cardsStatus: document.getElementById('cardsStatus'),
+  contactlessStatus: document.getElementById('contactlessStatus'),
+  paymentTip: document.getElementById('paymentTip'),
+  paymentTipText: document.getElementById('paymentTipText'),
 
   // From currency display
   fromFlag: document.getElementById('fromFlag'),
@@ -100,6 +109,8 @@ const elements = {
   closeDestinationModal: document.getElementById('closeDestinationModal'),
   destinationSearch: document.getElementById('destinationSearch'),
   destinationList: document.getElementById('destinationList'),
+  walletSection: document.getElementById('walletSection'),
+  walletList: document.getElementById('walletList'),
 
   settingsModal: document.getElementById('settingsModal'),
   settingsBtn: document.getElementById('settingsBtn'),
@@ -185,6 +196,7 @@ function saveState() {
     amount: state.amount,
     showUsdEquivalent: state.showUsdEquivalent,
     compareCurrencies: state.compareCurrencies,
+    walletCountries: state.walletCountries,
     rates: state.rates,
     lastRateUpdate: state.lastRateUpdate
   };
@@ -402,6 +414,9 @@ function convert() {
     elements.currencyNote.style.display = 'none';
   }
 
+  // Show payment info for destination
+  renderPaymentInfo(countryInfo);
+
   // Show home currency equivalent when not converting from home
   updateHomeEquivalent(amountInUsd);
 
@@ -447,6 +462,44 @@ function renderSecondaryResults(amountInUsd, fromCurrency, toCurrency, countryIn
       </div>
     `;
   }).join('');
+}
+
+function renderPaymentInfo(countryInfo) {
+  // Hide if no payment info available
+  if (!countryInfo?.payments) {
+    elements.paymentInfo.style.display = 'none';
+    return;
+  }
+
+  const payments = countryInfo.payments;
+  elements.paymentInfo.style.display = 'block';
+
+  // Update cash status
+  const cashStatus = payments.cash || 'common';
+  elements.cashStatus.textContent = capitalizeFirst(cashStatus);
+  elements.cashStatus.className = `payment-status ${cashStatus}`;
+
+  // Update cards status
+  const cardsStatus = payments.cards || 'common';
+  elements.cardsStatus.textContent = capitalizeFirst(cardsStatus);
+  elements.cardsStatus.className = `payment-status ${cardsStatus}`;
+
+  // Update contactless status
+  const contactlessStatus = payments.contactless || 'limited';
+  elements.contactlessStatus.textContent = capitalizeFirst(contactlessStatus);
+  elements.contactlessStatus.className = `payment-status ${contactlessStatus}`;
+
+  // Show payment tip if available
+  if (payments.tip) {
+    elements.paymentTip.style.display = 'block';
+    elements.paymentTipText.textContent = payments.tip;
+  } else {
+    elements.paymentTip.style.display = 'none';
+  }
+}
+
+function capitalizeFirst(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 function updateHomeEquivalent(amountInUsd) {
@@ -688,21 +741,116 @@ function renderDestinationList(filter = '') {
   // Sort alphabetically
   filtered.sort((a, b) => a[0].localeCompare(b[0]));
 
+  // Render wallet section
+  renderWalletSection(filter);
+
   elements.destinationList.innerHTML = filtered.map(([country, data]) => {
     const currency = state.currencies[data.currency];
     const flag = currency ? currency.flag : '🌍';
+    const inWallet = state.walletCountries.includes(country);
     return `
       <div class="destination-item" data-country="${country}">
         <span class="flag">${flag}</span>
         <span class="name">${country}</span>
+        <button class="add-wallet ${inWallet ? 'in-wallet' : ''}" data-country="${country}" title="${inWallet ? 'Remove from Wallet' : 'Add to Wallet'}">
+          <svg viewBox="0 0 24 24" fill="${inWallet ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </button>
       </div>
     `;
   }).join('');
 
-  // Add click listeners
+  // Add click listeners for destination selection
   elements.destinationList.querySelectorAll('.destination-item').forEach(item => {
-    item.addEventListener('click', () => selectDestination(item.dataset.country));
+    item.addEventListener('click', (e) => {
+      // Don't select if clicking the wallet button
+      if (e.target.closest('.add-wallet')) return;
+      selectDestination(item.dataset.country);
+    });
   });
+
+  // Add click listeners for wallet buttons
+  elements.destinationList.querySelectorAll('.add-wallet').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleWallet(btn.dataset.country);
+    });
+  });
+}
+
+function renderWalletSection(filter = '') {
+  const filterLower = filter.toLowerCase();
+
+  // Filter wallet countries if searching
+  const walletFiltered = state.walletCountries.filter(country => {
+    if (!filter) return true;
+    return country.toLowerCase().includes(filterLower);
+  });
+
+  if (walletFiltered.length === 0) {
+    elements.walletSection.style.display = 'none';
+    return;
+  }
+
+  elements.walletSection.style.display = 'block';
+  elements.walletList.innerHTML = walletFiltered.map(country => {
+    const data = state.countries[country];
+    if (!data) return '';
+    const currency = state.currencies[data.currency];
+    const flag = currency ? currency.flag : '🌍';
+    return `
+      <div class="wallet-item" data-country="${country}">
+        <span class="flag">${flag}</span>
+        <span class="name">${country}</span>
+        <button class="remove-wallet" data-country="${country}" title="Remove from Wallet">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  // Add click listeners for wallet items
+  elements.walletList.querySelectorAll('.wallet-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      if (e.target.closest('.remove-wallet')) return;
+      selectDestination(item.dataset.country);
+    });
+  });
+
+  // Add click listeners for remove buttons
+  elements.walletList.querySelectorAll('.remove-wallet').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      removeFromWallet(btn.dataset.country);
+    });
+  });
+}
+
+function toggleWallet(country) {
+  if (state.walletCountries.includes(country)) {
+    removeFromWallet(country);
+  } else {
+    addToWallet(country);
+  }
+}
+
+function addToWallet(country) {
+  if (!state.walletCountries.includes(country)) {
+    state.walletCountries.push(country);
+    saveState();
+    renderDestinationList(elements.destinationSearch.value);
+    showToast(`${country} added to Wallet`);
+  }
+}
+
+function removeFromWallet(country) {
+  state.walletCountries = state.walletCountries.filter(c => c !== country);
+  saveState();
+  renderDestinationList(elements.destinationSearch.value);
+  showToast(`${country} removed from Wallet`);
 }
 
 function filterDestinations(e) {
