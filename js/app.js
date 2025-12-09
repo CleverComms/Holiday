@@ -157,7 +157,10 @@ const elements = {
 
   // Update banner
   updateBanner: document.getElementById('updateBanner'),
-  updateBtn: document.getElementById('updateBtn')
+  updateBtn: document.getElementById('updateBtn'),
+
+  // Footer
+  appVersion: document.getElementById('appVersion')
 };
 
 let currentModalContext = null;
@@ -176,6 +179,7 @@ async function init() {
   loadState();
   await loadDataFiles();
   setupEventListeners();
+  displayVersion();
 
   if (isFirstLoad) {
     showSetupWizard();
@@ -194,6 +198,12 @@ async function init() {
 function checkFirstLoad() {
   const hasVisited = localStorage.getItem('holibobsSetupComplete');
   isFirstLoad = !hasVisited;
+}
+
+function displayVersion() {
+  if (elements.appVersion) {
+    elements.appVersion.textContent = `v${APP_VERSION}`;
+  }
 }
 
 function showSetupWizard() {

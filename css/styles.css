@@ -2315,6 +2315,34 @@ button {
   border: 1px solid var(--border-color);
 }
 
+/* App Footer */
+.app-footer {
+  padding: 20px 16px;
+  padding-bottom: calc(20px + var(--safe-bottom));
+  text-align: center;
+  margin-top: 20px;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.footer-love {
+  font-size: 13px;
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.footer-version {
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0.5;
+  font-family: monospace;
+}
+
 /* Print styles */
 @media print {
   .app-header,
@@ -2322,7 +2350,8 @@ button {
   .a2hs-banner,
   .modal,
   .toast,
-  .setup-modal {
+  .setup-modal,
+  .app-footer {
     display: none !important;
   }
 
