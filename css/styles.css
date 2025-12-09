@@ -2327,7 +2327,7 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .footer-love {
@@ -2336,10 +2336,31 @@ button {
   opacity: 0.8;
 }
 
-.footer-version {
+.footer-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 11px;
   color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.footer-rates {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.footer-rates .status-indicator {
+  width: 6px;
+  height: 6px;
+}
+
+.footer-divider {
   opacity: 0.5;
+}
+
+.footer-version {
   font-family: monospace;
 }
 

@@ -54,12 +54,6 @@
       </div>
     </header>
 
-    <!-- Rate Status Bar -->
-    <div class="rate-status" id="rateStatus">
-      <span class="status-indicator online"></span>
-      <span class="status-text">Rates updated: <span id="lastUpdated">--</span></span>
-    </div>
-
     <!-- Main Navigation Tabs -->
     <nav class="tab-nav">
       <button class="tab-btn active" data-tab="converter">
@@ -481,7 +475,14 @@
     <footer class="app-footer">
       <div class="footer-content">
         <span class="footer-love">Made with 🦝💕 on holiday in Mexico</span>
-        <span class="footer-version" id="appVersion"></span>
+        <div class="footer-meta">
+          <span class="footer-rates">
+            <span class="status-indicator online"></span>
+            Rates: <span id="lastUpdated">--</span>
+          </span>
+          <span class="footer-divider">•</span>
+          <span class="footer-version" id="appVersion"></span>
+        </div>
       </div>
     </footer>
   </div>

@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.1.0';
+const APP_VERSION = '2.2.0';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1132,77 +1132,152 @@ function toggleTheme() {
 // GEOLOCATION & LOCATION SUGGESTION
 // =============================================
 
-// Country coordinates (approximate centers, adjusted for tourist areas)
-const COUNTRY_COORDS = {
-  'Spain': { lat: 40.4, lng: -3.7 },
-  'France': { lat: 46.2, lng: 2.2 },
-  'Italy': { lat: 41.9, lng: 12.5 },
-  'Germany': { lat: 51.2, lng: 10.5 },
-  'Portugal': { lat: 39.4, lng: -8.2 },
-  'Greece': { lat: 39.1, lng: 21.8 },
-  'Netherlands': { lat: 52.1, lng: 5.3 },
-  'Belgium': { lat: 50.5, lng: 4.5 },
-  'United Kingdom': { lat: 55.4, lng: -3.4 },
-  'Ireland': { lat: 53.1, lng: -8.0 },
-  'Mexico': { lat: 21.5, lng: -88.0 }, // Adjusted toward Yucatan/Cancun tourist area
-  'United States': { lat: 37.1, lng: -95.7 },
-  'Canada': { lat: 56.1, lng: -106.3 },
-  'Australia': { lat: -25.3, lng: 133.8 },
-  'New Zealand': { lat: -40.9, lng: 174.9 },
-  'Japan': { lat: 36.2, lng: 138.3 },
-  'Thailand': { lat: 15.9, lng: 100.9 },
-  'Indonesia': { lat: -0.8, lng: 113.9 },
-  'Malaysia': { lat: 4.2, lng: 101.9 },
-  'Singapore': { lat: 1.4, lng: 103.8 },
-  'Philippines': { lat: 12.9, lng: 121.8 },
-  'Vietnam': { lat: 14.1, lng: 108.3 },
-  'South Korea': { lat: 35.9, lng: 128.0 },
-  'China': { lat: 35.9, lng: 104.2 },
-  'India': { lat: 20.6, lng: 79.0 },
-  'UAE': { lat: 23.4, lng: 53.8 },
-  'Turkey': { lat: 38.9, lng: 35.2 },
-  'Egypt': { lat: 26.8, lng: 30.8 },
-  'South Africa': { lat: -30.6, lng: 22.9 },
-  'Morocco': { lat: 31.8, lng: -7.1 },
-  'Brazil': { lat: -14.2, lng: -51.9 },
-  'Argentina': { lat: -38.4, lng: -63.6 },
-  'Chile': { lat: -35.7, lng: -71.5 },
-  'Colombia': { lat: 4.6, lng: -74.3 },
-  'Peru': { lat: -9.2, lng: -75.0 },
-  'Costa Rica': { lat: 9.7, lng: -83.8 },
-  'Switzerland': { lat: 46.8, lng: 8.2 },
-  'Austria': { lat: 47.5, lng: 14.6 },
-  'Czech Republic': { lat: 49.8, lng: 15.5 },
-  'Poland': { lat: 51.9, lng: 19.1 },
-  'Hungary': { lat: 47.2, lng: 19.5 },
-  'Croatia': { lat: 45.1, lng: 15.2 },
-  'Denmark': { lat: 56.3, lng: 9.5 },
-  'Sweden': { lat: 60.1, lng: 18.6 },
-  'Norway': { lat: 60.5, lng: 8.5 },
-  'Finland': { lat: 61.9, lng: 25.7 },
-  'Iceland': { lat: 64.9, lng: -19.0 },
-  'Cuba': { lat: 21.5, lng: -77.8 },
-  'Dominican Republic': { lat: 18.7, lng: -70.2 },
-  'Jamaica': { lat: 18.1, lng: -77.3 },
-  'Bahamas': { lat: 25.0, lng: -77.4 },
-  'Maldives': { lat: 3.2, lng: 73.2 },
-  'Sri Lanka': { lat: 7.9, lng: 80.8 },
-  'Nepal': { lat: 28.4, lng: 84.1 },
-  'Cambodia': { lat: 12.6, lng: 105.0 },
-  'Bali': { lat: -8.3, lng: 115.1 }, // Part of Indonesia but popular destination
-  'Hong Kong': { lat: 22.4, lng: 114.1 },
-  'Taiwan': { lat: 23.7, lng: 121.0 },
-  'Russia': { lat: 61.5, lng: 105.3 },
-  'Kenya': { lat: -0.0, lng: 37.9 },
-  'Tanzania': { lat: -6.4, lng: 34.9 },
-  'Israel': { lat: 31.0, lng: 34.9 },
-  'Jordan': { lat: 30.6, lng: 36.2 },
-  'Qatar': { lat: 25.4, lng: 51.2 },
-  'Saudi Arabia': { lat: 23.9, lng: 45.1 },
-  'Oman': { lat: 21.5, lng: 55.9 },
-  'Mauritius': { lat: -20.3, lng: 57.6 },
-  'Seychelles': { lat: -4.7, lng: 55.5 },
-  'Fiji': { lat: -17.7, lng: 178.1 }
+// Country coordinates - multiple points per country for better tourist area matching
+const COUNTRY_COORD_POINTS = {
+  // Europe
+  'Spain': [
+    { lat: 40.4, lng: -3.7 },    // Madrid
+    { lat: 41.4, lng: 2.2 },     // Barcelona
+    { lat: 28.1, lng: -15.4 },   // Canary Islands
+    { lat: 39.6, lng: 2.6 },     // Mallorca
+    { lat: 36.7, lng: -4.4 },    // Malaga/Costa del Sol
+  ],
+  'France': [
+    { lat: 48.9, lng: 2.3 },     // Paris
+    { lat: 43.3, lng: 5.4 },     // Marseille
+    { lat: 43.7, lng: 7.3 },     // Nice/Riviera
+    { lat: 45.8, lng: 6.9 },     // Alps
+  ],
+  'Italy': [
+    { lat: 41.9, lng: 12.5 },    // Rome
+    { lat: 45.4, lng: 9.2 },     // Milan
+    { lat: 45.4, lng: 12.3 },    // Venice
+    { lat: 43.8, lng: 11.3 },    // Florence
+    { lat: 40.9, lng: 14.3 },    // Naples/Amalfi
+    { lat: 38.1, lng: 13.4 },    // Sicily
+  ],
+  'Germany': [{ lat: 52.5, lng: 13.4 }, { lat: 48.1, lng: 11.6 }], // Berlin, Munich
+  'Portugal': [{ lat: 38.7, lng: -9.1 }, { lat: 37.0, lng: -8.0 }], // Lisbon, Algarve
+  'Greece': [
+    { lat: 37.9, lng: 23.7 },    // Athens
+    { lat: 36.4, lng: 25.4 },    // Santorini
+    { lat: 35.2, lng: 25.1 },    // Crete
+    { lat: 39.6, lng: 19.9 },    // Corfu
+  ],
+  'Netherlands': [{ lat: 52.4, lng: 4.9 }], // Amsterdam
+  'Belgium': [{ lat: 50.8, lng: 4.4 }], // Brussels
+  'United Kingdom': [
+    { lat: 51.5, lng: -0.1 },    // London
+    { lat: 55.9, lng: -3.2 },    // Edinburgh
+    { lat: 53.5, lng: -2.2 },    // Manchester
+  ],
+  'Ireland': [{ lat: 53.3, lng: -6.3 }], // Dublin
+  'Switzerland': [{ lat: 46.9, lng: 7.4 }, { lat: 46.2, lng: 6.1 }], // Bern, Geneva
+  'Austria': [{ lat: 48.2, lng: 16.4 }, { lat: 47.3, lng: 11.4 }], // Vienna, Innsbruck
+
+  // Americas
+  'Mexico': [
+    { lat: 21.2, lng: -86.8 },   // Cancun/Riviera Maya
+    { lat: 20.7, lng: -105.3 },  // Puerto Vallarta
+    { lat: 22.9, lng: -109.9 },  // Los Cabos
+    { lat: 19.4, lng: -99.1 },   // Mexico City
+    { lat: 20.5, lng: -87.4 },   // Tulum/Playa del Carmen
+  ],
+  'United States': [
+    { lat: 40.7, lng: -74.0 },   // New York
+    { lat: 34.1, lng: -118.2 },  // Los Angeles
+    { lat: 25.8, lng: -80.2 },   // Miami
+    { lat: 36.2, lng: -115.1 },  // Las Vegas
+    { lat: 37.8, lng: -122.4 },  // San Francisco
+    { lat: 21.3, lng: -157.8 },  // Hawaii
+    { lat: 28.5, lng: -81.4 },   // Orlando
+  ],
+  'Canada': [
+    { lat: 43.7, lng: -79.4 },   // Toronto
+    { lat: 49.3, lng: -123.1 },  // Vancouver
+    { lat: 45.5, lng: -73.6 },   // Montreal
+  ],
+  'Brazil': [{ lat: -22.9, lng: -43.2 }, { lat: -23.5, lng: -46.6 }], // Rio, Sao Paulo
+  'Argentina': [{ lat: -34.6, lng: -58.4 }], // Buenos Aires
+  'Costa Rica': [{ lat: 9.9, lng: -84.1 }], // San Jose area
+
+  // Caribbean
+  'Cuba': [{ lat: 23.1, lng: -82.4 }], // Havana
+  'Dominican Republic': [{ lat: 18.5, lng: -69.9 }, { lat: 18.8, lng: -70.7 }], // Santo Domingo, Punta Cana
+  'Jamaica': [{ lat: 18.5, lng: -77.9 }], // Kingston/Montego Bay
+  'Bahamas': [{ lat: 25.0, lng: -77.4 }], // Nassau
+
+  // Asia
+  'Thailand': [
+    { lat: 13.8, lng: 100.5 },   // Bangkok
+    { lat: 7.9, lng: 98.4 },     // Phuket
+    { lat: 18.8, lng: 98.9 },    // Chiang Mai
+    { lat: 9.1, lng: 99.8 },     // Koh Samui
+  ],
+  'Japan': [
+    { lat: 35.7, lng: 139.7 },   // Tokyo
+    { lat: 34.7, lng: 135.5 },   // Osaka
+    { lat: 35.0, lng: 135.8 },   // Kyoto
+  ],
+  'Indonesia': [{ lat: -6.2, lng: 106.8 }], // Jakarta
+  'Bali': [{ lat: -8.4, lng: 115.2 }], // Bali (separate entry)
+  'Malaysia': [{ lat: 3.1, lng: 101.7 }, { lat: 5.3, lng: 100.3 }], // KL, Penang
+  'Singapore': [{ lat: 1.3, lng: 103.8 }],
+  'Vietnam': [{ lat: 10.8, lng: 106.6 }, { lat: 21.0, lng: 105.8 }], // Ho Chi Minh, Hanoi
+  'Philippines': [{ lat: 14.6, lng: 121.0 }, { lat: 10.3, lng: 123.9 }], // Manila, Cebu
+  'South Korea': [{ lat: 37.6, lng: 127.0 }], // Seoul
+  'China': [{ lat: 31.2, lng: 121.5 }, { lat: 39.9, lng: 116.4 }], // Shanghai, Beijing
+  'India': [{ lat: 28.6, lng: 77.2 }, { lat: 19.1, lng: 72.9 }], // Delhi, Mumbai
+  'Hong Kong': [{ lat: 22.3, lng: 114.2 }],
+  'Taiwan': [{ lat: 25.0, lng: 121.5 }], // Taipei
+
+  // Middle East
+  'UAE': [{ lat: 25.2, lng: 55.3 }, { lat: 24.5, lng: 54.4 }], // Dubai, Abu Dhabi
+  'Turkey': [{ lat: 41.0, lng: 29.0 }, { lat: 36.9, lng: 30.7 }], // Istanbul, Antalya
+  'Israel': [{ lat: 32.1, lng: 34.8 }, { lat: 31.8, lng: 35.2 }], // Tel Aviv, Jerusalem
+  'Jordan': [{ lat: 31.9, lng: 35.9 }], // Amman
+  'Egypt': [{ lat: 30.0, lng: 31.2 }, { lat: 27.2, lng: 33.8 }], // Cairo, Hurghada
+  'Qatar': [{ lat: 25.3, lng: 51.5 }], // Doha
+  'Saudi Arabia': [{ lat: 24.7, lng: 46.7 }], // Riyadh
+
+  // Africa
+  'South Africa': [{ lat: -33.9, lng: 18.4 }, { lat: -26.2, lng: 28.0 }], // Cape Town, Johannesburg
+  'Morocco': [{ lat: 31.6, lng: -8.0 }, { lat: 33.6, lng: -7.6 }], // Marrakech, Casablanca
+  'Kenya': [{ lat: -1.3, lng: 36.8 }], // Nairobi
+  'Tanzania': [{ lat: -6.2, lng: 35.8 }],
+
+  // Oceania
+  'Australia': [
+    { lat: -33.9, lng: 151.2 },  // Sydney
+    { lat: -37.8, lng: 145.0 },  // Melbourne
+    { lat: -27.5, lng: 153.0 },  // Brisbane/Gold Coast
+    { lat: -16.9, lng: 145.8 },  // Cairns
+    { lat: -31.9, lng: 115.9 },  // Perth
+  ],
+  'New Zealand': [{ lat: -36.8, lng: 174.8 }, { lat: -43.5, lng: 172.6 }], // Auckland, Christchurch
+  'Fiji': [{ lat: -18.1, lng: 178.4 }],
+
+  // Other popular destinations
+  'Maldives': [{ lat: 4.2, lng: 73.5 }],
+  'Mauritius': [{ lat: -20.2, lng: 57.5 }],
+  'Seychelles': [{ lat: -4.6, lng: 55.5 }],
+  'Sri Lanka': [{ lat: 6.9, lng: 79.9 }], // Colombo
+  'Nepal': [{ lat: 27.7, lng: 85.3 }], // Kathmandu
+  'Cambodia': [{ lat: 13.4, lng: 103.9 }], // Siem Reap
+  'Czech Republic': [{ lat: 50.1, lng: 14.4 }], // Prague
+  'Hungary': [{ lat: 47.5, lng: 19.0 }], // Budapest
+  'Poland': [{ lat: 52.2, lng: 21.0 }, { lat: 50.1, lng: 19.9 }], // Warsaw, Krakow
+  'Croatia': [{ lat: 42.6, lng: 18.1 }, { lat: 45.8, lng: 16.0 }], // Dubrovnik, Zagreb
+  'Iceland': [{ lat: 64.1, lng: -21.9 }], // Reykjavik
+  'Norway': [{ lat: 59.9, lng: 10.7 }], // Oslo
+  'Sweden': [{ lat: 59.3, lng: 18.1 }], // Stockholm
+  'Denmark': [{ lat: 55.7, lng: 12.6 }], // Copenhagen
+  'Finland': [{ lat: 60.2, lng: 24.9 }], // Helsinki
+  'Russia': [{ lat: 55.8, lng: 37.6 }, { lat: 59.9, lng: 30.3 }], // Moscow, St Petersburg
+  'Colombia': [{ lat: 4.7, lng: -74.1 }, { lat: 10.4, lng: -75.5 }], // Bogota, Cartagena
+  'Peru': [{ lat: -12.0, lng: -77.0 }, { lat: -13.5, lng: -71.9 }], // Lima, Cusco
+  'Chile': [{ lat: -33.4, lng: -70.6 }], // Santiago
+  'Oman': [{ lat: 23.6, lng: 58.5 }], // Muscat
 };
 
 function detectUserLocation(isSetup = false) {
@@ -1223,21 +1298,8 @@ function detectUserLocation(isSetup = false) {
 
       if (nearestCountry && state.countries[nearestCountry]) {
         detectedCountry = nearestCountry;
-
-        if (isSetup) {
-          // Auto-suggest in setup wizard
-          state.destinationCountry = nearestCountry;
-          const countryData = state.countries[nearestCountry];
-          if (countryData) {
-            state.localCurrency = countryData.currency;
-            if (countryData.alsoAccepted && countryData.alsoAccepted.length > 0) {
-              state.altCurrency = countryData.alsoAccepted[0];
-            }
-          }
-          saveState(); // Save the detected location
-          updateSetupDisplay();
-          showToast(`Looks like you're in ${nearestCountry}!`);
-        }
+        // Always ask instead of auto-filling - more reliable
+        showLocationBanner(nearestCountry);
       }
     },
     (error) => {
@@ -1252,16 +1314,18 @@ function findNearestCountry(lat, lng) {
   let nearest = null;
   let minDistance = Infinity;
 
-  for (const [country, coords] of Object.entries(COUNTRY_COORDS)) {
-    // Simple distance calculation (good enough for country-level)
-    const distance = Math.sqrt(
-      Math.pow(lat - coords.lat, 2) + Math.pow(lng - coords.lng, 2)
-    );
+  for (const [country, points] of Object.entries(COUNTRY_COORD_POINTS)) {
+    // Check distance to each point for this country
+    for (const coords of points) {
+      const distance = Math.sqrt(
+        Math.pow(lat - coords.lat, 2) + Math.pow(lng - coords.lng, 2)
+      );
 
-    // Only match if reasonably close (within ~500km rough estimate)
-    if (distance < minDistance && distance < 10) {
-      minDistance = distance;
-      nearest = country;
+      // Only match if reasonably close (within ~500km rough estimate)
+      if (distance < minDistance && distance < 8) {
+        minDistance = distance;
+        nearest = country;
+      }
     }
   }
 
