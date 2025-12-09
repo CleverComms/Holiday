@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.4.3';
+const APP_VERSION = '2.4.4';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1595,6 +1595,9 @@ async function registerServiceWorker() {
       // Check for updates on launch
       registration.update();
 
+      // Also do a proactive version check after a short delay (helps iOS)
+      setTimeout(checkForUpdates, 3000);
+
       // Listen for new service worker installing
       registration.addEventListener('updatefound', () => {
         const newWorker = registration.installing;
@@ -1645,10 +1648,41 @@ function applyUpdate() {
     waitingServiceWorker.postMessage('skipWaiting');
     elements.updateBanner.classList.remove('active');
   } else {
-    // Fallback: just reload
-    window.location.reload();
+    // Fallback: hard reload bypassing cache
+    window.location.reload(true);
   }
 }
+
+// Proactive version check (helps iOS PWA updates)
+async function checkForUpdates() {
+  try {
+    // Fetch sw.js with cache busting to get latest version
+    const response = await fetch(`./sw.js?t=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) return;
+
+    const text = await response.text();
+    const match = text.match(/CACHE_VERSION\s*=\s*['"]([^'"]+)['"]/);
+    if (match && match[1]) {
+      const serverVersion = match[1];
+      if (serverVersion !== APP_VERSION) {
+        console.log(`[Update] New version available: ${serverVersion} (current: ${APP_VERSION})`);
+        showUpdateBanner();
+      }
+    }
+  } catch (e) {
+    // Silently fail - we're probably offline
+  }
+}
+
+// Check for updates when app becomes visible (iOS returning from background)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    checkForUpdates();
+  }
+});
+
+// Check for updates periodically (every 30 minutes)
+setInterval(checkForUpdates, 30 * 60 * 1000);
 
 // =============================================
 // TOAST
