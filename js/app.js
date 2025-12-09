@@ -66,6 +66,8 @@ const elements = {
   surchargeToggleBtn: document.getElementById('surchargeToggleBtn'),
   surchargeRow: document.getElementById('surchargeRow'),
   surchargeInput: document.getElementById('surchargeInput'),
+  surchargeMinus: document.getElementById('surchargeMinus'),
+  surchargePlus: document.getElementById('surchargePlus'),
   surchargePercent: document.getElementById('surchargePercent'),
   surchargeFixed: document.getElementById('surchargeFixed'),
 
@@ -411,6 +413,8 @@ function setupEventListeners() {
     state.surchargeAmount = parseFloat(e.target.value) || 0;
     calculatePrices();
   });
+  elements.surchargeMinus.addEventListener('click', () => adjustSurcharge(-1));
+  elements.surchargePlus.addEventListener('click', () => adjustSurcharge(1));
   elements.surchargePercent.addEventListener('click', () => setSurchargeType('percent'));
   elements.surchargeFixed.addEventListener('click', () => setSurchargeType('fixed'));
 }
@@ -519,6 +523,15 @@ function setSurchargeType(type) {
   state.surchargeType = type;
   elements.surchargePercent.classList.toggle('active', type === 'percent');
   elements.surchargeFixed.classList.toggle('active', type === 'fixed');
+  calculatePrices();
+}
+
+function adjustSurcharge(direction) {
+  let step = state.surchargeType === 'percent' ? 0.5 : 1;
+  let newAmount = state.surchargeAmount + (direction * step);
+  if (newAmount < 0) newAmount = 0;
+  state.surchargeAmount = newAmount;
+  elements.surchargeInput.value = newAmount;
   calculatePrices();
 }
 
