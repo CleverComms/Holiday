@@ -1413,9 +1413,9 @@ function render() {
   const homeInfo = state.currencies[state.homeCurrency];
 
   elements.localFlag.textContent = localInfo?.flag || '💱';
-  elements.localCurrency.textContent = state.localCurrency;
+  elements.localCurrency.textContent = `${localInfo?.symbol || ''} ${state.localCurrency}`;
   elements.altFlag.textContent = altInfo?.flag || '💱';
-  elements.altCurrency.textContent = state.altCurrency;
+  elements.altCurrency.textContent = `${altInfo?.symbol || ''} ${state.altCurrency}`;
 
   elements.localHomeFlag.textContent = homeInfo?.flag || '🏠';
   elements.altHomeFlag.textContent = homeInfo?.flag || '🏠';
