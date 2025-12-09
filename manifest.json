@@ -1,11 +1,11 @@
 {
-  "name": "Holiday Currency Converter",
-  "short_name": "Holiday",
-  "description": "Your offline currency converter and travel safety companion. Convert currencies, compare rates, and stay safe on your travels.",
+  "name": "Holibobs Travel Money",
+  "short_name": "Holibobs",
+  "description": "Compare prices in local currency vs your home currency while on holiday.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#667eea",
-  "theme_color": "#667eea",
+  "background_color": "#f6d365",
+  "theme_color": "#f6d365",
   "orientation": "portrait-primary",
   "scope": "./",
   "lang": "en",
@@ -30,27 +30,15 @@
       "sizes": "512x512",
       "type": "image/svg+xml",
       "form_factor": "narrow",
-      "label": "Holiday Currency Converter"
+      "label": "Holibobs Travel Money"
     }
   ],
   "shortcuts": [
     {
-      "name": "Convert Currency",
-      "short_name": "Convert",
-      "description": "Quick currency conversion",
-      "url": "/?tab=converter",
-      "icons": [
-        {
-          "src": "icons/icon.svg",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Compare Rates",
-      "short_name": "Compare",
-      "description": "Compare multiple currencies",
-      "url": "/?tab=compare",
+      "name": "Check Prices",
+      "short_name": "Prices",
+      "description": "Compare holiday prices",
+      "url": "./",
       "icons": [
         {
           "src": "icons/icon.svg",
@@ -62,7 +50,7 @@
       "name": "Safety Tips",
       "short_name": "Safety",
       "description": "Travel safety information",
-      "url": "/?tab=scams",
+      "url": "./?tab=scams",
       "icons": [
         {
           "src": "icons/icon.svg",
@@ -76,8 +64,5 @@
   "handle_links": "preferred",
   "launch_handler": {
     "client_mode": "navigate-existing"
-  },
-  "edge_side_panel": {
-    "preferred_width": 400
   }
 }

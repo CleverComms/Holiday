@@ -1,26 +1,24 @@
 /**
- * Holiday Currency Converter - Main Application
- * Offline-first PWA for currency conversion and travel safety
+ * Holibobs - Travel Money App
+ * Compare prices in local currency vs your home currency
  */
 
 // =============================================
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '1.0.0';
-const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours in ms
+const APP_VERSION = '2.0.0';
+const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
 let state = {
-  homeCurrency: 'USD',
+  homeCurrency: 'GBP',
   destinationCountry: null,
-  destinationCurrency: null,
-  fromCurrency: 'USD',
-  toCurrency: 'MXN',
-  amount: 100,
-  showUsdEquivalent: true,
-  compareCurrencies: ['EUR', 'GBP', 'MXN', 'JPY'],
-  walletCountries: [], // Favorite destinations
+  localCurrency: 'MXN',
+  altCurrency: 'USD',
+  localAmount: 500,
+  altAmount: 30,
+  walletCountries: [],
   rates: {},
   currencies: {},
   countries: {},
@@ -37,26 +35,26 @@ const elements = {
   tabBtns: document.querySelectorAll('.tab-btn'),
   tabContents: document.querySelectorAll('.tab-content'),
 
-  // Converter
-  amountInput: document.getElementById('amountInput'),
-  clearAmount: document.getElementById('clearAmount'),
-  fromCurrencyBtn: document.getElementById('fromCurrencyBtn'),
-  toCurrencyBtn: document.getElementById('toCurrencyBtn'),
-  swapCurrencies: document.getElementById('swapCurrencies'),
-  quickBtns: document.querySelectorAll('.quick-btn'),
+  // Destination header
+  destHeaderBtn: document.getElementById('destHeaderBtn'),
+  destHeaderFlag: document.getElementById('destHeaderFlag'),
+  destHeaderName: document.getElementById('destHeaderName'),
 
-  // Multi-currency results
-  primaryFlag: document.getElementById('primaryFlag'),
-  primaryValue: document.getElementById('primaryValue'),
-  primaryCurrency: document.getElementById('primaryCurrency'),
-  primaryRate: document.getElementById('primaryRate'),
-  secondaryResults: document.getElementById('secondaryResults'),
-  currencyNote: document.getElementById('currencyNote'),
-  currencyNoteText: document.getElementById('currencyNoteText'),
-  homeEquivalent: document.getElementById('homeEquivalent'),
-  homeFlag: document.getElementById('homeFlag'),
-  homeValue: document.getElementById('homeValue'),
-  homeCurrencySpan: document.getElementById('homeCurrency'),
+  // Price comparison
+  localAmountInput: document.getElementById('localAmountInput'),
+  altAmountInput: document.getElementById('altAmountInput'),
+  localFlag: document.getElementById('localFlag'),
+  localCurrency: document.getElementById('localCurrency'),
+  altFlag: document.getElementById('altFlag'),
+  altCurrency: document.getElementById('altCurrency'),
+  localHomeFlag: document.getElementById('localHomeFlag'),
+  localHomeAmount: document.getElementById('localHomeAmount'),
+  altHomeFlag: document.getElementById('altHomeFlag'),
+  altHomeAmount: document.getElementById('altHomeAmount'),
+  dealIndicator: document.getElementById('dealIndicator'),
+  dealText: document.getElementById('dealText'),
+  quickAmounts: document.getElementById('quickAmounts'),
+  altPriceCard: document.getElementById('altPriceCard'),
 
   // Payment info
   paymentInfo: document.getElementById('paymentInfo'),
@@ -65,24 +63,6 @@ const elements = {
   contactlessStatus: document.getElementById('contactlessStatus'),
   paymentTip: document.getElementById('paymentTip'),
   paymentTipText: document.getElementById('paymentTipText'),
-
-  // From currency display
-  fromFlag: document.getElementById('fromFlag'),
-  fromCode: document.getElementById('fromCode'),
-  fromName: document.getElementById('fromName'),
-
-  // To currency display
-  toFlag: document.getElementById('toFlag'),
-  toCode: document.getElementById('toCode'),
-  toName: document.getElementById('toName'),
-
-  // Compare
-  compareAmount: document.getElementById('compareAmount'),
-  compareCurrencyBtn: document.getElementById('compareCurrencyBtn'),
-  compareFlag: document.getElementById('compareFlag'),
-  compareCode: document.getElementById('compareCode'),
-  compareList: document.getElementById('compareList'),
-  addCompareBtn: document.getElementById('addCompareBtn'),
 
   // Scams
   destinationBtn: document.getElementById('destinationBtn'),
@@ -96,7 +76,6 @@ const elements = {
   countryScams: document.getElementById('countryScams'),
 
   // Rate status
-  rateStatus: document.getElementById('rateStatus'),
   lastUpdated: document.getElementById('lastUpdated'),
 
   // Modals
@@ -117,11 +96,8 @@ const elements = {
   closeSettingsModal: document.getElementById('closeSettingsModal'),
   homeSettingBtn: document.getElementById('homeSettingBtn'),
   destSettingBtn: document.getElementById('destSettingBtn'),
-  showUsdToggle: document.getElementById('showUsdToggle'),
   updateRatesBtn: document.getElementById('updateRatesBtn'),
   settingsLastUpdated: document.getElementById('settingsLastUpdated'),
-
-  // Settings display
   homeSettingFlag: document.getElementById('homeSettingFlag'),
   homeSettingCode: document.getElementById('homeSettingCode'),
   homeSettingName: document.getElementById('homeSettingName'),
@@ -143,7 +119,6 @@ const elements = {
   toastMessage: document.getElementById('toastMessage')
 };
 
-// Current modal context
 let currentModalContext = null;
 let deferredPrompt = null;
 
@@ -152,30 +127,17 @@ let deferredPrompt = null;
 // =============================================
 
 async function init() {
-  // Load saved state
   loadState();
-
-  // Load data files
   await loadDataFiles();
-
-  // Set up event listeners
   setupEventListeners();
-
-  // Initial render
   render();
-
-  // Check for rate updates
   checkRateUpdates();
-
-  // Register service worker
   registerServiceWorker();
-
-  // Setup A2HS
   setupAddToHomeScreen();
 }
 
 function loadState() {
-  const saved = localStorage.getItem('holidayState');
+  const saved = localStorage.getItem('holibobsState');
   if (saved) {
     try {
       const parsed = JSON.parse(saved);
@@ -190,39 +152,33 @@ function saveState() {
   const toSave = {
     homeCurrency: state.homeCurrency,
     destinationCountry: state.destinationCountry,
-    destinationCurrency: state.destinationCurrency,
-    fromCurrency: state.fromCurrency,
-    toCurrency: state.toCurrency,
-    amount: state.amount,
-    showUsdEquivalent: state.showUsdEquivalent,
-    compareCurrencies: state.compareCurrencies,
+    localCurrency: state.localCurrency,
+    altCurrency: state.altCurrency,
+    localAmount: state.localAmount,
+    altAmount: state.altAmount,
     walletCountries: state.walletCountries,
     rates: state.rates,
     lastRateUpdate: state.lastRateUpdate
   };
-  localStorage.setItem('holidayState', JSON.stringify(toSave));
+  localStorage.setItem('holibobsState', JSON.stringify(toSave));
 }
 
 async function loadDataFiles() {
   try {
-    // Load currencies and countries
-    const currenciesResponse = await fetch('data/currencies.json');
+    const currenciesResponse = await fetch('./data/currencies.json');
     const currenciesData = await currenciesResponse.json();
     state.currencies = currenciesData.currencies;
     state.countries = currenciesData.countries;
 
-    // Load rates (from storage first, then file as fallback)
     if (!state.rates || Object.keys(state.rates).length === 0) {
-      const ratesResponse = await fetch('data/rates.json');
+      const ratesResponse = await fetch('./data/rates.json');
       const ratesData = await ratesResponse.json();
       state.rates = ratesData.rates;
       state.lastRateUpdate = ratesData.lastUpdated;
     }
 
-    // Load scams
-    const scamsResponse = await fetch('data/scams.json');
+    const scamsResponse = await fetch('./data/scams.json');
     state.scams = await scamsResponse.json();
-
   } catch (e) {
     console.error('Error loading data files:', e);
     showToast('Error loading data. Please refresh.');
@@ -239,35 +195,42 @@ function setupEventListeners() {
     btn.addEventListener('click', () => switchTab(btn.dataset.tab));
   });
 
-  // Amount input
-  elements.amountInput.addEventListener('input', handleAmountChange);
-  elements.clearAmount.addEventListener('click', () => {
-    elements.amountInput.value = '';
-    state.amount = 0;
-    convert();
+  // Destination header button
+  elements.destHeaderBtn.addEventListener('click', () => openDestinationModal('main'));
+
+  // Price inputs
+  elements.localAmountInput.addEventListener('input', (e) => {
+    state.localAmount = parseFloat(e.target.value) || 0;
+    calculatePrices();
   });
 
-  // Quick amounts
-  elements.quickBtns.forEach(btn => {
+  elements.altAmountInput.addEventListener('input', (e) => {
+    state.altAmount = parseFloat(e.target.value) || 0;
+    calculatePrices();
+  });
+
+  // +/- buttons (event delegation)
+  document.querySelectorAll('.price-adjust').forEach(btn => {
     btn.addEventListener('click', () => {
-      elements.amountInput.value = btn.dataset.amount;
-      state.amount = parseFloat(btn.dataset.amount);
-      convert();
+      const target = btn.dataset.target;
+      const isPlus = btn.classList.contains('plus');
+      adjustPrice(target, isPlus ? 1 : -1);
     });
   });
 
-  // Currency selection
-  elements.fromCurrencyBtn.addEventListener('click', () => openCurrencyModal('from'));
-  elements.toCurrencyBtn.addEventListener('click', () => openCurrencyModal('to'));
-  elements.swapCurrencies.addEventListener('click', swapCurrencies);
+  // Quick amounts
+  elements.quickAmounts.addEventListener('click', (e) => {
+    const btn = e.target.closest('.quick-btn');
+    if (btn) {
+      const amount = parseFloat(btn.dataset.amount);
+      state.localAmount = amount;
+      elements.localAmountInput.value = amount;
+      calculatePrices();
+    }
+  });
 
-  // Compare
-  elements.compareAmount.addEventListener('input', handleCompareAmountChange);
-  elements.compareCurrencyBtn.addEventListener('click', () => openCurrencyModal('compare'));
-  elements.addCompareBtn.addEventListener('click', () => openCurrencyModal('addCompare'));
-
-  // Destination
-  elements.destinationBtn.addEventListener('click', () => openDestinationModal('destination'));
+  // Destination (Safety tab)
+  elements.destinationBtn.addEventListener('click', () => openDestinationModal('safety'));
 
   // Currency modal
   elements.closeCurrencyModal.addEventListener('click', closeCurrencyModal);
@@ -297,17 +260,12 @@ function setupEventListeners() {
     closeSettingsModal();
     openDestinationModal('settings');
   });
-  elements.showUsdToggle.addEventListener('change', () => {
-    state.showUsdEquivalent = elements.showUsdToggle.checked;
-    saveState();
-    updateUsdEquivalent();
-  });
   elements.updateRatesBtn.addEventListener('click', () => {
     closeSettingsModal();
     updateExchangeRates();
   });
 
-  // Refresh rates button
+  // Refresh rates
   elements.refreshRatesBtn.addEventListener('click', updateExchangeRates);
 
   // A2HS
@@ -317,14 +275,13 @@ function setupEventListeners() {
     elements.iosA2hsModal.classList.remove('active');
   });
 
-  // PWA install prompt
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
     showA2hsBanner();
   });
 
-  // Keyboard shortcuts
+  // Keyboard
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeCurrencyModal();
@@ -343,373 +300,97 @@ function switchTab(tabId) {
   elements.tabBtns.forEach(btn => {
     btn.classList.toggle('active', btn.dataset.tab === tabId);
   });
-
   elements.tabContents.forEach(content => {
     content.classList.toggle('active', content.id === `${tabId}Tab`);
   });
 }
 
 // =============================================
-// CURRENCY CONVERSION
+// PRICE CALCULATION
 // =============================================
 
-function handleAmountChange(e) {
-  state.amount = parseFloat(e.target.value) || 0;
-  convert();
+function adjustPrice(target, direction) {
+  const currentAmount = target === 'local' ? state.localAmount : state.altAmount;
+  let step = 10;
+  if (currentAmount >= 1000) step = 100;
+  else if (currentAmount >= 100) step = 50;
+  else if (currentAmount >= 50) step = 10;
+  else step = 5;
+
+  let newAmount = currentAmount + (direction * step);
+  if (newAmount < 0) newAmount = 0;
+
+  if (target === 'local') {
+    state.localAmount = newAmount;
+    elements.localAmountInput.value = newAmount;
+  } else {
+    state.altAmount = newAmount;
+    elements.altAmountInput.value = newAmount;
+  }
+  calculatePrices();
 }
 
-function handleCompareAmountChange(e) {
-  state.amount = parseFloat(e.target.value) || 0;
-  elements.amountInput.value = state.amount;
-  convert();
-  renderCompareList();
-}
+function calculatePrices() {
+  const { localAmount, altAmount, localCurrency, altCurrency, homeCurrency, rates, currencies } = state;
 
-function convert() {
-  const { amount, fromCurrency, toCurrency, rates, currencies, countries, destinationCountry } = state;
-
-  if (!rates[fromCurrency] || !rates[toCurrency]) {
-    elements.primaryValue.textContent = '--';
+  if (!rates[localCurrency] || !rates[altCurrency] || !rates[homeCurrency]) {
     return;
   }
 
-  // Convert via USD base
-  const amountInUsd = amount / rates[fromCurrency];
-  const primaryResult = amountInUsd * rates[toCurrency];
+  // Convert local price to home currency
+  const localInUsd = localAmount / rates[localCurrency];
+  const localInHome = localInUsd * rates[homeCurrency];
+
+  // Convert alt price to home currency
+  const altInUsd = altAmount / rates[altCurrency];
+  const altInHome = altInUsd * rates[homeCurrency];
 
   // Get currency info
-  const toCurrencyInfo = currencies[toCurrency];
+  const homeInfo = currencies[homeCurrency];
+  const homeSymbol = homeInfo?.symbol || '';
 
-  // Update primary result display
-  elements.primaryFlag.textContent = toCurrencyInfo?.flag || '💱';
-  elements.primaryValue.textContent = formatNumber(primaryResult, toCurrency);
-  elements.primaryCurrency.textContent = toCurrency;
+  // Update displays
+  elements.localHomeAmount.textContent = `${homeSymbol}${formatNumber(localInHome, homeCurrency)}`;
+  elements.altHomeAmount.textContent = `${homeSymbol}${formatNumber(altInHome, homeCurrency)}`;
 
-  // Update rate display
-  const rate = rates[toCurrency] / rates[fromCurrency];
-  elements.primaryRate.textContent = `1 ${fromCurrency} = ${formatNumber(rate, toCurrency)} ${toCurrency}`;
+  // Update deal indicator
+  const diff = Math.abs(localInHome - altInHome);
+  const diffFormatted = `${homeSymbol}${formatNumber(diff, homeCurrency)}`;
 
-  // Get destination country info for additional currencies
-  let countryInfo = null;
-  if (destinationCountry && countries[destinationCountry]) {
-    countryInfo = countries[destinationCountry];
+  if (localInHome < altInHome && localAmount > 0 && altAmount > 0) {
+    elements.dealIndicator.className = 'deal-indicator';
+    elements.dealText.textContent = `Local price saves ${diffFormatted}`;
+  } else if (altInHome < localInHome && localAmount > 0 && altAmount > 0) {
+    elements.dealIndicator.className = 'deal-indicator alt-better';
+    elements.dealText.textContent = `${altCurrency} price saves ${diffFormatted}`;
   } else {
-    // Try to find country by currency
-    for (const [country, info] of Object.entries(countries)) {
-      if (info.currency === toCurrency) {
-        countryInfo = info;
-        break;
-      }
-    }
+    elements.dealIndicator.className = 'deal-indicator same';
+    elements.dealText.textContent = localAmount > 0 || altAmount > 0 ? 'Same price' : 'Enter prices to compare';
   }
-
-  // Render secondary currencies (also accepted)
-  renderSecondaryResults(amountInUsd, fromCurrency, toCurrency, countryInfo);
-
-  // Show currency acceptance note
-  if (countryInfo?.note) {
-    elements.currencyNote.style.display = 'flex';
-    elements.currencyNoteText.textContent = countryInfo.note;
-  } else {
-    elements.currencyNote.style.display = 'none';
-  }
-
-  // Show payment info for destination
-  renderPaymentInfo(countryInfo);
-
-  // Show home currency equivalent when not converting from home
-  updateHomeEquivalent(amountInUsd);
 
   saveState();
-}
-
-function renderSecondaryResults(amountInUsd, fromCurrency, toCurrency, countryInfo) {
-  const { rates, currencies } = state;
-
-  // Get additional accepted currencies
-  let additionalCurrencies = [];
-  if (countryInfo?.alsoAccepted) {
-    additionalCurrencies = countryInfo.alsoAccepted.filter(code => {
-      // Don't show if it's the primary currency or the from currency
-      return code !== toCurrency && code !== fromCurrency && rates[code];
-    });
-  }
-
-  // Clear and populate secondary results
-  if (additionalCurrencies.length === 0) {
-    elements.secondaryResults.innerHTML = '';
-    elements.secondaryResults.style.display = 'none';
-    return;
-  }
-
-  elements.secondaryResults.style.display = 'grid';
-  elements.secondaryResults.innerHTML = additionalCurrencies.map(code => {
-    const currencyInfo = currencies[code];
-    const converted = amountInUsd * rates[code];
-    const rate = rates[code] / rates[state.fromCurrency];
-
-    return `
-      <div class="result-card secondary">
-        <div class="result-header">
-          <span class="result-flag">${currencyInfo?.flag || '💱'}</span>
-          <span class="result-label">Also Accepted</span>
-        </div>
-        <div class="result-amount">
-          <span class="result-value">${formatNumber(converted, code)}</span>
-          <span class="result-currency">${code}</span>
-        </div>
-        <div class="result-rate">1 ${state.fromCurrency} = ${formatNumber(rate, code)}</div>
-      </div>
-    `;
-  }).join('');
-}
-
-function renderPaymentInfo(countryInfo) {
-  // Hide if no payment info available
-  if (!countryInfo?.payments) {
-    elements.paymentInfo.style.display = 'none';
-    return;
-  }
-
-  const payments = countryInfo.payments;
-  elements.paymentInfo.style.display = 'block';
-
-  // Update cash status
-  const cashStatus = payments.cash || 'common';
-  elements.cashStatus.textContent = capitalizeFirst(cashStatus);
-  elements.cashStatus.className = `payment-status ${cashStatus}`;
-
-  // Update cards status
-  const cardsStatus = payments.cards || 'common';
-  elements.cardsStatus.textContent = capitalizeFirst(cardsStatus);
-  elements.cardsStatus.className = `payment-status ${cardsStatus}`;
-
-  // Update contactless status
-  const contactlessStatus = payments.contactless || 'limited';
-  elements.contactlessStatus.textContent = capitalizeFirst(contactlessStatus);
-  elements.contactlessStatus.className = `payment-status ${contactlessStatus}`;
-
-  // Show payment tip if available
-  if (payments.tip) {
-    elements.paymentTip.style.display = 'block';
-    elements.paymentTipText.textContent = payments.tip;
-  } else {
-    elements.paymentTip.style.display = 'none';
-  }
-}
-
-function capitalizeFirst(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-function updateHomeEquivalent(amountInUsd) {
-  const { fromCurrency, homeCurrency, currencies, rates } = state;
-
-  // Don't show if converting from home currency or if home currency is the same
-  if (fromCurrency === homeCurrency) {
-    elements.homeEquivalent.style.display = 'none';
-    return;
-  }
-
-  const homeInfo = currencies[homeCurrency];
-  const homeAmount = amountInUsd * rates[homeCurrency];
-
-  elements.homeEquivalent.style.display = 'flex';
-  elements.homeFlag.textContent = homeInfo?.flag || '🏠';
-  elements.homeValue.textContent = `${homeInfo?.symbol || ''}${formatNumber(homeAmount, homeCurrency)}`;
-  elements.homeCurrencySpan.textContent = homeCurrency;
-}
-
-function swapCurrencies() {
-  const temp = state.fromCurrency;
-  state.fromCurrency = state.toCurrency;
-  state.toCurrency = temp;
-
-  updateCurrencyDisplay();
-  convert();
-}
-
-function updateCurrencyDisplay() {
-  const from = state.currencies[state.fromCurrency];
-  const to = state.currencies[state.toCurrency];
-
-  if (from) {
-    elements.fromFlag.textContent = from.flag;
-    elements.fromCode.textContent = state.fromCurrency;
-    elements.fromName.textContent = from.name;
-  }
-
-  if (to) {
-    elements.toFlag.textContent = to.flag;
-    elements.toCode.textContent = state.toCurrency;
-    elements.toName.textContent = to.name;
-  }
-
-  // Update compare section
-  const home = state.currencies[state.homeCurrency];
-  if (home) {
-    elements.compareFlag.textContent = home.flag;
-    elements.compareCode.textContent = state.homeCurrency;
-  }
 }
 
 function formatNumber(num, currency) {
   if (isNaN(num)) return '--';
-
-  // Determine decimal places based on currency
   let decimals = 2;
-  const noDecimalCurrencies = ['JPY', 'KRW', 'VND', 'IDR', 'CLP', 'HUF', 'ISK'];
-  if (noDecimalCurrencies.includes(currency)) {
-    decimals = 0;
-  } else if (num >= 1000) {
-    decimals = 2;
-  } else if (num >= 100) {
-    decimals = 2;
-  } else if (num >= 1) {
-    decimals = 2;
-  } else {
-    decimals = 4;
+  const noDecimalCurrencies = ['JPY', 'KRW', 'VND', 'IDR', 'CLP', 'HUF'];
+  if (noDecimalCurrencies.includes(currency)) decimals = 0;
+  return num.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+}
+
+function updateQuickAmounts() {
+  const { localCurrency } = state;
+  let denominations = [50, 100, 200, 500, 1000];
+
+  const highValueCurrencies = ['JPY', 'KRW', 'VND', 'IDR', 'CLP', 'HUF', 'COP'];
+  if (highValueCurrencies.includes(localCurrency)) {
+    denominations = [500, 1000, 2000, 5000, 10000];
   }
 
-  return num.toLocaleString(undefined, {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals
-  });
-}
-
-// =============================================
-// COMPARE LIST
-// =============================================
-
-function renderCompareList() {
-  const { amount, homeCurrency, compareCurrencies, rates, currencies } = state;
-
-  elements.compareList.innerHTML = compareCurrencies.map(code => {
-    const currency = currencies[code];
-    if (!currency || !rates[code]) return '';
-
-    const amountInUsd = amount / rates[homeCurrency];
-    const converted = amountInUsd * rates[code];
-    const rate = rates[code] / rates[homeCurrency];
-
-    return `
-      <div class="compare-card" data-currency="${code}">
-        <span class="compare-flag">${currency.flag}</span>
-        <div class="compare-info">
-          <div class="compare-currency">${code}</div>
-          <div class="compare-name">${currency.name}</div>
-        </div>
-        <div class="compare-value">
-          <div class="compare-amount">${currency.symbol}${formatNumber(converted, code)}</div>
-          <div class="compare-rate">1 ${homeCurrency} = ${formatNumber(rate, code)}</div>
-        </div>
-        <button class="compare-remove" onclick="removeCompare('${code}')" aria-label="Remove ${code}">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <path d="M18 6L6 18M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
-    `;
-  }).join('');
-}
-
-function removeCompare(code) {
-  state.compareCurrencies = state.compareCurrencies.filter(c => c !== code);
-  saveState();
-  renderCompareList();
-}
-
-function addCompare(code) {
-  if (!state.compareCurrencies.includes(code)) {
-    state.compareCurrencies.push(code);
-    saveState();
-    renderCompareList();
-  }
-}
-
-// Make removeCompare globally accessible
-window.removeCompare = removeCompare;
-
-// =============================================
-// CURRENCY MODAL
-// =============================================
-
-function openCurrencyModal(context) {
-  currentModalContext = context;
-  elements.currencyModal.classList.add('active');
-  elements.currencySearch.value = '';
-  renderCurrencyList();
-  setTimeout(() => elements.currencySearch.focus(), 100);
-}
-
-function closeCurrencyModal() {
-  elements.currencyModal.classList.remove('active');
-  currentModalContext = null;
-}
-
-function renderCurrencyList(filter = '') {
-  const filterLower = filter.toLowerCase();
-  const entries = Object.entries(state.currencies);
-
-  const filtered = entries.filter(([code, currency]) => {
-    if (!filter) return true;
-    return code.toLowerCase().includes(filterLower) ||
-           currency.name.toLowerCase().includes(filterLower);
-  });
-
-  // Sort by most commonly used first
-  const commonCurrencies = ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'CHF', 'CNY'];
-  filtered.sort((a, b) => {
-    const aCommon = commonCurrencies.indexOf(a[0]);
-    const bCommon = commonCurrencies.indexOf(b[0]);
-    if (aCommon !== -1 && bCommon !== -1) return aCommon - bCommon;
-    if (aCommon !== -1) return -1;
-    if (bCommon !== -1) return 1;
-    return a[1].name.localeCompare(b[1].name);
-  });
-
-  elements.currencyList.innerHTML = filtered.map(([code, currency]) => `
-    <div class="currency-item" data-code="${code}">
-      <span class="flag">${currency.flag}</span>
-      <span class="code">${code}</span>
-      <span class="name">${currency.name}</span>
-    </div>
-  `).join('');
-
-  // Add click listeners
-  elements.currencyList.querySelectorAll('.currency-item').forEach(item => {
-    item.addEventListener('click', () => selectCurrency(item.dataset.code));
-  });
-}
-
-function filterCurrencies(e) {
-  renderCurrencyList(e.target.value);
-}
-
-function selectCurrency(code) {
-  switch (currentModalContext) {
-    case 'from':
-      state.fromCurrency = code;
-      break;
-    case 'to':
-      state.toCurrency = code;
-      break;
-    case 'compare':
-      state.homeCurrency = code;
-      state.fromCurrency = code;
-      break;
-    case 'home':
-      state.homeCurrency = code;
-      state.fromCurrency = code;
-      break;
-    case 'addCompare':
-      addCompare(code);
-      break;
-  }
-
-  saveState();
-  closeCurrencyModal();
-  render();
+  elements.quickAmounts.innerHTML = denominations.map(amount =>
+    `<button class="quick-btn" data-amount="${amount}">${amount >= 1000 ? (amount/1000) + 'k' : amount}</button>`
+  ).join('');
 }
 
 // =============================================
@@ -732,16 +413,9 @@ function closeDestinationModal() {
 function renderDestinationList(filter = '') {
   const filterLower = filter.toLowerCase();
   const entries = Object.entries(state.countries);
-
-  const filtered = entries.filter(([country]) => {
-    if (!filter) return true;
-    return country.toLowerCase().includes(filterLower);
-  });
-
-  // Sort alphabetically
+  const filtered = entries.filter(([country]) => !filter || country.toLowerCase().includes(filterLower));
   filtered.sort((a, b) => a[0].localeCompare(b[0]));
 
-  // Render wallet section
   renderWalletSection(filter);
 
   elements.destinationList.innerHTML = filtered.map(([country, data]) => {
@@ -752,7 +426,7 @@ function renderDestinationList(filter = '') {
       <div class="destination-item" data-country="${country}">
         <span class="flag">${flag}</span>
         <span class="name">${country}</span>
-        <button class="add-wallet ${inWallet ? 'in-wallet' : ''}" data-country="${country}" title="${inWallet ? 'Remove from Wallet' : 'Add to Wallet'}">
+        <button class="add-wallet ${inWallet ? 'in-wallet' : ''}" data-country="${country}">
           <svg viewBox="0 0 24 24" fill="${inWallet ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" width="16" height="16">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
           </svg>
@@ -761,16 +435,13 @@ function renderDestinationList(filter = '') {
     `;
   }).join('');
 
-  // Add click listeners for destination selection
   elements.destinationList.querySelectorAll('.destination-item').forEach(item => {
     item.addEventListener('click', (e) => {
-      // Don't select if clicking the wallet button
       if (e.target.closest('.add-wallet')) return;
       selectDestination(item.dataset.country);
     });
   });
 
-  // Add click listeners for wallet buttons
   elements.destinationList.querySelectorAll('.add-wallet').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -780,13 +451,9 @@ function renderDestinationList(filter = '') {
 }
 
 function renderWalletSection(filter = '') {
-  const filterLower = filter.toLowerCase();
-
-  // Filter wallet countries if searching
-  const walletFiltered = state.walletCountries.filter(country => {
-    if (!filter) return true;
-    return country.toLowerCase().includes(filterLower);
-  });
+  const walletFiltered = state.walletCountries.filter(country =>
+    !filter || country.toLowerCase().includes(filter.toLowerCase())
+  );
 
   if (walletFiltered.length === 0) {
     elements.walletSection.style.display = 'none';
@@ -803,7 +470,7 @@ function renderWalletSection(filter = '') {
       <div class="wallet-item" data-country="${country}">
         <span class="flag">${flag}</span>
         <span class="name">${country}</span>
-        <button class="remove-wallet" data-country="${country}" title="Remove from Wallet">
+        <button class="remove-wallet" data-country="${country}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
             <path d="M18 6L6 18M6 6l12 12"/>
           </svg>
@@ -812,7 +479,6 @@ function renderWalletSection(filter = '') {
     `;
   }).join('');
 
-  // Add click listeners for wallet items
   elements.walletList.querySelectorAll('.wallet-item').forEach(item => {
     item.addEventListener('click', (e) => {
       if (e.target.closest('.remove-wallet')) return;
@@ -820,7 +486,6 @@ function renderWalletSection(filter = '') {
     });
   });
 
-  // Add click listeners for remove buttons
   elements.walletList.querySelectorAll('.remove-wallet').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -842,7 +507,7 @@ function addToWallet(country) {
     state.walletCountries.push(country);
     saveState();
     renderDestinationList(elements.destinationSearch.value);
-    showToast(`${country} added to Wallet`);
+    showToast(`${country} added to favourites`);
   }
 }
 
@@ -850,7 +515,7 @@ function removeFromWallet(country) {
   state.walletCountries = state.walletCountries.filter(c => c !== country);
   saveState();
   renderDestinationList(elements.destinationSearch.value);
-  showToast(`${country} removed from Wallet`);
+  showToast(`${country} removed from favourites`);
 }
 
 function filterDestinations(e) {
@@ -860,22 +525,82 @@ function filterDestinations(e) {
 function selectDestination(country) {
   state.destinationCountry = country;
   const countryData = state.countries[country];
-  if (countryData) {
-    state.destinationCurrency = countryData.currency;
-    state.toCurrency = countryData.currency;
 
-    // Add destination currency to compare if not there
-    if (!state.compareCurrencies.includes(countryData.currency)) {
-      state.compareCurrencies.unshift(countryData.currency);
-      // Keep USD in compare list
-      if (!state.compareCurrencies.includes('USD') && countryData.currency !== 'USD') {
-        state.compareCurrencies.push('USD');
-      }
+  if (countryData) {
+    state.localCurrency = countryData.currency;
+
+    // Set alt currency (usually USD if not already local)
+    if (countryData.alsoAccepted && countryData.alsoAccepted.length > 0) {
+      state.altCurrency = countryData.alsoAccepted[0];
+    } else if (countryData.currency !== 'USD') {
+      state.altCurrency = 'USD';
+    } else {
+      state.altCurrency = 'EUR';
     }
   }
 
   saveState();
   closeDestinationModal();
+  render();
+}
+
+// =============================================
+// CURRENCY MODAL
+// =============================================
+
+function openCurrencyModal(context) {
+  currentModalContext = context;
+  elements.currencyModal.classList.add('active');
+  elements.currencySearch.value = '';
+  renderCurrencyList();
+  setTimeout(() => elements.currencySearch.focus(), 100);
+}
+
+function closeCurrencyModal() {
+  elements.currencyModal.classList.remove('active');
+  currentModalContext = null;
+}
+
+function renderCurrencyList(filter = '') {
+  const filterLower = filter.toLowerCase();
+  const entries = Object.entries(state.currencies);
+  const filtered = entries.filter(([code, currency]) =>
+    !filter || code.toLowerCase().includes(filterLower) || currency.name.toLowerCase().includes(filterLower)
+  );
+
+  const commonCurrencies = ['GBP', 'USD', 'EUR', 'AUD', 'CAD', 'NZD'];
+  filtered.sort((a, b) => {
+    const aCommon = commonCurrencies.indexOf(a[0]);
+    const bCommon = commonCurrencies.indexOf(b[0]);
+    if (aCommon !== -1 && bCommon !== -1) return aCommon - bCommon;
+    if (aCommon !== -1) return -1;
+    if (bCommon !== -1) return 1;
+    return a[1].name.localeCompare(b[1].name);
+  });
+
+  elements.currencyList.innerHTML = filtered.map(([code, currency]) => `
+    <div class="currency-item" data-code="${code}">
+      <span class="flag">${currency.flag}</span>
+      <span class="code">${code}</span>
+      <span class="name">${currency.name}</span>
+    </div>
+  `).join('');
+
+  elements.currencyList.querySelectorAll('.currency-item').forEach(item => {
+    item.addEventListener('click', () => selectCurrency(item.dataset.code));
+  });
+}
+
+function filterCurrencies(e) {
+  renderCurrencyList(e.target.value);
+}
+
+function selectCurrency(code) {
+  if (currentModalContext === 'home') {
+    state.homeCurrency = code;
+  }
+  saveState();
+  closeCurrencyModal();
   render();
 }
 
@@ -910,7 +635,6 @@ function updateSettingsDisplay() {
     elements.destSettingName.textContent = 'Select destination';
   }
 
-  elements.showUsdToggle.checked = state.showUsdEquivalent;
   elements.settingsLastUpdated.textContent = formatLastUpdated();
 }
 
@@ -919,7 +643,6 @@ function updateSettingsDisplay() {
 // =============================================
 
 function renderScams() {
-  // General scams
   if (state.scams.general) {
     elements.generalScams.innerHTML = state.scams.general.map(scam => `
       <div class="scam-card ${scam.severity}">
@@ -933,25 +656,17 @@ function renderScams() {
     `).join('');
   }
 
-  // Destination scams
   if (state.destinationCountry && state.scams.countries) {
     const countryScams = state.scams.countries[state.destinationCountry];
-
     if (countryScams) {
       elements.destinationSection.style.display = 'block';
       elements.destTitleFlag.textContent = countryScams.flag || '';
       elements.destTitleText.textContent = `${state.destinationCountry} Safety`;
 
-      // Tips
       if (countryScams.tips) {
-        elements.countryTips.innerHTML = `
-          <ul>
-            ${countryScams.tips.map(tip => `<li>${tip}</li>`).join('')}
-          </ul>
-        `;
+        elements.countryTips.innerHTML = `<ul>${countryScams.tips.map(tip => `<li>${tip}</li>`).join('')}</ul>`;
       }
 
-      // Country-specific scams
       if (countryScams.scams) {
         elements.countryScams.innerHTML = countryScams.scams.map(scam => `
           <div class="scam-card ${scam.severity}">
@@ -971,20 +686,49 @@ function renderScams() {
     elements.destinationSection.style.display = 'none';
   }
 
-  // Update destination button
+  // Update safety tab destination button
   if (state.destinationCountry) {
     const countryData = state.countries[state.destinationCountry];
     const currency = state.currencies[countryData?.currency];
     elements.destFlag.textContent = currency?.flag || '🌍';
     elements.destName.textContent = state.destinationCountry;
-  } else {
-    elements.destFlag.textContent = '🌍';
-    elements.destName.textContent = 'Select Destination';
   }
 }
 
+function renderPaymentInfo() {
+  const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;
+
+  if (!countryInfo?.payments) {
+    elements.paymentInfo.style.display = 'none';
+    return;
+  }
+
+  const payments = countryInfo.payments;
+  elements.paymentInfo.style.display = 'block';
+
+  elements.cashStatus.textContent = capitalize(payments.cash || 'common');
+  elements.cashStatus.className = `payment-status ${payments.cash || 'common'}`;
+
+  elements.cardsStatus.textContent = capitalize(payments.cards || 'common');
+  elements.cardsStatus.className = `payment-status ${payments.cards || 'common'}`;
+
+  elements.contactlessStatus.textContent = capitalize(payments.contactless || 'limited');
+  elements.contactlessStatus.className = `payment-status ${payments.contactless || 'limited'}`;
+
+  if (payments.tip) {
+    elements.paymentTip.style.display = 'block';
+    elements.paymentTipText.textContent = payments.tip;
+  } else {
+    elements.paymentTip.style.display = 'none';
+  }
+}
+
+function capitalize(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 // =============================================
-// EXCHANGE RATE UPDATES
+// EXCHANGE RATES
 // =============================================
 
 async function updateExchangeRates() {
@@ -994,7 +738,6 @@ async function updateExchangeRates() {
 
   try {
     showToast('Updating exchange rates...');
-
     const response = await fetch(EXCHANGE_API_URL);
     if (!response.ok) throw new Error('Failed to fetch rates');
 
@@ -1004,8 +747,7 @@ async function updateExchangeRates() {
 
     saveState();
     updateRateStatus();
-    convert();
-    renderCompareList();
+    calculatePrices();
 
     showToast('Exchange rates updated!');
   } catch (error) {
@@ -1025,9 +767,7 @@ function checkRateUpdates() {
 
   const lastUpdate = new Date(state.lastRateUpdate);
   const now = new Date();
-  const timeSinceUpdate = now - lastUpdate;
-
-  if (timeSinceUpdate > RATE_UPDATE_INTERVAL) {
+  if (now - lastUpdate > RATE_UPDATE_INTERVAL) {
     updateExchangeRates();
   }
 }
@@ -1038,19 +778,12 @@ function updateRateStatus() {
 
   const indicator = document.querySelector('.status-indicator');
   indicator.classList.remove('updating');
-
-  if (navigator.onLine) {
-    indicator.classList.add('online');
-    indicator.classList.remove('offline');
-  } else {
-    indicator.classList.add('offline');
-    indicator.classList.remove('online');
-  }
+  indicator.classList.toggle('online', navigator.onLine);
+  indicator.classList.toggle('offline', !navigator.onLine);
 }
 
 function formatLastUpdated() {
   if (!state.lastRateUpdate) return 'Never';
-
   const date = new Date(state.lastRateUpdate);
   const now = new Date();
   const diff = now - date;
@@ -1066,46 +799,31 @@ function formatLastUpdated() {
 // =============================================
 
 function setupAddToHomeScreen() {
-  // Check if already installed
-  if (window.matchMedia('(display-mode: standalone)').matches) {
-    return; // Already installed
-  }
+  if (window.matchMedia('(display-mode: standalone)').matches) return;
 
-  // Check if dismissed recently
   const dismissed = localStorage.getItem('a2hsDismissed');
   if (dismissed) {
-    const dismissedTime = new Date(dismissed);
-    const now = new Date();
-    const hoursSinceDismissed = (now - dismissedTime) / (1000 * 60 * 60);
-    if (hoursSinceDismissed < 24) {
-      return; // Don't show again for 24 hours
-    }
+    const hoursSinceDismissed = (new Date() - new Date(dismissed)) / (1000 * 60 * 60);
+    if (hoursSinceDismissed < 24) return;
   }
 
-  // iOS detection
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
   const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
 
   if (isIOS && isSafari && !navigator.standalone) {
-    // Show iOS instructions after a delay
-    setTimeout(() => {
-      elements.iosA2hsModal.classList.add('active');
-    }, 3000);
+    setTimeout(() => elements.iosA2hsModal.classList.add('active'), 3000);
   }
 }
 
 function showA2hsBanner() {
-  if (window.matchMedia('(display-mode: standalone)').matches) {
-    return;
+  if (!window.matchMedia('(display-mode: standalone)').matches) {
+    elements.a2hsBanner.classList.add('active');
   }
-  elements.a2hsBanner.classList.add('active');
 }
 
 async function installApp() {
   if (!deferredPrompt) {
-    // Check if iOS
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    if (isIOS) {
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
       elements.a2hsBanner.classList.remove('active');
       elements.iosA2hsModal.classList.add('active');
     }
@@ -1114,11 +832,7 @@ async function installApp() {
 
   deferredPrompt.prompt();
   const { outcome } = await deferredPrompt.userChoice;
-
-  if (outcome === 'accepted') {
-    showToast('App installed! Find it on your home screen.');
-  }
-
+  if (outcome === 'accepted') showToast('App installed!');
   deferredPrompt = null;
   elements.a2hsBanner.classList.remove('active');
 }
@@ -1135,10 +849,7 @@ function dismissA2hs() {
 async function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
     try {
-      const registration = await navigator.serviceWorker.register('sw.js');
-      console.log('Service Worker registered:', registration);
-
-      // Listen for updates
+      const registration = await navigator.serviceWorker.register('./sw.js');
       registration.addEventListener('updatefound', () => {
         const newWorker = registration.installing;
         newWorker.addEventListener('statechange', () => {
@@ -1154,16 +865,13 @@ async function registerServiceWorker() {
 }
 
 // =============================================
-// TOAST NOTIFICATIONS
+// TOAST
 // =============================================
 
 function showToast(message, duration = 3000) {
   elements.toastMessage.textContent = message;
   elements.toast.classList.add('active');
-
-  setTimeout(() => {
-    elements.toast.classList.remove('active');
-  }, duration);
+  setTimeout(() => elements.toast.classList.remove('active'), duration);
 }
 
 // =============================================
@@ -1171,16 +879,49 @@ function showToast(message, duration = 3000) {
 // =============================================
 
 function render() {
-  updateCurrencyDisplay();
-  convert();
-  renderCompareList();
+  // Update destination header
+  if (state.destinationCountry) {
+    const countryData = state.countries[state.destinationCountry];
+    const currency = state.currencies[countryData?.currency];
+    elements.destHeaderFlag.textContent = currency?.flag || '🌴';
+    elements.destHeaderName.textContent = state.destinationCountry;
+  } else {
+    elements.destHeaderFlag.textContent = '🌴';
+    elements.destHeaderName.textContent = 'Tap to select destination';
+  }
+
+  // Update price card currencies
+  const localInfo = state.currencies[state.localCurrency];
+  const altInfo = state.currencies[state.altCurrency];
+  const homeInfo = state.currencies[state.homeCurrency];
+
+  elements.localFlag.textContent = localInfo?.flag || '💱';
+  elements.localCurrency.textContent = state.localCurrency;
+  elements.altFlag.textContent = altInfo?.flag || '💱';
+  elements.altCurrency.textContent = state.altCurrency;
+
+  elements.localHomeFlag.textContent = homeInfo?.flag || '🏠';
+  elements.altHomeFlag.textContent = homeInfo?.flag || '🏠';
+
+  // Set input values
+  elements.localAmountInput.value = state.localAmount;
+  elements.altAmountInput.value = state.altAmount;
+
+  // Show/hide alt card based on destination
+  const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;
+  const hasAltCurrency = countryInfo?.alsoAccepted && countryInfo.alsoAccepted.length > 0;
+  elements.altPriceCard.style.display = hasAltCurrency || !state.destinationCountry ? 'block' : 'none';
+
+  updateQuickAmounts();
+  calculatePrices();
+  renderPaymentInfo();
   renderScams();
   updateRateStatus();
   updateSettingsDisplay();
 }
 
 // =============================================
-// ONLINE/OFFLINE DETECTION
+// ONLINE/OFFLINE
 // =============================================
 
 window.addEventListener('online', () => {
@@ -1194,7 +935,7 @@ window.addEventListener('offline', () => {
 });
 
 // =============================================
-// START APPLICATION
+// START
 // =============================================
 
 document.addEventListener('DOMContentLoaded', init);

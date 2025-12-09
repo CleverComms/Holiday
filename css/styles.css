@@ -234,7 +234,7 @@ button {
    ============================================= */
 .main-content {
   flex: 1;
-  padding: 16px;
+  padding: 12px;
   overflow-y: auto;
 }
 
@@ -253,116 +253,191 @@ button {
 }
 
 /* =============================================
-   CONVERTER TAB
+   CONVERTER TAB - HOLIDAY THEME
    ============================================= */
-.converter-card {
-  background: var(--card-bg);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  box-shadow: var(--shadow-md);
+
+/* Destination Header */
+.destination-header {
+  margin-bottom: 12px;
 }
 
-.currency-input-group {
-  margin-bottom: 20px;
-}
-
-.currency-input-group label {
-  display: block;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
-}
-
-.amount-input-wrapper {
-  position: relative;
-}
-
-.amount-input-wrapper input {
+.dest-select-btn {
   width: 100%;
-  padding: 16px 40px 16px 16px;
-  font-size: 1.75rem;
-  font-weight: 700;
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-md);
-  transition: all 0.2s ease;
-  background: var(--bg-color);
-}
-
-.amount-input-wrapper input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-}
-
-.clear-btn {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--border-color);
-  color: var(--text-muted);
-  font-size: 1.2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.amount-input-wrapper input:not(:placeholder-shown) + .clear-btn {
-  opacity: 1;
-}
-
-.currency-selector {
-  margin-bottom: 8px;
-}
-
-.currency-selector label {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.currency-select-btn {
-  width: 100%;
-  padding: 14px 16px;
+  padding: 12px 16px;
   display: flex;
   align-items: center;
   gap: 12px;
-  background: var(--bg-color);
-  border: 2px solid var(--border-color);
-  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   transition: all 0.2s ease;
 }
 
-.currency-select-btn:hover, .currency-select-btn:active {
-  border-color: var(--primary-color);
-  background: white;
+.dest-select-btn:active {
+  transform: scale(0.98);
 }
 
-.currency-flag {
+.dest-flag {
+  font-size: 1.75rem;
+}
+
+.dest-name {
+  flex: 1;
+  text-align: left;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #744210;
+}
+
+.dest-select-btn .chevron {
+  color: #744210;
+}
+
+/* Price Comparison */
+.price-comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.price-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.price-card.local {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.price-card.alt {
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+}
+
+.price-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.price-flag {
   font-size: 1.5rem;
 }
 
-.currency-code {
+.price-currency {
+  font-weight: 800;
+  font-size: 1rem;
+  color: white;
+}
+
+.price-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255,255,255,0.7);
+}
+
+.price-input-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.price-adjust {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.2);
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.price-adjust:active {
+  transform: scale(0.9);
+  background: rgba(255,255,255,0.3);
+}
+
+.price-input-row input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 4px;
+  font-size: 1.25rem;
   font-weight: 700;
-  font-size: 1.1rem;
+  text-align: center;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.9);
   color: var(--text-primary);
 }
 
-.currency-name {
-  flex: 1;
-  text-align: left;
-  color: var(--text-secondary);
+.price-input-row input:focus {
+  outline: none;
+  background: white;
+}
+
+.price-home-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  background: rgba(0,0,0,0.2);
+  border-radius: var(--radius-sm);
+}
+
+.price-home-value .home-flag {
+  font-size: 1rem;
+}
+
+.price-home-value .home-amount {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: white;
+}
+
+/* Deal Indicator */
+.deal-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+  box-shadow: var(--shadow-sm);
+}
+
+.deal-indicator.alt-better {
+  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+}
+
+.deal-indicator.same {
+  background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+}
+
+.deal-icon {
+  font-size: 1.1rem;
+}
+
+.deal-text {
+  font-weight: 600;
   font-size: 0.9rem;
+  color: white;
 }
 
 .chevron {
@@ -371,46 +446,22 @@ button {
   color: var(--text-muted);
 }
 
-/* Swap Button */
-.swap-btn {
-  width: 44px;
-  height: 44px;
-  margin: 8px auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--primary-gradient);
-  border-radius: 50%;
-  color: white;
-  box-shadow: var(--shadow-md);
-  transition: all 0.2s ease;
-}
-
-.swap-btn:hover, .swap-btn:active {
-  transform: scale(1.1) rotate(180deg);
-}
-
-.swap-btn svg {
-  width: 22px;
-  height: 22px;
-}
-
 /* Results Container */
 .results-container {
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 /* Primary Result Card */
 .result-card {
   background: var(--primary-gradient);
   border-radius: var(--radius-lg);
-  padding: 20px;
+  padding: 16px;
   text-align: center;
   box-shadow: var(--shadow-lg);
 }
 
 .result-card.primary {
-  padding: 24px;
+  padding: 16px 20px;
 }
 
 .result-header {
@@ -442,7 +493,7 @@ button {
 }
 
 .result-value {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 800;
   color: white;
 }
@@ -630,23 +681,32 @@ button {
 
 /* Quick Amounts */
 .quick-amounts {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-  margin-top: 16px;
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 
 .quick-btn {
-  padding: 10px 4px;
-  background: var(--card-bg);
+  flex: 1;
+  min-width: 45px;
+  padding: 8px 4px;
+  background: var(--bg-color);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   font-weight: 600;
+  font-size: 0.85rem;
   color: var(--text-secondary);
   transition: all 0.2s ease;
 }
 
 .quick-btn:hover, .quick-btn:active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.quick-btn.active {
   background: var(--primary-color);
   color: white;
   border-color: var(--primary-color);

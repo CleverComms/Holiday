@@ -6,10 +6,10 @@
   <meta name="theme-color" content="#667eea">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Holiday">
-  <meta name="description" content="Holiday - Your offline currency converter and travel companion">
+  <meta name="apple-mobile-web-app-title" content="Holibobs">
+  <meta name="description" content="Holibobs - Compare prices in your travel currency">
 
-  <title>Holiday - Currency Converter</title>
+  <title>Holibobs - Travel Money</title>
 
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
@@ -26,8 +26,8 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-content">
-        <img src="icons/icon.svg" alt="Holiday Logo" class="header-logo">
-        <h1>Holiday</h1>
+        <img src="icons/icon.svg" alt="Holibobs Logo" class="header-logo">
+        <h1>Holibobs</h1>
       </div>
       <div class="header-actions">
         <button id="refreshRatesBtn" class="icon-btn" title="Refresh exchange rates" aria-label="Refresh rates">
@@ -57,13 +57,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
         </svg>
-        <span>Convert</span>
-      </button>
-      <button class="tab-btn" data-tab="compare">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>
-        </svg>
-        <span>Compare</span>
+        <span>Prices</span>
       </button>
       <button class="tab-btn" data-tab="scams">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -78,151 +72,101 @@
     <main class="main-content">
       <!-- Converter Tab -->
       <section class="tab-content active" id="converterTab">
-        <div class="converter-card">
-          <div class="currency-input-group">
-            <label for="amountInput">Amount</label>
-            <div class="amount-input-wrapper">
-              <input type="number" id="amountInput" inputmode="decimal" placeholder="0.00" value="100">
-              <button id="clearAmount" class="clear-btn" aria-label="Clear amount">&times;</button>
-            </div>
-          </div>
-
-          <div class="currency-selector">
-            <label>From</label>
-            <button class="currency-select-btn" id="fromCurrencyBtn">
-              <span class="currency-flag" id="fromFlag">🏠</span>
-              <span class="currency-code" id="fromCode">USD</span>
-              <span class="currency-name" id="fromName">US Dollar</span>
-              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M6 9l6 6 6-6"/>
-              </svg>
-            </button>
-          </div>
-
-          <button class="swap-btn" id="swapCurrencies" aria-label="Swap currencies">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M7 16V4M7 4L3 8M7 4l4 4M17 8v12M17 20l4-4M17 20l-4-4"/>
+        <!-- Destination Header -->
+        <div class="destination-header" id="destinationHeader">
+          <button class="dest-select-btn" id="destHeaderBtn">
+            <span class="dest-flag" id="destHeaderFlag">🌴</span>
+            <span class="dest-name" id="destHeaderName">Select your destination</span>
+            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6"/>
             </svg>
           </button>
-
-          <div class="currency-selector">
-            <label>To</label>
-            <button class="currency-select-btn" id="toCurrencyBtn">
-              <span class="currency-flag" id="toFlag">🇲🇽</span>
-              <span class="currency-code" id="toCode">MXN</span>
-              <span class="currency-name" id="toName">Mexican Peso</span>
-              <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M6 9l6 6 6-6"/>
-              </svg>
-            </button>
-          </div>
         </div>
 
-        <!-- Multi-Currency Conversion Results -->
-        <div class="results-container" id="resultsContainer">
-          <!-- Primary result (destination currency) -->
-          <div class="result-card primary" id="primaryResult">
-            <div class="result-header">
-              <span class="result-flag" id="primaryFlag">🇲🇽</span>
-              <span class="result-label">Local Currency</span>
+        <!-- Price Comparison Cards -->
+        <div class="price-comparison" id="priceComparison">
+          <!-- Local Currency Input -->
+          <div class="price-card local" id="localPriceCard">
+            <div class="price-card-header">
+              <span class="price-flag" id="localFlag">🇲🇽</span>
+              <span class="price-currency" id="localCurrency">MXN</span>
+              <span class="price-label">Local Price</span>
             </div>
-            <div class="result-amount">
-              <span class="result-value" id="primaryValue">0.00</span>
-              <span class="result-currency" id="primaryCurrency">MXN</span>
+            <div class="price-input-row">
+              <button class="price-adjust minus" data-target="local">−</button>
+              <input type="number" id="localAmountInput" inputmode="decimal" placeholder="0" value="500">
+              <button class="price-adjust plus" data-target="local">+</button>
             </div>
-            <div class="result-rate" id="primaryRate">1 USD = 17.25 MXN</div>
+            <div class="price-home-value">
+              <span class="home-flag" id="localHomeFlag">🇬🇧</span>
+              <span class="home-amount" id="localHomeAmount">£23.45</span>
+            </div>
           </div>
 
-          <!-- Additional accepted currencies (shown when applicable) -->
-          <div class="secondary-results" id="secondaryResults">
-            <!-- Dynamically populated -->
-          </div>
-
-          <!-- Currency acceptance note -->
-          <div class="currency-note" id="currencyNote" style="display: none;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M12 16v-4M12 8h.01"/>
-            </svg>
-            <span id="currencyNoteText"></span>
-          </div>
-
-          <!-- Payment Methods Info -->
-          <div class="payment-info" id="paymentInfo" style="display: none;">
-            <div class="payment-header">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
-                <path d="M1 10h22"/>
-              </svg>
-              <span>Payment Methods</span>
+          <!-- USD/Alternative Currency Input -->
+          <div class="price-card alt" id="altPriceCard">
+            <div class="price-card-header">
+              <span class="price-flag" id="altFlag">🇺🇸</span>
+              <span class="price-currency" id="altCurrency">USD</span>
+              <span class="price-label">Also Quoted</span>
             </div>
-            <div class="payment-methods">
-              <div class="payment-method" id="paymentCash">
-                <span class="payment-icon">💵</span>
-                <span class="payment-label">Cash</span>
-                <span class="payment-status" id="cashStatus">--</span>
-              </div>
-              <div class="payment-method" id="paymentCards">
-                <span class="payment-icon">💳</span>
-                <span class="payment-label">Cards</span>
-                <span class="payment-status" id="cardsStatus">--</span>
-              </div>
-              <div class="payment-method" id="paymentContactless">
-                <span class="payment-icon">📱</span>
-                <span class="payment-label">Contactless</span>
-                <span class="payment-status" id="contactlessStatus">--</span>
-              </div>
+            <div class="price-input-row">
+              <button class="price-adjust minus" data-target="alt">−</button>
+              <input type="number" id="altAmountInput" inputmode="decimal" placeholder="0" value="30">
+              <button class="price-adjust plus" data-target="alt">+</button>
             </div>
-            <div class="payment-tip" id="paymentTip" style="display: none;">
-              <span id="paymentTipText"></span>
+            <div class="price-home-value">
+              <span class="home-flag" id="altHomeFlag">🇬🇧</span>
+              <span class="home-amount" id="altHomeAmount">£24.00</span>
             </div>
           </div>
         </div>
 
-        <!-- Quick Amount Buttons -->
-        <div class="quick-amounts">
-          <button class="quick-btn" data-amount="10">10</button>
-          <button class="quick-btn" data-amount="20">20</button>
+        <!-- Better Deal Indicator -->
+        <div class="deal-indicator" id="dealIndicator">
+          <span class="deal-icon">✨</span>
+          <span class="deal-text" id="dealText">Local price is better by £0.55</span>
+        </div>
+
+        <!-- Quick Local Amounts -->
+        <div class="quick-amounts" id="quickAmounts">
           <button class="quick-btn" data-amount="50">50</button>
           <button class="quick-btn" data-amount="100">100</button>
+          <button class="quick-btn" data-amount="200">200</button>
           <button class="quick-btn" data-amount="500">500</button>
-          <button class="quick-btn" data-amount="1000">1000</button>
+          <button class="quick-btn" data-amount="1000">1k</button>
         </div>
 
-        <!-- Home currency equivalent (when not converting from home) -->
-        <div class="home-equivalent" id="homeEquivalent" style="display: none;">
-          <span class="label">In your home currency:</span>
-          <span class="value">
-            <span id="homeFlag">🏠</span>
-            <span id="homeValue">$100.00</span>
-            <span id="homeCurrency">USD</span>
-          </span>
-        </div>
-      </section>
-
-      <!-- Compare Tab -->
-      <section class="tab-content" id="compareTab">
-        <div class="compare-header">
-          <div class="compare-input-group">
-            <input type="number" id="compareAmount" inputmode="decimal" placeholder="100" value="100">
-            <button class="currency-pill" id="compareCurrencyBtn">
-              <span id="compareFlag">🏠</span>
-              <span id="compareCode">USD</span>
-            </button>
+        <!-- Payment Methods Info -->
+        <div class="payment-info" id="paymentInfo" style="display: none;">
+          <div class="payment-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+              <path d="M1 10h22"/>
+            </svg>
+            <span>Payment Methods</span>
+          </div>
+          <div class="payment-methods">
+            <div class="payment-method" id="paymentCash">
+              <span class="payment-icon">💵</span>
+              <span class="payment-label">Cash</span>
+              <span class="payment-status" id="cashStatus">--</span>
+            </div>
+            <div class="payment-method" id="paymentCards">
+              <span class="payment-icon">💳</span>
+              <span class="payment-label">Cards</span>
+              <span class="payment-status" id="cardsStatus">--</span>
+            </div>
+            <div class="payment-method" id="paymentContactless">
+              <span class="payment-icon">📱</span>
+              <span class="payment-label">Contactless</span>
+              <span class="payment-status" id="contactlessStatus">--</span>
+            </div>
+          </div>
+          <div class="payment-tip" id="paymentTip" style="display: none;">
+            <span id="paymentTipText"></span>
           </div>
         </div>
-
-        <div class="compare-list" id="compareList">
-          <!-- Comparison cards will be generated here -->
-        </div>
-
-        <button class="add-currency-btn" id="addCompareBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M12 8v8M8 12h8"/>
-          </svg>
-          Add Currency
-        </button>
       </section>
 
       <!-- Scams/Safety Tab -->
