@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.4.0';
+const APP_VERSION = '2.4.1';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -428,12 +428,20 @@ function setupEventListeners() {
   });
 
   // QR Code sharing
-  elements.shareQrBtn.addEventListener('click', openQrModal);
-  elements.closeQrModal.addEventListener('click', closeQrModal);
-  elements.qrModal.addEventListener('click', (e) => {
-    if (e.target === elements.qrModal) closeQrModal();
-  });
-  elements.qrCopyBtn.addEventListener('click', copyShareUrl);
+  if (elements.shareQrBtn) {
+    elements.shareQrBtn.addEventListener('click', openQrModal);
+  }
+  if (elements.closeQrModal) {
+    elements.closeQrModal.addEventListener('click', closeQrModal);
+  }
+  if (elements.qrModal) {
+    elements.qrModal.addEventListener('click', (e) => {
+      if (e.target === elements.qrModal) closeQrModal();
+    });
+  }
+  if (elements.qrCopyBtn) {
+    elements.qrCopyBtn.addEventListener('click', copyShareUrl);
+  }
 
   // Refresh rates
   elements.refreshRatesBtn.addEventListener('click', updateExchangeRates);
@@ -457,6 +465,7 @@ function setupEventListeners() {
       closeCurrencyModal();
       closeDestinationModal();
       closeSettingsModal();
+      closeQrModal();
       elements.iosA2hsModal.classList.remove('active');
     }
   });
@@ -684,6 +693,9 @@ function calculatePrices() {
   if (surchargeAmount > 0) {
     const surchargeLabel = surchargeType === 'percent' ? `+${surchargeAmount}% fee` : `+${homeSymbol}${surchargeAmount} fee`;
     const oldLabel = elements.surchargeIndicator.textContent;
+
+    // Remove animate-out class if present
+    elements.surchargeIndicator.classList.remove('animate-out');
     elements.surchargeIndicator.textContent = surchargeLabel;
 
     // Trigger animation if surcharge changed
@@ -694,7 +706,16 @@ function calculatePrices() {
       elements.surchargeIndicator.classList.add('animate');
     }
   } else {
-    elements.surchargeIndicator.textContent = '';
+    // Animate out if there was a previous surcharge
+    if (elements.surchargeIndicator.textContent) {
+      elements.surchargeIndicator.classList.remove('animate');
+      elements.surchargeIndicator.classList.add('animate-out');
+      // Clear text after animation completes
+      setTimeout(() => {
+        elements.surchargeIndicator.textContent = '';
+        elements.surchargeIndicator.classList.remove('animate-out');
+      }, 400);
+    }
   }
 
   // Update deal indicator
@@ -1015,21 +1036,31 @@ function closeQrModal() {
 }
 
 function generateQrCode() {
-  const url = window.location.origin + window.location.pathname;
+  const url = window.location.href;
   elements.qrUrl.textContent = url;
 
   // Generate QR code using qrcode library
-  if (typeof QRCode !== 'undefined') {
-    QRCode.toCanvas(elements.qrCanvas, url, {
-      width: 200,
-      margin: 2,
-      color: {
-        dark: '#1a1a2e',
-        light: '#ffffff'
-      }
-    }, function(error) {
-      if (error) console.error('QR code error:', error);
-    });
+  if (typeof QRCode !== 'undefined' && elements.qrCanvas) {
+    try {
+      QRCode.toCanvas(elements.qrCanvas, url, {
+        width: 200,
+        margin: 2,
+        color: {
+          dark: '#1a1a2e',
+          light: '#ffffff'
+        }
+      }, function(error) {
+        if (error) {
+          console.error('QR code generation error:', error);
+          // Fallback: show URL prominently
+          elements.qrCanvas.style.display = 'none';
+        }
+      });
+    } catch (e) {
+      console.error('QR code error:', e);
+    }
+  } else {
+    console.log('QRCode library not available or canvas not found');
   }
 }
 

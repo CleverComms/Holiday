@@ -637,6 +637,8 @@ button {
   text-align: center;
   margin-top: 4px;
   transition: all 0.3s ease;
+  opacity: 1;
+  transform: scale(1);
 }
 
 .surcharge-indicator:empty {
@@ -645,6 +647,10 @@ button {
 
 .surcharge-indicator.animate {
   animation: surchargeFlash 0.6s ease-out;
+}
+
+.surcharge-indicator.animate-out {
+  animation: surchargeRemove 0.4s ease-out forwards;
 }
 
 @keyframes surchargeFlash {
@@ -661,6 +667,22 @@ button {
     transform: scale(1);
     color: rgba(255,255,255,0.7);
     text-shadow: none;
+  }
+}
+
+@keyframes surchargeRemove {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.8);
+    color: #ff6b6b;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
   }
 }
 
