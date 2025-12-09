@@ -6,18 +6,18 @@
 const CACHE_NAME = 'holiday-v1.0.0';
 const RUNTIME_CACHE = 'holiday-runtime';
 
-// Files to cache immediately on install
+// Files to cache immediately on install (relative paths for GitHub Pages compatibility)
 const PRECACHE_URLS = [
-  '/',
-  '/index.html',
-  '/css/styles.css',
-  '/js/app.js',
-  '/data/currencies.json',
-  '/data/rates.json',
-  '/data/scams.json',
-  '/icons/icon.svg',
-  '/icons/logo.svg',
-  '/manifest.json'
+  './',
+  './index.html',
+  './css/styles.css',
+  './js/app.js',
+  './data/currencies.json',
+  './data/rates.json',
+  './data/scams.json',
+  './icons/icon.svg',
+  './icons/logo.svg',
+  './manifest.json'
 ];
 
 // Install event - cache core assets
@@ -108,7 +108,7 @@ async function cacheFirst(request) {
 
     // Return offline fallback for navigation requests
     if (request.mode === 'navigate') {
-      return caches.match('/index.html');
+      return caches.match('./index.html');
     }
 
     return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
