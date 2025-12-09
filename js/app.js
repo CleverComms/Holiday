@@ -1,5 +1,5 @@
 /**
- * Holibobs - Travel Money App
+ * HoliBobs - Travel Money App
  * Compare prices in local currency vs your home currency
  */
 
@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.3.1';
+const APP_VERSION = '2.4.0';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -122,6 +122,14 @@ const elements = {
   destSettingFlag: document.getElementById('destSettingFlag'),
   destSettingName: document.getElementById('destSettingName'),
 
+  // QR Code Modal
+  qrModal: document.getElementById('qrModal'),
+  closeQrModal: document.getElementById('closeQrModal'),
+  shareQrBtn: document.getElementById('shareQrBtn'),
+  qrCanvas: document.getElementById('qrCanvas'),
+  qrUrl: document.getElementById('qrUrl'),
+  qrCopyBtn: document.getElementById('qrCopyBtn'),
+
   // A2HS
   a2hsBanner: document.getElementById('a2hsBanner'),
   a2hsInstall: document.getElementById('a2hsInstall'),
@@ -174,6 +182,46 @@ let waitingServiceWorker = null;
 let locationDetectionDone = false; // Prevent double location detection
 
 // =============================================
+// FLAG RENDERING HELPER
+// =============================================
+
+function renderFlag(currencyCode, size = 'md') {
+  const currency = state.currencies[currencyCode];
+  if (!currency || !currency.code) {
+    // Fallback to emoji if no ISO code
+    return currency?.flag || '🌍';
+  }
+
+  // Use flag-icons CSS library
+  const sizeClass = size === 'lg' ? 'fi-lg' : (size === 'sm' ? 'fi-sm' : '');
+  return `<span class="fi fi-${currency.code} ${sizeClass}"></span>`;
+}
+
+function setFlagElement(element, currencyCode, size = 'md') {
+  if (!element) return;
+  const currency = state.currencies[currencyCode];
+  if (!currency || !currency.code) {
+    // Fallback to emoji
+    element.innerHTML = '';
+    element.textContent = currency?.flag || '🌍';
+  } else {
+    const sizeClass = size === 'lg' ? 'fi-lg' : (size === 'sm' ? 'fi-sm' : '');
+    element.innerHTML = `<span class="fi fi-${currency.code} ${sizeClass}"></span>`;
+  }
+}
+
+function setCountryFlag(element, countryName, size = 'md') {
+  if (!element) return;
+  const countryData = state.countries[countryName];
+  if (countryData) {
+    setFlagElement(element, countryData.currency, size);
+  } else {
+    element.innerHTML = '';
+    element.textContent = '🌍';
+  }
+}
+
+// =============================================
 // INITIALIZATION
 // =============================================
 
@@ -218,17 +266,16 @@ function showSetupWizard() {
 function updateSetupDisplay() {
   const home = state.currencies[state.homeCurrency];
   if (home) {
-    elements.setupHomeFlag.textContent = home.flag;
+    setFlagElement(elements.setupHomeFlag, state.homeCurrency, 'lg');
     elements.setupHomeCode.textContent = state.homeCurrency;
     elements.setupHomeName.textContent = home.name;
   }
 
   if (state.destinationCountry) {
-    const countryData = state.countries[state.destinationCountry];
-    const currency = state.currencies[countryData?.currency];
-    elements.setupDestFlag.textContent = currency?.flag || '🌍';
+    setCountryFlag(elements.setupDestFlag, state.destinationCountry, 'lg');
     elements.setupDestName.textContent = state.destinationCountry;
   } else {
+    elements.setupDestFlag.innerHTML = '';
     elements.setupDestFlag.textContent = '🌍';
     elements.setupDestName.textContent = 'Tap to select destination';
   }
@@ -239,7 +286,7 @@ function completeSetup() {
   elements.setupModal.classList.remove('active');
   saveState();
   render();
-  showToast('Welcome to Holibobs! 🦝');
+  showToast('Welcome to HoliBobs! 🦝');
 }
 
 function loadState() {
@@ -379,6 +426,14 @@ function setupEventListeners() {
     closeSettingsModal();
     updateExchangeRates();
   });
+
+  // QR Code sharing
+  elements.shareQrBtn.addEventListener('click', openQrModal);
+  elements.closeQrModal.addEventListener('click', closeQrModal);
+  elements.qrModal.addEventListener('click', (e) => {
+    if (e.target === elements.qrModal) closeQrModal();
+  });
+  elements.qrCopyBtn.addEventListener('click', copyShareUrl);
 
   // Refresh rates
   elements.refreshRatesBtn.addEventListener('click', updateExchangeRates);
@@ -628,7 +683,16 @@ function calculatePrices() {
   // Show surcharge indication if applicable
   if (surchargeAmount > 0) {
     const surchargeLabel = surchargeType === 'percent' ? `+${surchargeAmount}% fee` : `+${homeSymbol}${surchargeAmount} fee`;
+    const oldLabel = elements.surchargeIndicator.textContent;
     elements.surchargeIndicator.textContent = surchargeLabel;
+
+    // Trigger animation if surcharge changed
+    if (oldLabel !== surchargeLabel) {
+      elements.surchargeIndicator.classList.remove('animate');
+      // Force reflow to restart animation
+      void elements.surchargeIndicator.offsetWidth;
+      elements.surchargeIndicator.classList.add('animate');
+    }
   } else {
     elements.surchargeIndicator.textContent = '';
   }
@@ -700,11 +764,13 @@ function renderDestinationList(filter = '') {
 
   elements.destinationList.innerHTML = filtered.map(([country, data]) => {
     const currency = state.currencies[data.currency];
-    const flag = currency ? currency.flag : '🌍';
+    const flagHtml = currency?.code
+      ? `<span class="fi fi-${currency.code} fi-lg"></span>`
+      : (currency?.flag || '🌍');
     const inWallet = state.walletCountries.includes(country);
     return `
       <div class="destination-item" data-country="${country}">
-        <span class="flag">${flag}</span>
+        <span class="flag">${flagHtml}</span>
         <span class="name">${country}</span>
         <button class="add-wallet ${inWallet ? 'in-wallet' : ''}" data-country="${country}">
           <svg viewBox="0 0 24 24" fill="${inWallet ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" width="16" height="16">
@@ -745,10 +811,12 @@ function renderWalletSection(filter = '') {
     const data = state.countries[country];
     if (!data) return '';
     const currency = state.currencies[data.currency];
-    const flag = currency ? currency.flag : '🌍';
+    const flagHtml = currency?.code
+      ? `<span class="fi fi-${currency.code} fi-lg"></span>`
+      : (currency?.flag || '🌍');
     return `
       <div class="wallet-item" data-country="${country}">
-        <span class="flag">${flag}</span>
+        <span class="flag">${flagHtml}</span>
         <span class="name">${country}</span>
         <button class="remove-wallet" data-country="${country}">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
@@ -863,13 +931,18 @@ function renderCurrencyList(filter = '') {
     return a[1].name.localeCompare(b[1].name);
   });
 
-  elements.currencyList.innerHTML = filtered.map(([code, currency]) => `
-    <div class="currency-item" data-code="${code}">
-      <span class="flag">${currency.flag}</span>
-      <span class="code">${code}</span>
-      <span class="name">${currency.name}</span>
-    </div>
-  `).join('');
+  elements.currencyList.innerHTML = filtered.map(([code, currency]) => {
+    const flagHtml = currency.code
+      ? `<span class="fi fi-${currency.code} fi-lg"></span>`
+      : currency.flag;
+    return `
+      <div class="currency-item" data-code="${code}">
+        <span class="flag">${flagHtml}</span>
+        <span class="code">${code}</span>
+        <span class="name">${currency.name}</span>
+      </div>
+    `;
+  }).join('');
 
   elements.currencyList.querySelectorAll('.currency-item').forEach(item => {
     item.addEventListener('click', () => selectCurrency(item.dataset.code));
@@ -910,22 +983,63 @@ function closeSettingsModal() {
 function updateSettingsDisplay() {
   const home = state.currencies[state.homeCurrency];
   if (home) {
-    elements.homeSettingFlag.textContent = home.flag;
+    setFlagElement(elements.homeSettingFlag, state.homeCurrency, 'lg');
     elements.homeSettingCode.textContent = state.homeCurrency;
     elements.homeSettingName.textContent = home.name;
   }
 
   if (state.destinationCountry) {
-    const countryData = state.countries[state.destinationCountry];
-    const currency = state.currencies[countryData?.currency];
-    elements.destSettingFlag.textContent = currency?.flag || '🌍';
+    setCountryFlag(elements.destSettingFlag, state.destinationCountry, 'lg');
     elements.destSettingName.textContent = state.destinationCountry;
   } else {
+    elements.destSettingFlag.innerHTML = '';
     elements.destSettingFlag.textContent = '🌍';
     elements.destSettingName.textContent = 'Select destination';
   }
 
   elements.settingsLastUpdated.textContent = formatLastUpdated();
+}
+
+// =============================================
+// QR CODE SHARING
+// =============================================
+
+function openQrModal() {
+  closeSettingsModal();
+  elements.qrModal.classList.add('active');
+  generateQrCode();
+}
+
+function closeQrModal() {
+  elements.qrModal.classList.remove('active');
+}
+
+function generateQrCode() {
+  const url = window.location.origin + window.location.pathname;
+  elements.qrUrl.textContent = url;
+
+  // Generate QR code using qrcode library
+  if (typeof QRCode !== 'undefined') {
+    QRCode.toCanvas(elements.qrCanvas, url, {
+      width: 200,
+      margin: 2,
+      color: {
+        dark: '#1a1a2e',
+        light: '#ffffff'
+      }
+    }, function(error) {
+      if (error) console.error('QR code error:', error);
+    });
+  }
+}
+
+function copyShareUrl() {
+  const url = window.location.origin + window.location.pathname;
+  navigator.clipboard.writeText(url).then(() => {
+    showToast('Link copied to clipboard!');
+  }).catch(() => {
+    showToast('Could not copy link');
+  });
 }
 
 // =============================================
@@ -978,9 +1092,7 @@ function renderScams() {
 
   // Update safety tab destination button
   if (state.destinationCountry) {
-    const countryData = state.countries[state.destinationCountry];
-    const currency = state.currencies[countryData?.currency];
-    elements.destFlag.textContent = currency?.flag || '🌍';
+    setCountryFlag(elements.destFlag, state.destinationCountry, 'lg');
     elements.destName.textContent = state.destinationCountry;
   }
 }
@@ -1410,11 +1522,9 @@ function showLocationBanner(country) {
   const countryData = state.countries[country];
   if (!countryData) return;
 
-  const currency = state.currencies[countryData.currency];
-  const flag = currency?.flag || '🌍';
+  setCountryFlag(elements.locationBannerFlag, country, 'lg');
 
   elements.locationBannerTitle.textContent = `Are you visiting ${country}?`;
-  elements.locationBannerFlag.textContent = flag;
 
   // Show banner after a short delay (non-intrusive)
   setTimeout(() => {
@@ -1519,11 +1629,10 @@ function showToast(message, duration = 3000) {
 function render() {
   // Update destination header
   if (state.destinationCountry) {
-    const countryData = state.countries[state.destinationCountry];
-    const currency = state.currencies[countryData?.currency];
-    elements.destHeaderFlag.textContent = currency?.flag || '🌴';
+    setCountryFlag(elements.destHeaderFlag, state.destinationCountry, 'lg');
     elements.destHeaderName.textContent = state.destinationCountry;
   } else {
+    elements.destHeaderFlag.innerHTML = '';
     elements.destHeaderFlag.textContent = '🌴';
     elements.destHeaderName.textContent = 'Tap to select destination';
   }
@@ -1533,13 +1642,13 @@ function render() {
   const altInfo = state.currencies[state.altCurrency];
   const homeInfo = state.currencies[state.homeCurrency];
 
-  elements.localFlag.textContent = localInfo?.flag || '💱';
+  setFlagElement(elements.localFlag, state.localCurrency, 'lg');
   elements.localCurrency.textContent = `${localInfo?.symbol || ''} ${state.localCurrency}`;
-  elements.altFlag.textContent = altInfo?.flag || '💱';
+  setFlagElement(elements.altFlag, state.altCurrency, 'lg');
   elements.altCurrency.textContent = `${altInfo?.symbol || ''} ${state.altCurrency}`;
 
-  elements.localHomeFlag.textContent = homeInfo?.flag || '🏠';
-  elements.altHomeFlag.textContent = homeInfo?.flag || '🏠';
+  setFlagElement(elements.localHomeFlag, state.homeCurrency);
+  setFlagElement(elements.altHomeFlag, state.homeCurrency);
 
   // Set input values
   elements.localAmountInput.value = state.localAmount;

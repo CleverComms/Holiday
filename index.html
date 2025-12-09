@@ -6,10 +6,10 @@
   <meta name="theme-color" content="#ff6b6b">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Holibobs">
+  <meta name="apple-mobile-web-app-title" content="HoliBobs">
   <meta name="description" content="Bob the Raccoon helps you compare holiday prices! Pay in local or USD? Bob knows!">
 
-  <title>Holibobs - Bob's Travel Money</title>
+  <title>HoliBobs - Bob's Travel Money</title>
 
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
@@ -17,6 +17,12 @@
   <!-- Icons -->
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
   <link rel="apple-touch-icon" href="icons/icon.svg">
+
+  <!-- Flag Icons CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css">
+
+  <!-- QR Code Library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/styles.css">
@@ -27,7 +33,7 @@
     <header class="app-header">
       <div class="header-content">
         <img src="icons/icon.svg" alt="Bob" class="header-bob-icon">
-        <h1>Holibobs</h1>
+        <h1>HoliBobs</h1>
       </div>
       <div class="header-actions">
         <button id="themeToggleBtn" class="icon-btn theme-toggle" title="Toggle day/night mode" aria-label="Toggle theme">
@@ -347,9 +353,48 @@
           </div>
 
           <div class="setting-group">
+            <label>Share with Friends</label>
+            <p class="setting-description">Show a QR code to share HoliBobs</p>
+            <button class="setting-action-btn secondary" id="shareQrBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+              </svg>
+              Share QR Code
+            </button>
+          </div>
+
+          <div class="setting-group">
             <label>About</label>
             <p class="about-text">Holiday Currency Converter v1.0<br>Works offline - your data stays on your device.</p>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR Code Share Modal -->
+    <div class="modal" id="qrModal">
+      <div class="modal-content qr-modal-content">
+        <div class="modal-header">
+          <h2>Share HoliBobs</h2>
+          <button class="modal-close" id="closeQrModal">&times;</button>
+        </div>
+        <div class="qr-content">
+          <div class="qr-mascot">🦝</div>
+          <p class="qr-subtitle">Scan to get HoliBobs!</p>
+          <div class="qr-code-container">
+            <canvas id="qrCanvas"></canvas>
+          </div>
+          <p class="qr-url" id="qrUrl"></p>
+          <button class="qr-copy-btn" id="qrCopyBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Copy Link
+          </button>
         </div>
       </div>
     </div>
@@ -359,7 +404,7 @@
       <div class="a2hs-content">
         <span class="a2hs-bob">🦝</span>
         <div class="a2hs-text">
-          <strong>Add Holibobs to Home Screen</strong>
+          <strong>Add HoliBobs to Home Screen</strong>
           <span>Bob's ready to save you money!</span>
         </div>
       </div>
@@ -374,7 +419,7 @@
       <div class="ios-a2hs-content">
         <button class="modal-close" id="closeIosModal">&times;</button>
         <span class="ios-a2hs-bob">🦝</span>
-        <h2>Add Holibobs to Home</h2>
+        <h2>Add HoliBobs to Home</h2>
         <p>Bob wants to help you on your holidays!</p>
         <ol class="ios-instructions">
           <li>

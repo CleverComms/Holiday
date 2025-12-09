@@ -1,6 +1,6 @@
 {
-  "name": "Holibobs - Bob's Travel Money",
-  "short_name": "Holibobs",
+  "name": "HoliBobs - Bob's Travel Money",
+  "short_name": "HoliBobs",
   "description": "Bob the Raccoon helps you compare holiday prices! See if paying in local currency or USD is the better deal.",
   "start_url": "./",
   "display": "standalone",
@@ -30,7 +30,7 @@
       "sizes": "512x512",
       "type": "image/svg+xml",
       "form_factor": "narrow",
-      "label": "Holibobs Travel Money"
+      "label": "HoliBobs Travel Money"
     }
   ],
   "shortcuts": [
