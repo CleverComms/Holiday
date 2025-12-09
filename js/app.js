@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.0.0';
+const APP_VERSION = '2.1.0';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -18,7 +18,7 @@ let state = {
   altCurrency: 'USD',
   localAmount: 500,
   altAmount: 30,
-  pricesLocked: false,
+  pricesLocked: true, // Default to linked prices
   surchargeAmount: 0,
   surchargeType: 'percent', // 'percent' or 'fixed'
   walletCountries: [],
@@ -168,6 +168,7 @@ let deferredPrompt = null;
 let isFirstLoad = false;
 let detectedCountry = null;
 let waitingServiceWorker = null;
+let locationDetectionDone = false; // Prevent double location detection
 
 // =============================================
 // INITIALIZATION
@@ -1131,7 +1132,7 @@ function toggleTheme() {
 // GEOLOCATION & LOCATION SUGGESTION
 // =============================================
 
-// Country coordinates (approximate centers)
+// Country coordinates (approximate centers, adjusted for tourist areas)
 const COUNTRY_COORDS = {
   'Spain': { lat: 40.4, lng: -3.7 },
   'France': { lat: 46.2, lng: 2.2 },
@@ -1143,7 +1144,7 @@ const COUNTRY_COORDS = {
   'Belgium': { lat: 50.5, lng: 4.5 },
   'United Kingdom': { lat: 55.4, lng: -3.4 },
   'Ireland': { lat: 53.1, lng: -8.0 },
-  'Mexico': { lat: 23.6, lng: -102.5 },
+  'Mexico': { lat: 21.5, lng: -88.0 }, // Adjusted toward Yucatan/Cancun tourist area
   'United States': { lat: 37.1, lng: -95.7 },
   'Canada': { lat: 56.1, lng: -106.3 },
   'Australia': { lat: -25.3, lng: 133.8 },
@@ -1205,10 +1206,15 @@ const COUNTRY_COORDS = {
 };
 
 function detectUserLocation(isSetup = false) {
+  // Prevent double detection in same session
+  if (locationDetectionDone) return;
+
   if (!navigator.geolocation) {
     console.log('Geolocation not supported');
     return;
   }
+
+  locationDetectionDone = true; // Mark as done before async call
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
@@ -1228,6 +1234,7 @@ function detectUserLocation(isSetup = false) {
               state.altCurrency = countryData.alsoAccepted[0];
             }
           }
+          saveState(); // Save the detected location
           updateSetupDisplay();
           showToast(`Looks like you're in ${nearestCountry}!`);
         }
@@ -1263,10 +1270,12 @@ function findNearestCountry(lat, lng) {
 
 function checkLocationSuggestion() {
   // Don't show banner if:
-  // 1. User already has a destination set
-  // 2. User dismissed suggestion recently (within 6 hours)
-  // 3. We don't have location permission
+  // 1. Location already detected this session
+  // 2. User already has a destination set
+  // 3. User dismissed suggestion recently (within 6 hours)
+  // 4. We don't have location permission
 
+  if (locationDetectionDone) return;
   if (state.destinationCountry) return;
 
   const lastDismissed = localStorage.getItem('locationBannerDismissed');
@@ -1277,6 +1286,8 @@ function checkLocationSuggestion() {
 
   // Try to detect location
   if (!navigator.geolocation) return;
+
+  locationDetectionDone = true; // Mark as done before async call
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
