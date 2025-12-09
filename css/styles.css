@@ -173,12 +173,11 @@ button {
   gap: 12px;
 }
 
-.header-bob {
-  font-size: 2.2rem;
+.header-bob-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
   animation: bobWiggle 3s ease-in-out infinite;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 

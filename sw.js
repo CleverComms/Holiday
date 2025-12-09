@@ -3,7 +3,7 @@
  * Enables offline functionality and caching
  */
 
-const CACHE_VERSION = '1.1.0';
+const CACHE_VERSION = '1.2.0';
 const CACHE_NAME = `holiday-v${CACHE_VERSION}`;
 const RUNTIME_CACHE = 'holiday-runtime';
 

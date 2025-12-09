@@ -1,43 +1,65 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#667eea"/>
-      <stop offset="100%" style="stop-color:#764ba2"/>
-    </linearGradient>
-    <linearGradient id="sun" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#ffecd2"/>
-      <stop offset="100%" style="stop-color:#fcb69f"/>
+      <stop offset="0%" style="stop-color:#ff6b6b"/>
+      <stop offset="100%" style="stop-color:#ff8e53"/>
     </linearGradient>
   </defs>
 
   <!-- Background -->
   <rect width="512" height="512" rx="100" fill="url(#bg)"/>
 
-  <!-- Sun/Coin -->
-  <circle cx="256" cy="200" r="100" fill="url(#sun)"/>
+  <!-- Raccoon Face -->
+  <g transform="translate(256, 280)">
+    <!-- Ears -->
+    <ellipse cx="-95" cy="-140" rx="45" ry="55" fill="#6b6b6b"/>
+    <ellipse cx="95" cy="-140" rx="45" ry="55" fill="#6b6b6b"/>
+    <ellipse cx="-95" cy="-140" rx="30" ry="40" fill="#f5e6d3"/>
+    <ellipse cx="95" cy="-140" rx="30" ry="40" fill="#f5e6d3"/>
 
-  <!-- Currency symbols -->
-  <text x="220" y="215" font-family="Arial" font-size="50" font-weight="bold" fill="#764ba2">$</text>
-  <text x="260" y="215" font-family="Arial" font-size="50" font-weight="bold" fill="#764ba2">€</text>
+    <!-- Head shape -->
+    <ellipse cx="0" cy="-30" rx="140" ry="120" fill="#8c8c8c"/>
 
-  <!-- Wave/Beach -->
-  <path d="M0 350 Q128 300 256 350 Q384 400 512 350 L512 512 L0 512 Z" fill="#fff" opacity="0.2"/>
-  <path d="M0 380 Q128 330 256 380 Q384 430 512 380 L512 512 L0 512 Z" fill="#fff" opacity="0.3"/>
+    <!-- White face markings -->
+    <ellipse cx="0" cy="10" rx="100" ry="85" fill="#f5f5f5"/>
 
-  <!-- Palm tree -->
-  <g fill="#fff" opacity="0.95">
-    <path d="M120 450 Q125 380 128 340 Q130 330 126 330 Q122 330 124 340 Q118 380 113 450 Z"/>
-    <ellipse cx="95" cy="325" rx="40" ry="10" transform="rotate(-30 95 325)"/>
-    <ellipse cx="155" cy="325" rx="40" ry="10" transform="rotate(30 155 325)"/>
-    <ellipse cx="85" cy="310" rx="35" ry="8" transform="rotate(-60 85 310)"/>
-    <ellipse cx="165" cy="310" rx="35" ry="8" transform="rotate(60 165 310)"/>
-    <ellipse cx="125" cy="300" rx="30" ry="8"/>
+    <!-- Dark mask around eyes -->
+    <path d="M-110 -60 Q-80 -80 -40 -60 Q-20 -40 -40 -20 Q-80 0 -110 -20 Q-130 -40 -110 -60" fill="#2d2d2d"/>
+    <path d="M110 -60 Q80 -80 40 -60 Q20 -40 40 -20 Q80 0 110 -20 Q130 -40 110 -60" fill="#2d2d2d"/>
+
+    <!-- Eyes -->
+    <ellipse cx="-65" cy="-45" rx="22" ry="25" fill="#fff"/>
+    <ellipse cx="65" cy="-45" rx="22" ry="25" fill="#fff"/>
+    <ellipse cx="-60" cy="-42" rx="12" ry="14" fill="#1a1a1a"/>
+    <ellipse cx="60" cy="-42" rx="12" ry="14" fill="#1a1a1a"/>
+    <!-- Eye shine -->
+    <circle cx="-55" cy="-48" r="5" fill="#fff"/>
+    <circle cx="55" cy="-48" r="5" fill="#fff"/>
+
+    <!-- Nose -->
+    <ellipse cx="0" cy="25" rx="20" ry="15" fill="#2d2d2d"/>
+    <ellipse cx="0" cy="22" rx="8" ry="5" fill="#4a4a4a"/>
+
+    <!-- Mouth -->
+    <path d="M0 40 Q-15 55 -25 50" stroke="#2d2d2d" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M0 40 Q15 55 25 50" stroke="#2d2d2d" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+    <!-- Cheek stripes -->
+    <path d="M-100 20 Q-85 30 -70 25" stroke="#6b6b6b" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M-105 35 Q-90 45 -75 40" stroke="#6b6b6b" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M100 20 Q85 30 70 25" stroke="#6b6b6b" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M105 35 Q90 45 75 40" stroke="#6b6b6b" stroke-width="5" fill="none" stroke-linecap="round"/>
   </g>
 
-  <!-- Airplane -->
-  <g fill="#fff" transform="translate(340, 100) rotate(20) scale(1.2)">
-    <path d="M0 12 L50 12 L60 5 L60 19 L50 12 L0 12 Z"/>
-    <path d="M15 12 L25 0 L28 0 L23 12 Z"/>
-    <path d="M15 12 L25 24 L28 24 L23 12 Z"/>
+  <!-- Sunglasses on forehead (holiday vibe!) -->
+  <g transform="translate(256, 105)">
+    <ellipse cx="-45" cy="0" rx="38" ry="28" fill="#1a1a1a" opacity="0.9"/>
+    <ellipse cx="45" cy="0" rx="38" ry="28" fill="#1a1a1a" opacity="0.9"/>
+    <rect x="-10" y="-5" width="20" height="10" rx="3" fill="#1a1a1a"/>
+    <path d="M-83 -5 Q-100 -15 -110 -10" stroke="#1a1a1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M83 -5 Q100 -15 110 -10" stroke="#1a1a1a" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <!-- Lens shine -->
+    <ellipse cx="-55" cy="-8" rx="12" ry="8" fill="#fff" opacity="0.2"/>
+    <ellipse cx="35" cy="-8" rx="12" ry="8" fill="#fff" opacity="0.2"/>
   </g>
 </svg>
