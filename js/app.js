@@ -128,18 +128,30 @@ const elements = {
   setupDestFlag: document.getElementById('setupDestFlag'),
   setupDestName: document.getElementById('setupDestName'),
   setupSkip: document.getElementById('setupSkip'),
-  setupDone: document.getElementById('setupDone')
+  setupDone: document.getElementById('setupDone'),
+
+  // Theme toggle
+  themeToggleBtn: document.getElementById('themeToggleBtn'),
+
+  // Location banner
+  locationBanner: document.getElementById('locationBanner'),
+  locationBannerTitle: document.getElementById('locationBannerTitle'),
+  locationBannerFlag: document.getElementById('locationBannerFlag'),
+  locationYesBtn: document.getElementById('locationYesBtn'),
+  locationNoBtn: document.getElementById('locationNoBtn')
 };
 
 let currentModalContext = null;
 let deferredPrompt = null;
 let isFirstLoad = false;
+let detectedCountry = null;
 
 // =============================================
 // INITIALIZATION
 // =============================================
 
 async function init() {
+  initTheme();
   checkFirstLoad();
   loadState();
   await loadDataFiles();
@@ -147,8 +159,11 @@ async function init() {
 
   if (isFirstLoad) {
     showSetupWizard();
+    detectUserLocation(true); // On first load, detect for setup wizard
   } else {
     render();
+    // Check if we should offer location detection (non-annoying prompt)
+    checkLocationSuggestion();
   }
 
   checkRateUpdates();
@@ -357,6 +372,13 @@ function setupEventListeners() {
   });
   elements.setupSkip.addEventListener('click', completeSetup);
   elements.setupDone.addEventListener('click', completeSetup);
+
+  // Theme toggle
+  elements.themeToggleBtn.addEventListener('click', toggleTheme);
+
+  // Location banner
+  elements.locationYesBtn.addEventListener('click', acceptLocationSuggestion);
+  elements.locationNoBtn.addEventListener('click', dismissLocationSuggestion);
 }
 
 // =============================================
@@ -917,6 +939,231 @@ async function installApp() {
 function dismissA2hs() {
   elements.a2hsBanner.classList.remove('active');
   localStorage.setItem('a2hsDismissed', new Date().toISOString());
+}
+
+// =============================================
+// THEME (DAY/NIGHT MODE)
+// =============================================
+
+function initTheme() {
+  const savedTheme = localStorage.getItem('holibobsTheme');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  }
+  // If no saved theme, let system preference handle it via CSS
+}
+
+function toggleTheme() {
+  const currentTheme = document.documentElement.getAttribute('data-theme');
+  let newTheme;
+
+  if (currentTheme === 'dark') {
+    newTheme = 'light';
+    showToast('Day mode - high contrast for sunny days!');
+  } else {
+    newTheme = 'dark';
+    showToast('Night mode enabled');
+  }
+
+  document.documentElement.setAttribute('data-theme', newTheme);
+  localStorage.setItem('holibobsTheme', newTheme);
+}
+
+// =============================================
+// GEOLOCATION & LOCATION SUGGESTION
+// =============================================
+
+// Country coordinates (approximate centers)
+const COUNTRY_COORDS = {
+  'Spain': { lat: 40.4, lng: -3.7 },
+  'France': { lat: 46.2, lng: 2.2 },
+  'Italy': { lat: 41.9, lng: 12.5 },
+  'Germany': { lat: 51.2, lng: 10.5 },
+  'Portugal': { lat: 39.4, lng: -8.2 },
+  'Greece': { lat: 39.1, lng: 21.8 },
+  'Netherlands': { lat: 52.1, lng: 5.3 },
+  'Belgium': { lat: 50.5, lng: 4.5 },
+  'United Kingdom': { lat: 55.4, lng: -3.4 },
+  'Ireland': { lat: 53.1, lng: -8.0 },
+  'Mexico': { lat: 23.6, lng: -102.5 },
+  'United States': { lat: 37.1, lng: -95.7 },
+  'Canada': { lat: 56.1, lng: -106.3 },
+  'Australia': { lat: -25.3, lng: 133.8 },
+  'New Zealand': { lat: -40.9, lng: 174.9 },
+  'Japan': { lat: 36.2, lng: 138.3 },
+  'Thailand': { lat: 15.9, lng: 100.9 },
+  'Indonesia': { lat: -0.8, lng: 113.9 },
+  'Malaysia': { lat: 4.2, lng: 101.9 },
+  'Singapore': { lat: 1.4, lng: 103.8 },
+  'Philippines': { lat: 12.9, lng: 121.8 },
+  'Vietnam': { lat: 14.1, lng: 108.3 },
+  'South Korea': { lat: 35.9, lng: 128.0 },
+  'China': { lat: 35.9, lng: 104.2 },
+  'India': { lat: 20.6, lng: 79.0 },
+  'UAE': { lat: 23.4, lng: 53.8 },
+  'Turkey': { lat: 38.9, lng: 35.2 },
+  'Egypt': { lat: 26.8, lng: 30.8 },
+  'South Africa': { lat: -30.6, lng: 22.9 },
+  'Morocco': { lat: 31.8, lng: -7.1 },
+  'Brazil': { lat: -14.2, lng: -51.9 },
+  'Argentina': { lat: -38.4, lng: -63.6 },
+  'Chile': { lat: -35.7, lng: -71.5 },
+  'Colombia': { lat: 4.6, lng: -74.3 },
+  'Peru': { lat: -9.2, lng: -75.0 },
+  'Costa Rica': { lat: 9.7, lng: -83.8 },
+  'Switzerland': { lat: 46.8, lng: 8.2 },
+  'Austria': { lat: 47.5, lng: 14.6 },
+  'Czech Republic': { lat: 49.8, lng: 15.5 },
+  'Poland': { lat: 51.9, lng: 19.1 },
+  'Hungary': { lat: 47.2, lng: 19.5 },
+  'Croatia': { lat: 45.1, lng: 15.2 },
+  'Denmark': { lat: 56.3, lng: 9.5 },
+  'Sweden': { lat: 60.1, lng: 18.6 },
+  'Norway': { lat: 60.5, lng: 8.5 },
+  'Finland': { lat: 61.9, lng: 25.7 },
+  'Iceland': { lat: 64.9, lng: -19.0 },
+  'Cuba': { lat: 21.5, lng: -77.8 },
+  'Dominican Republic': { lat: 18.7, lng: -70.2 },
+  'Jamaica': { lat: 18.1, lng: -77.3 },
+  'Bahamas': { lat: 25.0, lng: -77.4 },
+  'Maldives': { lat: 3.2, lng: 73.2 },
+  'Sri Lanka': { lat: 7.9, lng: 80.8 },
+  'Nepal': { lat: 28.4, lng: 84.1 },
+  'Cambodia': { lat: 12.6, lng: 105.0 },
+  'Bali': { lat: -8.3, lng: 115.1 }, // Part of Indonesia but popular destination
+  'Hong Kong': { lat: 22.4, lng: 114.1 },
+  'Taiwan': { lat: 23.7, lng: 121.0 },
+  'Russia': { lat: 61.5, lng: 105.3 },
+  'Kenya': { lat: -0.0, lng: 37.9 },
+  'Tanzania': { lat: -6.4, lng: 34.9 },
+  'Israel': { lat: 31.0, lng: 34.9 },
+  'Jordan': { lat: 30.6, lng: 36.2 },
+  'Qatar': { lat: 25.4, lng: 51.2 },
+  'Saudi Arabia': { lat: 23.9, lng: 45.1 },
+  'Oman': { lat: 21.5, lng: 55.9 },
+  'Mauritius': { lat: -20.3, lng: 57.6 },
+  'Seychelles': { lat: -4.7, lng: 55.5 },
+  'Fiji': { lat: -17.7, lng: 178.1 }
+};
+
+function detectUserLocation(isSetup = false) {
+  if (!navigator.geolocation) {
+    console.log('Geolocation not supported');
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+      const nearestCountry = findNearestCountry(latitude, longitude);
+
+      if (nearestCountry && state.countries[nearestCountry]) {
+        detectedCountry = nearestCountry;
+
+        if (isSetup) {
+          // Auto-suggest in setup wizard
+          state.destinationCountry = nearestCountry;
+          const countryData = state.countries[nearestCountry];
+          if (countryData) {
+            state.localCurrency = countryData.currency;
+            if (countryData.alsoAccepted && countryData.alsoAccepted.length > 0) {
+              state.altCurrency = countryData.alsoAccepted[0];
+            }
+          }
+          updateSetupDisplay();
+          showToast(`Looks like you're in ${nearestCountry}!`);
+        }
+      }
+    },
+    (error) => {
+      console.log('Geolocation error:', error.message);
+      // Silently fail - don't bother user
+    },
+    { timeout: 10000, enableHighAccuracy: false }
+  );
+}
+
+function findNearestCountry(lat, lng) {
+  let nearest = null;
+  let minDistance = Infinity;
+
+  for (const [country, coords] of Object.entries(COUNTRY_COORDS)) {
+    // Simple distance calculation (good enough for country-level)
+    const distance = Math.sqrt(
+      Math.pow(lat - coords.lat, 2) + Math.pow(lng - coords.lng, 2)
+    );
+
+    // Only match if reasonably close (within ~500km rough estimate)
+    if (distance < minDistance && distance < 10) {
+      minDistance = distance;
+      nearest = country;
+    }
+  }
+
+  return nearest;
+}
+
+function checkLocationSuggestion() {
+  // Don't show banner if:
+  // 1. User already has a destination set
+  // 2. User dismissed suggestion recently (within 6 hours)
+  // 3. We don't have location permission
+
+  if (state.destinationCountry) return;
+
+  const lastDismissed = localStorage.getItem('locationBannerDismissed');
+  if (lastDismissed) {
+    const hoursSinceDismissed = (new Date() - new Date(lastDismissed)) / (1000 * 60 * 60);
+    if (hoursSinceDismissed < 6) return;
+  }
+
+  // Try to detect location
+  if (!navigator.geolocation) return;
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+      const nearestCountry = findNearestCountry(latitude, longitude);
+
+      if (nearestCountry && state.countries[nearestCountry]) {
+        detectedCountry = nearestCountry;
+        showLocationBanner(nearestCountry);
+      }
+    },
+    (error) => {
+      // Silently fail
+    },
+    { timeout: 10000, enableHighAccuracy: false }
+  );
+}
+
+function showLocationBanner(country) {
+  const countryData = state.countries[country];
+  if (!countryData) return;
+
+  const currency = state.currencies[countryData.currency];
+  const flag = currency?.flag || '🌍';
+
+  elements.locationBannerTitle.textContent = `Are you visiting ${country}?`;
+  elements.locationBannerFlag.textContent = flag;
+
+  // Show banner after a short delay (non-intrusive)
+  setTimeout(() => {
+    elements.locationBanner.classList.add('active');
+  }, 2000);
+}
+
+function acceptLocationSuggestion() {
+  if (detectedCountry) {
+    selectDestination(detectedCountry);
+    showToast(`Welcome to ${detectedCountry}! 🦝`);
+  }
+  elements.locationBanner.classList.remove('active');
+}
+
+function dismissLocationSuggestion() {
+  elements.locationBanner.classList.remove('active');
+  localStorage.setItem('locationBannerDismissed', new Date().toISOString());
 }
 
 // =============================================

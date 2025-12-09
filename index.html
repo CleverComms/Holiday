@@ -30,6 +30,15 @@
         <h1>Holibobs</h1>
       </div>
       <div class="header-actions">
+        <button id="themeToggleBtn" class="icon-btn theme-toggle" title="Toggle day/night mode" aria-label="Toggle theme">
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+          </svg>
+        </button>
         <button id="refreshRatesBtn" class="icon-btn" title="Refresh exchange rates" aria-label="Refresh rates">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M23 4v6h-6M1 20v-6h6"/>
@@ -420,6 +429,20 @@
     <!-- Toast Notification -->
     <div class="toast" id="toast">
       <span class="toast-message" id="toastMessage">Message</span>
+    </div>
+
+    <!-- Location Suggestion Banner -->
+    <div class="location-banner" id="locationBanner">
+      <span class="bob-mini">🦝</span>
+      <div class="banner-text">
+        <div class="banner-title" id="locationBannerTitle">Are you visiting Spain?</div>
+        <div class="banner-subtitle">Bob detected your location</div>
+      </div>
+      <span class="banner-flag" id="locationBannerFlag">🇪🇸</span>
+      <div class="location-banner-actions">
+        <button class="location-banner-btn yes" id="locationYesBtn">Yes!</button>
+        <button class="location-banner-btn no" id="locationNoBtn">No</button>
+      </div>
     </div>
   </div>
 

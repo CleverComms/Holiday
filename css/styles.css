@@ -5,26 +5,27 @@
 
 /* CSS Variables */
 :root {
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --accent-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  /* High Contrast Day Mode (default) - optimized for bright sunlight! */
+  --primary-gradient: linear-gradient(135deg, #4a5ad8 0%, #6b3fa0 100%);
+  --secondary-gradient: linear-gradient(135deg, #e060d0 0%, #e04050 100%);
+  --accent-gradient: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
 
-  --primary-color: #667eea;
-  --primary-dark: #5a67d8;
-  --secondary-color: #764ba2;
-  --accent-color: #f5576c;
+  --primary-color: #4a5ad8;
+  --primary-dark: #3a4ac0;
+  --secondary-color: #6b3fa0;
+  --accent-color: #e04050;
 
-  --bg-color: #f5f7fa;
+  --bg-color: #ffffff;
   --card-bg: #ffffff;
-  --text-primary: #1a202c;
-  --text-secondary: #718096;
-  --text-muted: #a0aec0;
+  --text-primary: #000000;
+  --text-secondary: #333333;
+  --text-muted: #555555;
 
-  --border-color: #e2e8f0;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
-  --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
-  --shadow-xl: 0 20px 40px rgba(0,0,0,0.2);
+  --border-color: #cccccc;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.15);
+  --shadow-md: 0 4px 8px rgba(0,0,0,0.15);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.2);
+  --shadow-xl: 0 20px 40px rgba(0,0,0,0.25);
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -37,6 +38,30 @@
   --header-height: 60px;
   --nav-height: 70px;
   --status-height: 32px;
+}
+
+/* Dark/Night Mode Theme */
+[data-theme="dark"] {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --accent-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+
+  --primary-color: #7c8cf0;
+  --primary-dark: #667eea;
+  --secondary-color: #9060c0;
+  --accent-color: #f5576c;
+
+  --bg-color: #0f1419;
+  --card-bg: #1a2332;
+  --text-primary: #f0f4f8;
+  --text-secondary: #a0aec0;
+  --text-muted: #718096;
+
+  --border-color: #2d3748;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 8px rgba(0,0,0,0.4);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
+  --shadow-xl: 0 20px 40px rgba(0,0,0,0.6);
 }
 
 /* Reset & Base */
@@ -1718,42 +1743,164 @@ button {
   }
 }
 
-/* Dark mode support */
+/* Dark mode - apply when system prefers AND no manual theme set */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg-color: #1a202c;
-    --card-bg: #2d3748;
-    --text-primary: #f7fafc;
+  :root:not([data-theme="light"]) {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --primary-color: #7c8cf0;
+    --primary-dark: #667eea;
+    --secondary-color: #9060c0;
+    --bg-color: #0f1419;
+    --card-bg: #1a2332;
+    --text-primary: #f0f4f8;
     --text-secondary: #a0aec0;
     --text-muted: #718096;
-    --border-color: #4a5568;
+    --border-color: #2d3748;
   }
+}
 
-  .amount-input-wrapper input,
-  .compare-input-group input {
-    background: var(--bg-color);
-    color: var(--text-primary);
-  }
+/* Dark theme specific overrides */
+[data-theme="dark"] .amount-input-wrapper input,
+[data-theme="dark"] .compare-input-group input,
+[data-theme="dark"] .price-input-row input {
+  background: var(--bg-color);
+  color: var(--text-primary);
+}
 
-  .tips-box {
-    background: #2a4365;
-    border-left-color: #63b3ed;
-  }
+[data-theme="dark"] .tips-box {
+  background: #2a4365;
+  border-left-color: #63b3ed;
+}
 
-  .scam-card.high .scam-severity {
-    background: #742a2a;
-    color: #feb2b2;
-  }
+[data-theme="dark"] .scam-card.high .scam-severity {
+  background: #742a2a;
+  color: #feb2b2;
+}
 
-  .scam-card.medium .scam-severity {
-    background: #744210;
-    color: #faf089;
-  }
+[data-theme="dark"] .scam-card.medium .scam-severity {
+  background: #744210;
+  color: #faf089;
+}
 
-  .scam-card.low .scam-severity {
-    background: #22543d;
-    color: #9ae6b4;
-  }
+[data-theme="dark"] .scam-card.low .scam-severity {
+  background: #22543d;
+  color: #9ae6b4;
+}
+
+[data-theme="dark"] .setup-content {
+  background: var(--card-bg);
+}
+
+[data-theme="dark"] .quick-btn {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-toggle .sun-icon,
+.theme-toggle .moon-icon {
+  position: absolute;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.theme-toggle .sun-icon {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.theme-toggle .moon-icon {
+  transform: translateY(30px);
+  opacity: 0;
+}
+
+[data-theme="dark"] .theme-toggle .sun-icon {
+  transform: translateY(-30px);
+  opacity: 0;
+}
+
+[data-theme="dark"] .theme-toggle .moon-icon {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Location Suggestion Banner */
+.location-banner {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-lg);
+  z-index: 500;
+  max-width: calc(100% - 32px);
+  opacity: 0;
+  transition: all 0.3s ease;
+  border: 2px solid var(--primary-color);
+}
+
+.location-banner.active {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.location-banner .bob-mini {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.location-banner .banner-text {
+  flex: 1;
+}
+
+.location-banner .banner-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.location-banner .banner-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.location-banner .banner-flag {
+  font-size: 1.25rem;
+}
+
+.location-banner-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.location-banner-btn {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.location-banner-btn.yes {
+  background: var(--primary-gradient);
+  color: white;
+}
+
+.location-banner-btn.no {
+  background: var(--bg-color);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
 }
 
 /* Reduced motion */
