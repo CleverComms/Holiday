@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.14';
+const APP_VERSION = '2.5.15';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -65,7 +65,6 @@ const elements = {
   altSurchargeIndicator: document.getElementById('altSurchargeIndicator'),
   dealIndicator: document.getElementById('dealIndicator'),
   dealText: document.getElementById('dealText'),
-  quickAmounts: document.getElementById('quickAmounts'),
   altPriceCard: document.getElementById('altPriceCard'),
 
   // Home currency card
@@ -416,52 +415,6 @@ function setupEventListeners() {
       const isPlus = btn.classList.contains('plus');
       adjustPrice(target, isPlus ? 1 : -1);
     });
-  });
-
-  // Quick amounts - update local and sync others if linked
-  elements.quickAmounts?.addEventListener('click', (e) => {
-    const btn = e.target.closest('.quick-btn');
-    if (!btn) return;
-
-    // Debounce rapid clicks
-    const now = Date.now();
-    if (isSyncing || (now - lastSyncTime) < SYNC_DEBOUNCE_MS) return;
-    lastSyncTime = now;
-    isSyncing = true;
-
-    const amount = parseFloat(btn.dataset.amount);
-    if (isNaN(amount) || amount <= 0) {
-      isSyncing = false;
-      return;
-    }
-
-    try {
-      state.localAmount = amount;
-      elements.localAmountInput.value = amount;
-
-      // Sync other currencies if linked
-      if (state.pricesLocked) {
-        const { localCurrency, altCurrency, homeCurrency, rates } = state;
-        if (rates[localCurrency] && rates[altCurrency] && rates[homeCurrency]) {
-          const localToUsd = 1 / rates[localCurrency];
-          const usdToAlt = rates[altCurrency];
-          const usdToHome = rates[homeCurrency];
-          const localToAlt = localToUsd * usdToAlt;
-
-          let altAmount = amount * localToAlt;
-          state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
-          elements.altAmountInput.value = state.altAmount;
-
-          let homeAmount = amount * localToUsd * usdToHome;
-          state.homeAmount = homeAmount >= 10 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
-          elements.homeAmountInput.value = state.homeAmount;
-        }
-      }
-
-      calculatePrices();
-    } finally {
-      isSyncing = false;
-    }
   });
 
   // Currency modal
@@ -972,20 +925,6 @@ function formatNumber(num, currency) {
   const noDecimalCurrencies = ['JPY', 'KRW', 'VND', 'IDR', 'CLP', 'HUF'];
   if (noDecimalCurrencies.includes(currency)) decimals = 0;
   return num.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
-}
-
-function updateQuickAmounts() {
-  const { localCurrency } = state;
-  let denominations = [50, 100, 200, 500, 1000];
-
-  const highValueCurrencies = ['JPY', 'KRW', 'VND', 'IDR', 'CLP', 'HUF', 'COP'];
-  if (highValueCurrencies.includes(localCurrency)) {
-    denominations = [500, 1000, 2000, 5000, 10000];
-  }
-
-  elements.quickAmounts.innerHTML = denominations.map(amount =>
-    `<button class="quick-btn" data-amount="${amount}">${amount >= 1000 ? (amount/1000) + 'k' : amount}</button>`
-  ).join('');
 }
 
 // =============================================
@@ -2225,7 +2164,6 @@ function render() {
   const hasAltCurrency = countryInfo?.alsoAccepted && countryInfo.alsoAccepted.length > 0;
   elements.altPriceCard.style.display = hasAltCurrency || !state.destinationCountry ? 'block' : 'none';
 
-  updateQuickAmounts();
   updateLockUI();
   updateSurchargeUI();
   calculatePrices();
