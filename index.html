@@ -79,10 +79,12 @@
               <span class="price-currency" id="localCurrency">MXN</span>
               <span class="price-label">Local Price</span>
             </div>
-            <div class="price-input-row">
-              <button class="price-adjust minus" data-target="local">−</button>
+            <div class="price-input-wrapper">
               <input type="number" id="localAmountInput" inputmode="decimal" placeholder="0" value="500">
-              <button class="price-adjust plus" data-target="local">+</button>
+              <div class="price-adjust-row">
+                <button class="price-adjust minus" data-target="local">−</button>
+                <button class="price-adjust plus" data-target="local">+</button>
+              </div>
             </div>
             <div class="price-home-value">
               <span class="home-flag" id="localHomeFlag">🇬🇧</span>
@@ -97,10 +99,12 @@
               <span class="price-currency" id="altCurrency">USD</span>
               <span class="price-label">Also Quoted</span>
             </div>
-            <div class="price-input-row">
-              <button class="price-adjust minus" data-target="alt">−</button>
+            <div class="price-input-wrapper">
               <input type="number" id="altAmountInput" inputmode="decimal" placeholder="0" value="30">
-              <button class="price-adjust plus" data-target="alt">+</button>
+              <div class="price-adjust-row">
+                <button class="price-adjust minus" data-target="alt">−</button>
+                <button class="price-adjust plus" data-target="alt">+</button>
+              </div>
             </div>
             <div class="price-home-value">
               <span class="home-flag" id="altHomeFlag">🇬🇧</span>
