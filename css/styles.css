@@ -387,6 +387,9 @@ button {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
 }
 
 .dest-select-btn:active {
