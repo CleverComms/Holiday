@@ -340,6 +340,27 @@ button {
   color: var(--text-muted);
   margin-bottom: 8px;
   font-weight: 500;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.greeting-scroll {
+  display: inline-block;
+  animation: greeting-scroll 12s linear infinite;
+  padding-left: 100%;
+}
+
+.locale-greeting:hover .greeting-scroll {
+  animation-play-state: paused;
+}
+
+@keyframes greeting-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 
 .greeting-translation {
@@ -442,10 +463,15 @@ button {
   border-radius: var(--radius-lg);
   padding: 12px 16px;
   box-shadow: var(--shadow-md);
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-rows: auto auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.price-cards-stack .price-card .price-card-row {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
 }
 
@@ -465,9 +491,16 @@ button {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
+  padding: 8px;
   border-radius: var(--radius-sm);
   transition: background 0.2s ease;
+  position: relative;
+  z-index: 1;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+}
+
+.price-card-info * {
+  pointer-events: none;
 }
 
 .price-card-info:hover,
@@ -547,7 +580,6 @@ button {
 
 /* Home equivalent row */
 .price-cards-stack .price-home-value {
-  grid-column: 1 / -1;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -569,7 +601,6 @@ button {
 
 /* Surcharge indicator in cards */
 .price-cards-stack .surcharge-indicator {
-  grid-column: 1 / -1;
   font-size: 0.7rem;
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.85);
@@ -2865,6 +2896,37 @@ button {
   0% { opacity: 1; }
   60% { opacity: 0.3; }
   100% { opacity: 0; }
+}
+
+/* The moon - sets from upper-right to bottom-right */
+.sunrise-moon {
+  position: absolute;
+  top: 15%;
+  right: 15%;
+  font-size: 3rem;
+  animation: moonSet 2s ease-in forwards;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 200, 0.8));
+}
+
+@keyframes moonSet {
+  0% {
+    top: 15%;
+    right: 15%;
+    opacity: 1;
+    transform: rotate(0deg);
+  }
+  60% {
+    top: 50%;
+    right: 5%;
+    opacity: 0.6;
+    transform: rotate(-20deg);
+  }
+  100% {
+    top: 90%;
+    right: 0%;
+    opacity: 0;
+    transform: rotate(-30deg);
+  }
 }
 
 /* The sun - rises from bottom-left (east) to upper-right arc */

@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.23';
+const APP_VERSION = '2.5.28';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -938,34 +938,71 @@ function calculatePrices() {
     });
   }
 
-  // Update deal indicator
-  const diff = Math.abs(localInHome - altInHome);
-  const diffFormatted = `${homeSymbol}${formatNumber(diff, homeCurrency)}`;
+  // Update deal indicator - only show alt comparison if country accepts alt currency
+  const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;
+  const hasAltCurrency = countryInfo?.alsoAccepted && countryInfo.alsoAccepted.length > 0;
 
-  if (localInHome < altInHome && localAmount > 0 && altAmount > 0) {
-    elements.dealIndicator.className = 'deal-indicator';
-    elements.dealText.textContent = `Local price saves ${diffFormatted}`;
-  } else if (altInHome < localInHome && localAmount > 0 && altAmount > 0) {
-    elements.dealIndicator.className = 'deal-indicator alt-better';
-    elements.dealText.textContent = `${altCurrency} price saves ${diffFormatted}`;
+  if (hasAltCurrency || !state.destinationCountry) {
+    // Show comparison between local and alt
+    const diff = Math.abs(localInHome - altInHome);
+    const diffFormatted = `${homeSymbol}${formatNumber(diff, homeCurrency)}`;
+
+    if (localInHome < altInHome && localAmount > 0 && altAmount > 0) {
+      elements.dealIndicator.className = 'deal-indicator';
+      elements.dealText.textContent = `Local price saves ${diffFormatted}`;
+    } else if (altInHome < localInHome && localAmount > 0 && altAmount > 0) {
+      elements.dealIndicator.className = 'deal-indicator alt-better';
+      elements.dealText.textContent = `${altCurrency} price saves ${diffFormatted}`;
+    } else {
+      elements.dealIndicator.className = 'deal-indicator same';
+      elements.dealText.textContent = localAmount > 0 || altAmount > 0 ? 'Same price' : 'Enter prices to compare';
+    }
   } else {
-    elements.dealIndicator.className = 'deal-indicator same';
-    elements.dealText.textContent = localAmount > 0 || altAmount > 0 ? 'Same price' : 'Enter prices to compare';
+    // No alt currency - just show home equivalent info
+    elements.dealIndicator.className = 'deal-indicator';
+    if (localAmount > 0) {
+      elements.dealText.textContent = `${homeSymbol}${formatNumber(localInHome, homeCurrency)} in ${homeCurrency}`;
+    } else {
+      elements.dealText.textContent = 'Enter a price to convert';
+    }
   }
 
   saveState();
 }
 
-// Get short currency name - strip country prefix for unambiguous names
+// Get short currency name - abbreviate country names for common currencies
 function getShortCurrencyName(name) {
   if (!name) return '';
 
-  // Keep full name for ambiguous currencies (Dollar, Krone, Franc, etc.)
-  const keepFull = ['Dollar', 'Krone', 'Krona', 'Franc', 'Rupee', 'Dinar'];
-  const lastWord = name.split(' ').pop();
+  // Country name abbreviations
+  const countryAbbrevs = {
+    'New Zealand': 'NZ',
+    'United States': 'US',
+    'United Kingdom': 'UK',
+    'South African': 'SA',
+    'Hong Kong': 'HK',
+    'Australian': 'AU',
+    'Canadian': 'CA',
+    'Singapore': 'SG',
+    'Saudi': 'Saudi',
+    'United Arab Emirates': 'UAE'
+  };
+
+  // Apply abbreviations
+  let shortName = name;
+  for (const [full, abbrev] of Object.entries(countryAbbrevs)) {
+    if (name.includes(full)) {
+      shortName = name.replace(full, abbrev);
+      break;
+    }
+  }
+
+  // For ambiguous currencies (Dollar, Krone, etc.) keep the abbreviated country prefix
+  const keepFull = ['Dollar', 'Krone', 'Krona', 'Franc', 'Rupee', 'Dinar', 'Rand', 'Peso'];
+  const lastWord = shortName.split(' ').pop();
 
   if (keepFull.includes(lastWord)) {
-    return name; // Keep "US Dollar", "Canadian Dollar", etc.
+    return shortName; // Keep "NZ Dollar", "US Dollar", etc.
   }
 
   // For unique names, use just the currency type
@@ -1522,8 +1559,12 @@ function initTheme() {
   const savedTheme = localStorage.getItem('holibobsTheme');
   if (savedTheme) {
     document.documentElement.setAttribute('data-theme', savedTheme);
+  } else {
+    // Auto-set based on time of day (dark from 7pm to 7am)
+    const hour = new Date().getHours();
+    const isNightTime = hour >= 19 || hour < 7;
+    document.documentElement.setAttribute('data-theme', isNightTime ? 'dark' : 'light');
   }
-  // If no saved theme, let system preference handle it via CSS
 }
 
 function toggleTheme() {
@@ -1639,6 +1680,12 @@ function createSunrise() {
   }
   sunriseContainer.appendChild(starsLayer);
 
+  // Setting moon (goes down as sun rises)
+  const moon = document.createElement('div');
+  moon.className = 'sunrise-moon';
+  moon.textContent = '🌙';
+  sunriseContainer.appendChild(moon);
+
   // Horizon glow
   const horizon = document.createElement('div');
   horizon.className = 'sunrise-horizon';
@@ -1648,29 +1695,6 @@ function createSunrise() {
   const sun = document.createElement('div');
   sun.className = 'sunrise-sun';
   sunriseContainer.appendChild(sun);
-
-  // Flying birds
-  const birds = document.createElement('div');
-  birds.className = 'sunrise-birds';
-  birds.textContent = '🐦';
-  sunriseContainer.appendChild(birds);
-
-  // Second bird with slight delay
-  const birds2 = document.createElement('div');
-  birds2.className = 'sunrise-birds';
-  birds2.textContent = '🐦';
-  birds2.style.top = '40%';
-  birds2.style.animationDelay = '1s';
-  sunriseContainer.appendChild(birds2);
-
-  // Third bird
-  const birds3 = document.createElement('div');
-  birds3.className = 'sunrise-birds';
-  birds3.textContent = '🐦';
-  birds3.style.top = '32%';
-  birds3.style.animationDelay = '1.3s';
-  birds3.style.fontSize = '1rem';
-  sunriseContainer.appendChild(birds3);
 
   container.appendChild(sunriseContainer);
 }
@@ -2220,22 +2244,37 @@ function updateLocaleGreeting() {
   const country = state.destinationCountry;
   let langSetting = country ? (countryLanguages[country] || 'en') : 'en';
 
-  // Handle multilingual countries - randomly select one language
-  let langCode;
-  if (Array.isArray(langSetting)) {
-    langCode = langSetting[Math.floor(Math.random() * langSetting.length)];
+  // Build array of language codes to display
+  let langCodes = Array.isArray(langSetting) ? langSetting : [langSetting];
+
+  // Get English greeting for reference
+  const enGreeting = greetings.en[timeOfDay];
+
+  // Build greeting parts
+  let greetingParts = [];
+  let hasEnglish = langCodes.includes('en');
+
+  langCodes.forEach(langCode => {
+    const lang = greetings[langCode] || greetings.en;
+    if (langCode !== 'en') {
+      greetingParts.push(lang[timeOfDay]);
+    }
+  });
+
+  // Always include English at the end if there are non-English greetings
+  if (greetingParts.length > 0) {
+    greetingParts.push(enGreeting);
   } else {
-    langCode = langSetting;
+    // Only English
+    greetingParts.push(enGreeting);
   }
 
-  const lang = greetings[langCode] || greetings.en;
-
-  let greeting = lang[timeOfDay];
-
-  // Add English translation for non-Latin scripts
-  if (lang.isNonLatin) {
-    const enKey = 'en' + timeOfDay.charAt(0).toUpperCase() + timeOfDay.slice(1);
-    greeting += ` <span class="greeting-translation">(${lang[enKey]})</span>`;
+  // Join with separator and wrap for scrolling if long
+  let greeting;
+  if (greetingParts.length > 1) {
+    greeting = `<span class="greeting-scroll">${greetingParts.join(' · ')}</span>`;
+  } else {
+    greeting = greetingParts[0];
   }
 
   if (elements.localeGreeting) {
