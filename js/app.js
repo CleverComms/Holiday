@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.15';
+const APP_VERSION = '2.5.16';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -2004,6 +2004,9 @@ window.addEventListener('pageshow', (event) => {
 
 // Check for updates periodically (every 30 minutes)
 setInterval(checkForUpdates, 30 * 60 * 1000);
+
+// Update greeting periodically (every 30 minutes)
+setInterval(updateLocaleGreeting, 30 * 60 * 1000);
 
 // =============================================
 // TOAST
