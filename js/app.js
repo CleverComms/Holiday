@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.4.8';
+const APP_VERSION = '2.4.9';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -224,11 +224,14 @@ async function init() {
   setupEventListeners();
   displayVersion();
 
+  render();
+
   if (isFirstLoad) {
-    showSetupWizard();
-    detectUserLocation(true); // On first load, detect for setup wizard
+    // Mark setup as complete and detect location
+    localStorage.setItem('holibobsSetupComplete', 'true');
+    detectUserLocation(true);
+    showToast('Welcome to HoliBobs! 🦝');
   } else {
-    render();
     // Check if we should offer location detection (non-annoying prompt)
     checkLocationSuggestion();
   }
