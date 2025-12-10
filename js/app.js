@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.26';
+const APP_VERSION = '2.5.27';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -938,19 +938,33 @@ function calculatePrices() {
     });
   }
 
-  // Update deal indicator
-  const diff = Math.abs(localInHome - altInHome);
-  const diffFormatted = `${homeSymbol}${formatNumber(diff, homeCurrency)}`;
+  // Update deal indicator - only show alt comparison if country accepts alt currency
+  const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;
+  const hasAltCurrency = countryInfo?.alsoAccepted && countryInfo.alsoAccepted.length > 0;
 
-  if (localInHome < altInHome && localAmount > 0 && altAmount > 0) {
-    elements.dealIndicator.className = 'deal-indicator';
-    elements.dealText.textContent = `Local price saves ${diffFormatted}`;
-  } else if (altInHome < localInHome && localAmount > 0 && altAmount > 0) {
-    elements.dealIndicator.className = 'deal-indicator alt-better';
-    elements.dealText.textContent = `${altCurrency} price saves ${diffFormatted}`;
+  if (hasAltCurrency || !state.destinationCountry) {
+    // Show comparison between local and alt
+    const diff = Math.abs(localInHome - altInHome);
+    const diffFormatted = `${homeSymbol}${formatNumber(diff, homeCurrency)}`;
+
+    if (localInHome < altInHome && localAmount > 0 && altAmount > 0) {
+      elements.dealIndicator.className = 'deal-indicator';
+      elements.dealText.textContent = `Local price saves ${diffFormatted}`;
+    } else if (altInHome < localInHome && localAmount > 0 && altAmount > 0) {
+      elements.dealIndicator.className = 'deal-indicator alt-better';
+      elements.dealText.textContent = `${altCurrency} price saves ${diffFormatted}`;
+    } else {
+      elements.dealIndicator.className = 'deal-indicator same';
+      elements.dealText.textContent = localAmount > 0 || altAmount > 0 ? 'Same price' : 'Enter prices to compare';
+    }
   } else {
-    elements.dealIndicator.className = 'deal-indicator same';
-    elements.dealText.textContent = localAmount > 0 || altAmount > 0 ? 'Same price' : 'Enter prices to compare';
+    // No alt currency - just show home equivalent info
+    elements.dealIndicator.className = 'deal-indicator';
+    if (localAmount > 0) {
+      elements.dealText.textContent = `${homeSymbol}${formatNumber(localInHome, homeCurrency)} in ${homeCurrency}`;
+    } else {
+      elements.dealText.textContent = 'Enter a price to convert';
+    }
   }
 
   saveState();
