@@ -377,27 +377,42 @@ function setupEventListeners() {
   // Price inputs
   elements.localAmountInput.addEventListener('input', (e) => {
     if (isSyncing) return;
-    state.localAmount = parseFloat(e.target.value) || 0;
-    if (state.pricesLocked) {
-      syncLockedPrices('local');
+    isSyncing = true;
+    try {
+      state.localAmount = parseFloat(e.target.value) || 0;
+      if (state.pricesLocked) {
+        syncLockedPrices('local');
+      }
+      calculatePrices();
+    } finally {
+      isSyncing = false;
     }
-    calculatePrices();
   });
 
   elements.altAmountInput.addEventListener('input', (e) => {
     if (isSyncing) return;
-    state.altAmount = parseFloat(e.target.value) || 0;
-    if (state.pricesLocked) {
-      syncLockedPrices('alt');
+    isSyncing = true;
+    try {
+      state.altAmount = parseFloat(e.target.value) || 0;
+      if (state.pricesLocked) {
+        syncLockedPrices('alt');
+      }
+      calculatePrices();
+    } finally {
+      isSyncing = false;
     }
-    calculatePrices();
   });
 
   // Home amount input
   elements.homeAmountInput.addEventListener('input', (e) => {
     if (isSyncing) return;
-    state.homeAmount = parseFloat(e.target.value) || 0;
-    calculateHomeConversions();
+    isSyncing = true;
+    try {
+      state.homeAmount = parseFloat(e.target.value) || 0;
+      calculateHomeConversions();
+    } finally {
+      isSyncing = false;
+    }
   });
 
   // +/- buttons for home amount
@@ -600,9 +615,7 @@ function adjustHomeAmount(direction) {
 }
 
 function calculateHomeConversions() {
-  // Prevent re-entrant calls
-  if (isSyncing) return;
-
+  // Note: isSyncing is managed by callers (home input handler)
   // Only sync if prices are locked
   if (!state.pricesLocked) {
     saveState();
@@ -688,55 +701,50 @@ function updateLockUI() {
 }
 
 function syncLockedPrices(source) {
-  // Prevent re-entrant calls
-  if (isSyncing) return;
-  isSyncing = true;
+  // Note: isSyncing is managed by callers (adjustPrice, togglePriceLock, etc.)
+  // This function should not check/set isSyncing itself to avoid conflicts
 
-  try {
-    const { localCurrency, altCurrency, homeCurrency, rates } = state;
+  const { localCurrency, altCurrency, homeCurrency, rates } = state;
 
-    if (!rates[localCurrency] || !rates[altCurrency] || !rates[homeCurrency]) return;
+  if (!rates[localCurrency] || !rates[altCurrency] || !rates[homeCurrency]) return;
 
-    // Exchange rates via USD
-    const localToUsd = 1 / rates[localCurrency];
-    const usdToAlt = rates[altCurrency];
-    const usdToHome = rates[homeCurrency];
-    const localToAlt = localToUsd * usdToAlt;
+  // Exchange rates via USD
+  const localToUsd = 1 / rates[localCurrency];
+  const usdToAlt = rates[altCurrency];
+  const usdToHome = rates[homeCurrency];
+  const localToAlt = localToUsd * usdToAlt;
 
-    if (source === 'local') {
-      // Calculate alt from local
-      let altAmount = state.localAmount * localToAlt;
-      state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
-      elements.altAmountInput.value = state.altAmount;
+  if (source === 'local') {
+    // Calculate alt from local
+    let altAmount = state.localAmount * localToAlt;
+    state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
+    elements.altAmountInput.value = state.altAmount;
 
-      // Calculate home from local
-      let homeAmount = state.localAmount * localToUsd * usdToHome;
-      state.homeAmount = homeAmount >= 10 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
-      elements.homeAmountInput.value = state.homeAmount;
-    } else if (source === 'alt') {
-      // Calculate local from alt
-      let localAmount = state.altAmount / localToAlt;
-      state.localAmount = localAmount >= 10 ? Math.round(localAmount) : Math.round(localAmount * 10) / 10;
-      elements.localAmountInput.value = state.localAmount;
+    // Calculate home from local
+    let homeAmount = state.localAmount * localToUsd * usdToHome;
+    state.homeAmount = homeAmount >= 10 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
+    elements.homeAmountInput.value = state.homeAmount;
+  } else if (source === 'alt') {
+    // Calculate local from alt
+    let localAmount = state.altAmount / localToAlt;
+    state.localAmount = localAmount >= 10 ? Math.round(localAmount) : Math.round(localAmount * 10) / 10;
+    elements.localAmountInput.value = state.localAmount;
 
-      // Calculate home from alt
-      let homeAmount = state.altAmount / usdToAlt * usdToHome;
-      state.homeAmount = homeAmount >= 10 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
-      elements.homeAmountInput.value = state.homeAmount;
-    } else if (source === 'home') {
-      // Calculate local and alt from home
-      const homeInUsd = state.homeAmount / usdToHome;
+    // Calculate home from alt
+    let homeAmount = state.altAmount / usdToAlt * usdToHome;
+    state.homeAmount = homeAmount >= 10 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
+    elements.homeAmountInput.value = state.homeAmount;
+  } else if (source === 'home') {
+    // Calculate local and alt from home
+    const homeInUsd = state.homeAmount / usdToHome;
 
-      let localAmount = homeInUsd * rates[localCurrency];
-      state.localAmount = Math.round(localAmount);
-      elements.localAmountInput.value = state.localAmount;
+    let localAmount = homeInUsd * rates[localCurrency];
+    state.localAmount = Math.round(localAmount);
+    elements.localAmountInput.value = state.localAmount;
 
-      let altAmount = homeInUsd * usdToAlt;
-      state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
-      elements.altAmountInput.value = state.altAmount;
-    }
-  } finally {
-    isSyncing = false;
+    let altAmount = homeInUsd * usdToAlt;
+    state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
+    elements.altAmountInput.value = state.altAmount;
   }
 }
 
@@ -2170,7 +2178,9 @@ function render() {
   updateLockUI();
   updateSurchargeUI();
   calculatePrices();
-  calculateHomeConversions();
+  // Note: Don't call calculateHomeConversions() here - it would sync from home
+  // to local/alt and overwrite user changes. Only sync when user actually
+  // changes the home input.
   renderPaymentInfo();
   renderScams();
   updateRateStatus();
