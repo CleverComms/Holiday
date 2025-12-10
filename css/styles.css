@@ -538,6 +538,8 @@ button {
   border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.9);
   color: var(--text-primary);
+  position: relative;
+  z-index: 3;
 }
 
 .price-card-value input:focus {
@@ -559,6 +561,9 @@ button {
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
+  pointer-events: auto;
+  position: relative;
+  z-index: 5;
 }
 
 .price-cards-stack .price-adjust:active {
