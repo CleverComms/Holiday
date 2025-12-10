@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.18';
+const APP_VERSION = '2.5.19';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -849,7 +849,11 @@ function calculatePrices() {
 
   // Get currency info
   const homeInfo = currencies[homeCurrency];
+  const localInfo = currencies[localCurrency];
+  const altInfo = currencies[altCurrency];
   const homeSymbol = homeInfo?.symbol || '';
+  const localSymbol = localInfo?.symbol || '';
+  const altSymbol = altInfo?.symbol || '';
 
   // Update displays
   elements.localHomeAmount.textContent = `${homeSymbol}${formatNumber(localInHome, homeCurrency)}`;
@@ -859,22 +863,39 @@ function calculatePrices() {
   const surchargeIndicators = [elements.localSurchargeIndicator, elements.altSurchargeIndicator, elements.homeSurchargeIndicator];
 
   if (surchargeAmount > 0) {
-    // Calculate the fee amount in home currency (use local price as reference)
-    const localInUsdBase = localAmount / rates[localCurrency];
-    const localInHomeBase = localInUsdBase * rates[homeCurrency];
-    const feeInHome = localInHome - localInHomeBase;
-    const feeFormatted = `${homeSymbol}${formatNumber(feeInHome, homeCurrency)}`;
+    // Calculate fee amounts in all currencies
+    let feeInLocal, feeInAlt, feeInHome;
 
-    const surchargeLabel = surchargeType === 'percent'
-      ? `+${surchargeAmount}% fee (${feeFormatted})`
-      : `+${homeSymbol}${surchargeAmount} fee`;
+    if (surchargeType === 'percent') {
+      feeInLocal = localAmount * (surchargeAmount / 100);
+      feeInAlt = altAmount * (surchargeAmount / 100);
+      feeInHome = (localAmount / rates[localCurrency] * rates[homeCurrency]) * (surchargeAmount / 100);
+    } else {
+      // Fixed fee is in home currency
+      feeInHome = surchargeAmount;
+      const feeInUsd = surchargeAmount / rates[homeCurrency];
+      feeInLocal = feeInUsd * rates[localCurrency];
+      feeInAlt = feeInUsd * rates[altCurrency];
+    }
+
+    // Calculate totals
+    const totalLocal = localAmount + feeInLocal;
+    const totalAlt = altAmount + feeInAlt;
+    const totalHome = (localAmount / rates[localCurrency] * rates[homeCurrency]) + feeInHome;
+
+    // Format the surcharge label with fee and total in all currencies
+    const feeLabel = surchargeType === 'percent' ? `+${surchargeAmount}%` : `+${homeSymbol}${surchargeAmount}`;
+
+    const surchargeLabel = `${feeLabel} fee: ${localSymbol}${formatNumber(feeInLocal, localCurrency)} / ${altSymbol}${formatNumber(feeInAlt, altCurrency)} / ${homeSymbol}${formatNumber(feeInHome, homeCurrency)}
+Total: ${localSymbol}${formatNumber(totalLocal, localCurrency)} / ${altSymbol}${formatNumber(totalAlt, altCurrency)} / ${homeSymbol}${formatNumber(totalHome, homeCurrency)}`;
+
     const oldLabel = elements.localSurchargeIndicator?.textContent || '';
 
     // Update all surcharge indicators
     surchargeIndicators.forEach(indicator => {
       if (!indicator) return;
       indicator.classList.remove('animate-out');
-      indicator.textContent = surchargeLabel;
+      indicator.innerHTML = surchargeLabel.replace('\n', '<br>');
 
       // Trigger animation if surcharge changed
       if (oldLabel !== surchargeLabel) {
