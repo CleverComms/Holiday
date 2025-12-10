@@ -2344,7 +2344,8 @@ button {
 /* Dark theme specific overrides */
 [data-theme="dark"] .amount-input-wrapper input,
 [data-theme="dark"] .compare-input-group input,
-[data-theme="dark"] .price-input-wrapper input {
+[data-theme="dark"] .price-input-wrapper input,
+[data-theme="dark"] .home-card-input-wrapper input {
   background: var(--bg-color);
   color: var(--text-primary);
 }

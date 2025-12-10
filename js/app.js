@@ -1825,7 +1825,6 @@ function render() {
 
   // Update home currency card
   setFlagElement(elements.homeCardFlag, state.homeCurrency, 'lg');
-  const homeInfo = state.currencies[state.homeCurrency];
   elements.homeCardCurrency.textContent = `${homeInfo?.symbol || ''} ${state.homeCurrency}`;
   setFlagElement(elements.homeToLocalFlag, state.localCurrency);
   setFlagElement(elements.homeToAltFlag, state.altCurrency);
