@@ -2036,10 +2036,12 @@ button {
   transform: translateX(-50%) translateY(-100px);
   background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
   border-radius: var(--radius-lg);
-  padding: 12px 16px;
+  padding: 20px 24px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
+  text-align: center;
+  gap: 16px;
   box-shadow: var(--shadow-lg);
   z-index: 600;
   max-width: calc(100% - 32px);
@@ -2063,27 +2065,27 @@ button {
 }
 
 .update-text {
-  flex: 1;
   color: white;
 }
 
 .update-text strong {
   display: block;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
+  margin-bottom: 2px;
 }
 
 .update-text span {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   opacity: 0.9;
 }
 
 .update-btn {
-  padding: 8px 16px;
+  padding: 10px 24px;
   background: white;
   color: #38a169;
   border-radius: var(--radius-sm);
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   transition: all 0.2s ease;
 }
 

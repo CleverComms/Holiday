@@ -51,6 +51,7 @@ const elements = {
   altHomeFlag: document.getElementById('altHomeFlag'),
   altHomeAmount: document.getElementById('altHomeAmount'),
   surchargeIndicator: document.getElementById('surchargeIndicator'),
+  localSurchargeIndicator: document.getElementById('localSurchargeIndicator'),
   dealIndicator: document.getElementById('dealIndicator'),
   dealText: document.getElementById('dealText'),
   quickAmounts: document.getElementById('quickAmounts'),
@@ -204,7 +205,12 @@ function setFlagElement(element, currencyCode, size = 'md') {
 function setCountryFlag(element, countryName, size = 'md') {
   if (!element) return;
   const countryData = state.countries[countryName];
-  if (countryData) {
+  if (countryData && countryData.code) {
+    // Use country code directly (e.g., "FR" for France) instead of currency code
+    const sizeClass = size === 'lg' ? 'fi-lg' : (size === 'sm' ? 'fi-sm' : '');
+    element.innerHTML = `<span class="fi fi-${countryData.code.toLowerCase()} ${sizeClass}"></span>`;
+  } else if (countryData) {
+    // Fallback to currency flag if no country code
     setFlagElement(element, countryData.currency, size);
   } else {
     element.innerHTML = '';
@@ -682,7 +688,9 @@ function calculatePrices() {
   elements.localHomeAmount.textContent = `${homeSymbol}${formatNumber(localInHome, homeCurrency)}`;
   elements.altHomeAmount.textContent = `${homeSymbol}${formatNumber(altInHome, homeCurrency)}`;
 
-  // Show surcharge indication if applicable
+  // Show surcharge indication if applicable (on both local and alt cards)
+  const surchargeIndicators = [elements.surchargeIndicator, elements.localSurchargeIndicator];
+
   if (surchargeAmount > 0) {
     // Calculate the fee amount in home currency (use local price as reference)
     const localInUsdBase = localAmount / rates[localCurrency];
@@ -695,28 +703,32 @@ function calculatePrices() {
       : `+${homeSymbol}${surchargeAmount} fee`;
     const oldLabel = elements.surchargeIndicator.textContent;
 
-    // Remove animate-out class if present
-    elements.surchargeIndicator.classList.remove('animate-out');
-    elements.surchargeIndicator.textContent = surchargeLabel;
+    // Update both surcharge indicators
+    surchargeIndicators.forEach(indicator => {
+      if (!indicator) return;
+      indicator.classList.remove('animate-out');
+      indicator.textContent = surchargeLabel;
 
-    // Trigger animation if surcharge changed
-    if (oldLabel !== surchargeLabel) {
-      elements.surchargeIndicator.classList.remove('animate');
-      // Force reflow to restart animation
-      void elements.surchargeIndicator.offsetWidth;
-      elements.surchargeIndicator.classList.add('animate');
-    }
+      // Trigger animation if surcharge changed
+      if (oldLabel !== surchargeLabel) {
+        indicator.classList.remove('animate');
+        void indicator.offsetWidth;
+        indicator.classList.add('animate');
+      }
+    });
   } else {
     // Animate out if there was a previous surcharge
-    if (elements.surchargeIndicator.textContent) {
-      elements.surchargeIndicator.classList.remove('animate');
-      elements.surchargeIndicator.classList.add('animate-out');
-      // Clear text after animation completes
-      setTimeout(() => {
-        elements.surchargeIndicator.textContent = '';
-        elements.surchargeIndicator.classList.remove('animate-out');
-      }, 400);
-    }
+    surchargeIndicators.forEach(indicator => {
+      if (!indicator) return;
+      if (indicator.textContent) {
+        indicator.classList.remove('animate');
+        indicator.classList.add('animate-out');
+        setTimeout(() => {
+          indicator.textContent = '';
+          indicator.classList.remove('animate-out');
+        }, 400);
+      }
+    });
   }
 
   // Update deal indicator
