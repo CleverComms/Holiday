@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.11';
+const APP_VERSION = '2.5.12';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -29,6 +29,9 @@ let state = {
   scams: {},
   lastRateUpdate: null
 };
+
+// Guard flag to prevent re-entrant sync calls
+let isSyncing = false;
 
 // =============================================
 // DOM ELEMENTS
@@ -372,6 +375,7 @@ function setupEventListeners() {
 
   // Price inputs
   elements.localAmountInput.addEventListener('input', (e) => {
+    if (isSyncing) return;
     state.localAmount = parseFloat(e.target.value) || 0;
     if (state.pricesLocked) {
       syncLockedPrices('local');
@@ -380,6 +384,7 @@ function setupEventListeners() {
   });
 
   elements.altAmountInput.addEventListener('input', (e) => {
+    if (isSyncing) return;
     state.altAmount = parseFloat(e.target.value) || 0;
     if (state.pricesLocked) {
       syncLockedPrices('alt');
@@ -389,6 +394,7 @@ function setupEventListeners() {
 
   // Home amount input
   elements.homeAmountInput.addEventListener('input', (e) => {
+    if (isSyncing) return;
     state.homeAmount = parseFloat(e.target.value) || 0;
     calculateHomeConversions();
   });
@@ -586,6 +592,9 @@ function adjustHomeAmount(direction) {
 }
 
 function calculateHomeConversions() {
+  // Prevent re-entrant calls
+  if (isSyncing) return;
+
   // Only sync if prices are locked
   if (!state.pricesLocked) {
     saveState();
@@ -657,47 +666,55 @@ function updateLockUI() {
 }
 
 function syncLockedPrices(source) {
-  const { localCurrency, altCurrency, homeCurrency, rates } = state;
+  // Prevent re-entrant calls
+  if (isSyncing) return;
+  isSyncing = true;
 
-  if (!rates[localCurrency] || !rates[altCurrency] || !rates[homeCurrency]) return;
+  try {
+    const { localCurrency, altCurrency, homeCurrency, rates } = state;
 
-  // Exchange rates via USD
-  const localToUsd = 1 / rates[localCurrency];
-  const usdToAlt = rates[altCurrency];
-  const usdToHome = rates[homeCurrency];
-  const localToAlt = localToUsd * usdToAlt;
+    if (!rates[localCurrency] || !rates[altCurrency] || !rates[homeCurrency]) return;
 
-  if (source === 'local') {
-    // Calculate alt from local
-    let altAmount = state.localAmount * localToAlt;
-    state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
-    elements.altAmountInput.value = state.altAmount;
+    // Exchange rates via USD
+    const localToUsd = 1 / rates[localCurrency];
+    const usdToAlt = rates[altCurrency];
+    const usdToHome = rates[homeCurrency];
+    const localToAlt = localToUsd * usdToAlt;
 
-    // Calculate home from local
-    let homeAmount = state.localAmount * localToUsd * usdToHome;
-    state.homeAmount = homeAmount >= 10 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
-    elements.homeAmountInput.value = state.homeAmount;
-  } else if (source === 'alt') {
-    // Calculate local from alt
-    let localAmount = state.altAmount / localToAlt;
-    state.localAmount = localAmount >= 10 ? Math.round(localAmount) : Math.round(localAmount * 10) / 10;
-    elements.localAmountInput.value = state.localAmount;
+    if (source === 'local') {
+      // Calculate alt from local
+      let altAmount = state.localAmount * localToAlt;
+      state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
+      elements.altAmountInput.value = state.altAmount;
 
-    // Calculate home from alt
-    let homeAmount = state.altAmount / usdToAlt * usdToHome;
-    state.homeAmount = homeAmount >= 10 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
-    elements.homeAmountInput.value = state.homeAmount;
-  } else if (source === 'home') {
-    // Calculate local and alt from home
-    const homeInUsd = state.homeAmount / usdToHome;
+      // Calculate home from local
+      let homeAmount = state.localAmount * localToUsd * usdToHome;
+      state.homeAmount = homeAmount >= 10 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
+      elements.homeAmountInput.value = state.homeAmount;
+    } else if (source === 'alt') {
+      // Calculate local from alt
+      let localAmount = state.altAmount / localToAlt;
+      state.localAmount = localAmount >= 10 ? Math.round(localAmount) : Math.round(localAmount * 10) / 10;
+      elements.localAmountInput.value = state.localAmount;
 
-    let localAmount = homeInUsd * rates[localCurrency];
-    state.localAmount = Math.round(localAmount);
-    elements.localAmountInput.value = state.localAmount;
+      // Calculate home from alt
+      let homeAmount = state.altAmount / usdToAlt * usdToHome;
+      state.homeAmount = homeAmount >= 10 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
+      elements.homeAmountInput.value = state.homeAmount;
+    } else if (source === 'home') {
+      // Calculate local and alt from home
+      const homeInUsd = state.homeAmount / usdToHome;
 
-    let altAmount = homeInUsd * usdToAlt;
-    state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
-    elements.altAmountInput.value = state.altAmount;
+      let localAmount = homeInUsd * rates[localCurrency];
+      state.localAmount = Math.round(localAmount);
+      elements.localAmountInput.value = state.localAmount;
+
+      let altAmount = homeInUsd * usdToAlt;
+      state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
+      elements.altAmountInput.value = state.altAmount;
+    }
+  } finally {
+    isSyncing = false;
   }
 }
 
