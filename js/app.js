@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.4.9';
+const APP_VERSION = '2.4.11';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -640,8 +640,21 @@ function calculatePrices() {
     return;
   }
 
+  // Calculate local with surcharge applied
+  let localWithSurcharge = localAmount;
+  if (surchargeAmount > 0) {
+    if (surchargeType === 'percent') {
+      localWithSurcharge = localAmount * (1 + surchargeAmount / 100);
+    } else {
+      // Fixed surcharge in home currency - convert to local currency
+      const surchargeInUsd = surchargeAmount / rates[homeCurrency];
+      const surchargeInLocal = surchargeInUsd * rates[localCurrency];
+      localWithSurcharge = localAmount + surchargeInLocal;
+    }
+  }
+
   // Convert local price to home currency
-  const localInUsd = localAmount / rates[localCurrency];
+  const localInUsd = localWithSurcharge / rates[localCurrency];
   const localInHome = localInUsd * rates[homeCurrency];
 
   // Calculate alt with surcharge applied
@@ -671,7 +684,15 @@ function calculatePrices() {
 
   // Show surcharge indication if applicable
   if (surchargeAmount > 0) {
-    const surchargeLabel = surchargeType === 'percent' ? `+${surchargeAmount}% fee` : `+${homeSymbol}${surchargeAmount} fee`;
+    // Calculate the fee amount in home currency (use local price as reference)
+    const localInUsdBase = localAmount / rates[localCurrency];
+    const localInHomeBase = localInUsdBase * rates[homeCurrency];
+    const feeInHome = localInHome - localInHomeBase;
+    const feeFormatted = `${homeSymbol}${formatNumber(feeInHome, homeCurrency)}`;
+
+    const surchargeLabel = surchargeType === 'percent'
+      ? `+${surchargeAmount}% fee (${feeFormatted})`
+      : `+${homeSymbol}${surchargeAmount} fee`;
     const oldLabel = elements.surchargeIndicator.textContent;
 
     // Remove animate-out class if present
