@@ -460,7 +460,7 @@ button {
 .price-card-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: none;
   border: none;
   cursor: pointer;
@@ -477,19 +477,28 @@ button {
 }
 
 .price-cards-stack .price-flag {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
 }
 
-.price-cards-stack .price-currency {
+/* Currency code and name stacked vertically */
+.price-currency-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.price-card-info .price-currency {
   font-weight: 800;
   font-size: 1rem;
   color: white;
+  line-height: 1.2;
 }
 
-.price-cards-stack .price-currency-name {
-  font-size: 0.75rem;
+.price-card-info .price-currency-name {
+  font-size: 0.7rem;
   color: rgba(255, 255, 255, 0.7);
-  margin: 0;
+  line-height: 1.2;
 }
 
 /* Price Card Value (input + buttons) */
