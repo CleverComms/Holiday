@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.3';
+const APP_VERSION = '2.5.4';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -571,13 +571,27 @@ function calculateHomeConversions() {
   const localSymbol = localInfo?.symbol || '';
   const altSymbol = altInfo?.symbol || '';
 
-  // Format conversions
+  // Format conversions for display
   const localFormatted = formatNumber(homeInLocal, localCurrency);
   const altFormatted = formatNumber(homeInAlt, altCurrency);
 
-  // Update displays
+  // Update home card displays
   elements.homeToLocalAmount.textContent = `≈ ${localSymbol}${localFormatted} ${localCurrency}`;
   elements.homeToAltAmount.textContent = `≈ ${altSymbol}${altFormatted} ${altCurrency}`;
+
+  // Update local and alt price cards with rounded values
+  const roundedLocal = Math.round(homeInLocal);
+  const roundedAlt = Math.round(homeInAlt * 100) / 100; // Keep 2 decimals for USD
+
+  state.localAmount = roundedLocal;
+  state.altAmount = roundedAlt;
+
+  // Update input fields
+  elements.localAmountInput.value = roundedLocal;
+  elements.altAmountInput.value = roundedAlt;
+
+  // Recalculate prices to update the price cards
+  calculatePrices();
 
   saveState();
 }
