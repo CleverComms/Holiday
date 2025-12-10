@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.5';
+const APP_VERSION = '2.5.8';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -45,14 +45,16 @@ const elements = {
   altAmountInput: document.getElementById('altAmountInput'),
   localFlag: document.getElementById('localFlag'),
   localCurrency: document.getElementById('localCurrency'),
+  localCurrencyName: document.getElementById('localCurrencyName'),
   altFlag: document.getElementById('altFlag'),
   altCurrency: document.getElementById('altCurrency'),
+  altCurrencyName: document.getElementById('altCurrencyName'),
   localHomeFlag: document.getElementById('localHomeFlag'),
   localHomeAmount: document.getElementById('localHomeAmount'),
   altHomeFlag: document.getElementById('altHomeFlag'),
   altHomeAmount: document.getElementById('altHomeAmount'),
-  surchargeIndicator: document.getElementById('surchargeIndicator'),
   localSurchargeIndicator: document.getElementById('localSurchargeIndicator'),
+  altSurchargeIndicator: document.getElementById('altSurchargeIndicator'),
   dealIndicator: document.getElementById('dealIndicator'),
   dealText: document.getElementById('dealText'),
   quickAmounts: document.getElementById('quickAmounts'),
@@ -62,7 +64,9 @@ const elements = {
   homeCurrencyCard: document.getElementById('homeCurrencyCard'),
   homeCardFlag: document.getElementById('homeCardFlag'),
   homeCardCurrency: document.getElementById('homeCardCurrency'),
+  homeCurrencyName: document.getElementById('homeCurrencyName'),
   homeAmountInput: document.getElementById('homeAmountInput'),
+  homeSurchargeIndicator: document.getElementById('homeSurchargeIndicator'),
 
   // Lock toggle and surcharge
   lockToggleBtn: document.getElementById('lockToggleBtn'),
@@ -86,11 +90,15 @@ const elements = {
   paymentTip: document.getElementById('paymentTip'),
   paymentTipText: document.getElementById('paymentTipText'),
 
-  // Scams/Safety
+  // Scams/Safety tabs
+  countryTab: document.getElementById('countryTab'),
+  tipsTab: document.getElementById('tipsTab'),
+  countryTabFlag: document.getElementById('countryTabFlag'),
+  countryTabText: document.getElementById('countryTabText'),
+  countryTabContent: document.getElementById('countryTabContent'),
+  tipsTabContent: document.getElementById('tipsTabContent'),
+  noCountryMessage: document.getElementById('noCountryMessage'),
   generalScams: document.getElementById('generalScams'),
-  destinationSection: document.getElementById('destinationSection'),
-  destTitleFlag: document.getElementById('destTitleFlag'),
-  destTitleText: document.getElementById('destTitleText'),
   countryTips: document.getElementById('countryTips'),
   countryScams: document.getElementById('countryScams'),
 
@@ -523,6 +531,24 @@ function setupEventListeners() {
   elements.surchargePlus.addEventListener('click', () => adjustSurcharge(1));
   elements.surchargePercent.addEventListener('click', () => setSurchargeType('percent'));
   elements.surchargeFixed.addEventListener('click', () => setSurchargeType('fixed'));
+
+  // Safety tabs
+  elements.countryTab.addEventListener('click', () => switchSafetyTab('country'));
+  elements.tipsTab.addEventListener('click', () => switchSafetyTab('tips'));
+}
+
+function switchSafetyTab(tab) {
+  if (tab === 'country') {
+    elements.countryTab.classList.add('active');
+    elements.tipsTab.classList.remove('active');
+    elements.countryTabContent.classList.add('active');
+    elements.tipsTabContent.classList.remove('active');
+  } else {
+    elements.tipsTab.classList.add('active');
+    elements.countryTab.classList.remove('active');
+    elements.tipsTabContent.classList.add('active');
+    elements.countryTabContent.classList.remove('active');
+  }
 }
 
 // =============================================
@@ -549,31 +575,14 @@ function adjustHomeAmount(direction) {
 }
 
 function calculateHomeConversions() {
-  const { homeAmount, localCurrency, altCurrency, homeCurrency, rates } = state;
-
-  if (!rates[localCurrency] || !rates[altCurrency] || !rates[homeCurrency]) {
+  // Only sync if prices are locked
+  if (!state.pricesLocked) {
+    saveState();
     return;
   }
 
-  // Convert home currency to USD first, then to local and alt
-  const homeInUsd = homeAmount / rates[homeCurrency];
-  const homeInLocal = homeInUsd * rates[localCurrency];
-  const homeInAlt = homeInUsd * rates[altCurrency];
-
-  // Update local and alt price cards with rounded values
-  const roundedLocal = Math.round(homeInLocal);
-  const roundedAlt = Math.round(homeInAlt * 100) / 100; // Keep 2 decimals for USD
-
-  state.localAmount = roundedLocal;
-  state.altAmount = roundedAlt;
-
-  // Update input fields
-  elements.localAmountInput.value = roundedLocal;
-  elements.altAmountInput.value = roundedAlt;
-
-  // Recalculate prices to update the price cards
+  syncLockedPrices('home');
   calculatePrices();
-
   saveState();
 }
 
@@ -637,25 +646,47 @@ function updateLockUI() {
 }
 
 function syncLockedPrices(source) {
-  const { localCurrency, altCurrency, rates } = state;
+  const { localCurrency, altCurrency, homeCurrency, rates } = state;
 
-  if (!rates[localCurrency] || !rates[altCurrency]) return;
+  if (!rates[localCurrency] || !rates[altCurrency] || !rates[homeCurrency]) return;
 
-  // Exchange rate from local to alt
+  // Exchange rates via USD
   const localToUsd = 1 / rates[localCurrency];
   const usdToAlt = rates[altCurrency];
+  const usdToHome = rates[homeCurrency];
   const localToAlt = localToUsd * usdToAlt;
 
   if (source === 'local') {
-    // Calculate alt from local - round to whole number for cleaner display
+    // Calculate alt from local
     let altAmount = state.localAmount * localToAlt;
-    state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 10) / 10;
+    state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
     elements.altAmountInput.value = state.altAmount;
-  } else {
-    // Calculate local from alt - round to whole number for cleaner display
+
+    // Calculate home from local
+    let homeAmount = state.localAmount * localToUsd * usdToHome;
+    state.homeAmount = homeAmount >= 10 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
+    elements.homeAmountInput.value = state.homeAmount;
+  } else if (source === 'alt') {
+    // Calculate local from alt
     let localAmount = state.altAmount / localToAlt;
     state.localAmount = localAmount >= 10 ? Math.round(localAmount) : Math.round(localAmount * 10) / 10;
     elements.localAmountInput.value = state.localAmount;
+
+    // Calculate home from alt
+    let homeAmount = state.altAmount / usdToAlt * usdToHome;
+    state.homeAmount = homeAmount >= 10 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
+    elements.homeAmountInput.value = state.homeAmount;
+  } else if (source === 'home') {
+    // Calculate local and alt from home
+    const homeInUsd = state.homeAmount / usdToHome;
+
+    let localAmount = homeInUsd * rates[localCurrency];
+    state.localAmount = Math.round(localAmount);
+    elements.localAmountInput.value = state.localAmount;
+
+    let altAmount = homeInUsd * usdToAlt;
+    state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
+    elements.altAmountInput.value = state.altAmount;
   }
 }
 
@@ -760,8 +791,8 @@ function calculatePrices() {
   elements.localHomeAmount.textContent = `${homeSymbol}${formatNumber(localInHome, homeCurrency)}`;
   elements.altHomeAmount.textContent = `${homeSymbol}${formatNumber(altInHome, homeCurrency)}`;
 
-  // Show surcharge indication if applicable (on both local and alt cards)
-  const surchargeIndicators = [elements.surchargeIndicator, elements.localSurchargeIndicator];
+  // Show surcharge indication if applicable (on all three cards)
+  const surchargeIndicators = [elements.localSurchargeIndicator, elements.altSurchargeIndicator, elements.homeSurchargeIndicator];
 
   if (surchargeAmount > 0) {
     // Calculate the fee amount in home currency (use local price as reference)
@@ -773,9 +804,9 @@ function calculatePrices() {
     const surchargeLabel = surchargeType === 'percent'
       ? `+${surchargeAmount}% fee (${feeFormatted})`
       : `+${homeSymbol}${surchargeAmount} fee`;
-    const oldLabel = elements.surchargeIndicator.textContent;
+    const oldLabel = elements.localSurchargeIndicator?.textContent || '';
 
-    // Update both surcharge indicators
+    // Update all surcharge indicators
     surchargeIndicators.forEach(indicator => {
       if (!indicator) return;
       indicator.classList.remove('animate-out');
@@ -819,6 +850,23 @@ function calculatePrices() {
   }
 
   saveState();
+}
+
+// Get short currency name - strip country prefix for unambiguous names
+function getShortCurrencyName(name) {
+  if (!name) return '';
+
+  // Keep full name for ambiguous currencies (Dollar, Krone, Franc, etc.)
+  const keepFull = ['Dollar', 'Krone', 'Krona', 'Franc', 'Rupee', 'Dinar'];
+  const lastWord = name.split(' ').pop();
+
+  if (keepFull.includes(lastWord)) {
+    return name; // Keep "US Dollar", "Canadian Dollar", etc.
+  }
+
+  // For unique names, use just the currency type
+  // "British Pound" -> "Pound", "Japanese Yen" -> "Yen", "Euro" -> "Euro"
+  return lastWord;
 }
 
 function formatNumber(num, currency) {
@@ -1163,6 +1211,7 @@ function copyShareUrl() {
 // =============================================
 
 function renderScams() {
+  // Render general safety tips
   if (state.scams.general) {
     elements.generalScams.innerHTML = state.scams.general.map(scam => `
       <div class="scam-card ${scam.severity}">
@@ -1176,18 +1225,25 @@ function renderScams() {
     `).join('');
   }
 
+  // Render country-specific safety info
   if (state.destinationCountry && state.scams.countries) {
     const countryScams = state.scams.countries[state.destinationCountry];
     if (countryScams) {
-      elements.destinationSection.style.display = 'block';
-      elements.destTitleFlag.textContent = countryScams.flag || '';
-      elements.destTitleText.textContent = `${state.destinationCountry} Safety`;
+      // Update tab with country flag and name
+      elements.countryTabFlag.textContent = countryScams.flag || '🌍';
+      elements.countryTabText.textContent = `${state.destinationCountry} Safety`;
+
+      // Hide "no country" message, show content
+      elements.noCountryMessage.style.display = 'none';
 
       if (countryScams.tips) {
+        elements.countryTips.style.display = 'block';
         elements.countryTips.innerHTML = `<ul>${countryScams.tips.map(tip => `<li>${tip}</li>`).join('')}</ul>`;
+      } else {
+        elements.countryTips.style.display = 'none';
       }
 
-      if (countryScams.scams) {
+      if (countryScams.scams && countryScams.scams.length > 0) {
         elements.countryScams.innerHTML = countryScams.scams.map(scam => `
           <div class="scam-card ${scam.severity}">
             <div class="scam-header">
@@ -1198,14 +1254,23 @@ function renderScams() {
             <p class="scam-description">${scam.description}</p>
           </div>
         `).join('');
+      } else {
+        elements.countryScams.innerHTML = '';
       }
     } else {
-      elements.destinationSection.style.display = 'none';
+      showNoCountryMessage();
     }
   } else {
-    elements.destinationSection.style.display = 'none';
+    showNoCountryMessage();
   }
+}
 
+function showNoCountryMessage() {
+  elements.countryTabFlag.textContent = '🌍';
+  elements.countryTabText.textContent = 'Country Safety';
+  elements.noCountryMessage.style.display = 'block';
+  elements.countryTips.style.display = 'none';
+  elements.countryScams.innerHTML = '';
 }
 
 function renderPaymentInfo() {
@@ -1922,8 +1987,10 @@ function render() {
 
   setFlagElement(elements.localFlag, state.localCurrency, 'lg');
   elements.localCurrency.textContent = `${localInfo?.symbol || ''} ${state.localCurrency}`;
+  elements.localCurrencyName.textContent = getShortCurrencyName(localInfo?.name);
   setFlagElement(elements.altFlag, state.altCurrency, 'lg');
   elements.altCurrency.textContent = `${altInfo?.symbol || ''} ${state.altCurrency}`;
+  elements.altCurrencyName.textContent = getShortCurrencyName(altInfo?.name);
 
   setFlagElement(elements.localHomeFlag, state.homeCurrency);
   setFlagElement(elements.altHomeFlag, state.homeCurrency);
@@ -1936,6 +2003,7 @@ function render() {
   // Update home currency card
   setFlagElement(elements.homeCardFlag, state.homeCurrency, 'lg');
   elements.homeCardCurrency.textContent = `${homeInfo?.symbol || ''} ${state.homeCurrency}`;
+  elements.homeCurrencyName.textContent = getShortCurrencyName(homeInfo?.name);
 
   // Show/hide alt card based on destination
   const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;

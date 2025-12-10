@@ -79,6 +79,7 @@
               <span class="price-currency" id="localCurrency">MXN</span>
               <span class="price-label">Local Price</span>
             </div>
+            <span class="price-currency-name" id="localCurrencyName">Mexican Peso</span>
             <div class="price-input-wrapper">
               <input type="number" id="localAmountInput" inputmode="decimal" placeholder="0" value="500">
               <div class="price-adjust-row">
@@ -100,6 +101,7 @@
               <span class="price-currency" id="altCurrency">USD</span>
               <span class="price-label">Also Quoted</span>
             </div>
+            <span class="price-currency-name" id="altCurrencyName">US Dollar</span>
             <div class="price-input-wrapper">
               <input type="number" id="altAmountInput" inputmode="decimal" placeholder="0" value="30">
               <div class="price-adjust-row">
@@ -111,7 +113,7 @@
               <span class="home-flag" id="altHomeFlag">🇬🇧</span>
               <span class="home-amount" id="altHomeAmount">£24.00</span>
             </div>
-            <span class="surcharge-indicator" id="surchargeIndicator"></span>
+            <span class="surcharge-indicator" id="altSurchargeIndicator"></span>
           </div>
         </div>
 
@@ -157,11 +159,13 @@
             <span class="home-card-flag" id="homeCardFlag">🇬🇧</span>
             <span class="home-card-currency" id="homeCardCurrency">£ GBP</span>
           </div>
+          <span class="home-card-currency-name" id="homeCurrencyName">British Pound</span>
           <div class="home-card-input-wrapper">
             <button class="home-adjust minus" data-target="home">−</button>
             <input type="number" id="homeAmountInput" inputmode="decimal" placeholder="0" value="50">
             <button class="home-adjust plus" data-target="home">+</button>
           </div>
+          <span class="surcharge-indicator home-surcharge" id="homeSurchargeIndicator"></span>
         </div>
 
         <!-- Quick Local Amounts -->
@@ -204,33 +208,40 @@
           </div>
         </div>
 
-        <!-- Safety Tips Section (inline, no tab) -->
-        <div class="scams-content" id="scamsContent">
-          <!-- General Safety Tips -->
-          <div class="safety-section">
-            <h3>
+        <!-- Safety Tabs -->
+        <div class="safety-tabs-container">
+          <div class="safety-tabs">
+            <button class="safety-tab active" data-tab="country" id="countryTab">
+              <span id="countryTabFlag">🌍</span>
+              <span id="countryTabText">Country Safety</span>
+            </button>
+            <button class="safety-tab" data-tab="tips" id="tipsTab">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"/>
                 <path d="M12 16v-4M12 8h.01"/>
               </svg>
-              Safety Tips
-            </h3>
-            <div class="scam-cards" id="generalScams">
-              <!-- General scams loaded here -->
-            </div>
+              <span>Safety Tips</span>
+            </button>
           </div>
 
-          <!-- Destination-Specific -->
-          <div class="safety-section destination-section" id="destinationSection" style="display: none;">
-            <h3 id="destinationTitle">
-              <span id="destTitleFlag"></span>
-              <span id="destTitleText">Country Tips</span>
-            </h3>
+          <!-- Country Safety Tab Content -->
+          <div class="safety-tab-content active" id="countryTabContent">
             <div class="tips-box" id="countryTips">
               <!-- Country tips loaded here -->
             </div>
             <div class="scam-cards" id="countryScams">
               <!-- Country-specific scams loaded here -->
+            </div>
+            <div class="no-country-message" id="noCountryMessage">
+              <span>🌍</span>
+              <p>Select a destination to see country-specific safety info</p>
+            </div>
+          </div>
+
+          <!-- Safety Tips Tab Content -->
+          <div class="safety-tab-content" id="tipsTabContent">
+            <div class="scam-cards" id="generalScams">
+              <!-- General scams loaded here -->
             </div>
           </div>
         </div>
