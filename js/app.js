@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.19';
+const APP_VERSION = '2.5.20';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -860,8 +860,6 @@ function calculatePrices() {
   elements.altHomeAmount.textContent = `${homeSymbol}${formatNumber(altInHome, homeCurrency)}`;
 
   // Show surcharge indication if applicable (on all three cards)
-  const surchargeIndicators = [elements.localSurchargeIndicator, elements.altSurchargeIndicator, elements.homeSurchargeIndicator];
-
   if (surchargeAmount > 0) {
     // Calculate fee amounts in all currencies
     let feeInLocal, feeInAlt, feeInHome;
@@ -883,30 +881,33 @@ function calculatePrices() {
     const totalAlt = altAmount + feeInAlt;
     const totalHome = (localAmount / rates[localCurrency] * rates[homeCurrency]) + feeInHome;
 
-    // Format the surcharge label with fee and total in all currencies
-    const feeLabel = surchargeType === 'percent' ? `+${surchargeAmount}%` : `+${homeSymbol}${surchargeAmount}`;
+    // Format fee label prefix
+    const feePrefix = surchargeType === 'percent' ? `+${surchargeAmount}%` : `+${homeSymbol}${surchargeAmount}`;
 
-    const surchargeLabel = `${feeLabel} fee: ${localSymbol}${formatNumber(feeInLocal, localCurrency)} / ${altSymbol}${formatNumber(feeInAlt, altCurrency)} / ${homeSymbol}${formatNumber(feeInHome, homeCurrency)}
-Total: ${localSymbol}${formatNumber(totalLocal, localCurrency)} / ${altSymbol}${formatNumber(totalAlt, altCurrency)} / ${homeSymbol}${formatNumber(totalHome, homeCurrency)}`;
+    // Create labels for each card with its relevant currency
+    const localLabel = `${feePrefix} fee: ${localSymbol}${formatNumber(feeInLocal, localCurrency)}<br>Total: ${localSymbol}${formatNumber(totalLocal, localCurrency)}`;
+    const altLabel = `${feePrefix} fee: ${altSymbol}${formatNumber(feeInAlt, altCurrency)}<br>Total: ${altSymbol}${formatNumber(totalAlt, altCurrency)}`;
+    const homeLabel = `${feePrefix} fee: ${homeSymbol}${formatNumber(feeInHome, homeCurrency)}<br>Total: ${homeSymbol}${formatNumber(totalHome, homeCurrency)}`;
 
-    const oldLabel = elements.localSurchargeIndicator?.textContent || '';
-
-    // Update all surcharge indicators
-    surchargeIndicators.forEach(indicator => {
+    // Update each indicator with its specific label
+    const updateIndicator = (indicator, label) => {
       if (!indicator) return;
+      const oldLabel = indicator.innerHTML;
       indicator.classList.remove('animate-out');
-      indicator.innerHTML = surchargeLabel.replace('\n', '<br>');
-
-      // Trigger animation if surcharge changed
-      if (oldLabel !== surchargeLabel) {
+      indicator.innerHTML = label;
+      if (oldLabel !== label) {
         indicator.classList.remove('animate');
         void indicator.offsetWidth;
         indicator.classList.add('animate');
       }
-    });
+    };
+
+    updateIndicator(elements.localSurchargeIndicator, localLabel);
+    updateIndicator(elements.altSurchargeIndicator, altLabel);
+    updateIndicator(elements.homeSurchargeIndicator, homeLabel);
   } else {
     // Animate out if there was a previous surcharge
-    surchargeIndicators.forEach(indicator => {
+    [elements.localSurchargeIndicator, elements.altSurchargeIndicator, elements.homeSurchargeIndicator].forEach(indicator => {
       if (!indicator) return;
       if (indicator.textContent) {
         indicator.classList.remove('animate');
