@@ -1159,51 +1159,6 @@ button {
   }
 }
 
-/* Quick Amounts */
-.quick-amounts-section {
-  margin-bottom: 12px;
-}
-
-.quick-amounts-label {
-  display: block;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-muted);
-  margin-bottom: 6px;
-}
-
-.quick-amounts {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.quick-btn {
-  flex: 1;
-  min-width: 45px;
-  padding: 8px 4px;
-  background: var(--bg-color);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  transition: all 0.2s ease;
-}
-
-.quick-btn:hover, .quick-btn:active {
-  background: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-}
-
-.quick-btn.active {
-  background: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-}
-
 /* Home Currency Equivalent */
 .home-equivalent {
   display: flex;
@@ -2369,10 +2324,6 @@ button {
     max-height: calc(100vh - 40px);
   }
 
-  .quick-amounts {
-    grid-template-columns: repeat(6, 1fr);
-  }
-
   .result-value {
     font-size: 3rem;
   }
@@ -2488,11 +2439,6 @@ button {
 
 [data-theme="dark"] .setup-content {
   background: var(--card-bg);
-}
-
-[data-theme="dark"] .quick-btn {
-  background: var(--card-bg);
-  border-color: var(--border-color);
 }
 
 /* Theme Toggle Button */
