@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.0';
+const APP_VERSION = '2.5.1';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -162,6 +162,8 @@ const elements = {
 
   // Theme toggle
   themeToggleBtn: document.getElementById('themeToggleBtn'),
+  themeTransition: document.getElementById('themeTransition'),
+  starsContainer: document.getElementById('starsContainer'),
 
   // Location banner
   locationBanner: document.getElementById('locationBanner'),
@@ -1376,18 +1378,89 @@ function initTheme() {
 
 function toggleTheme() {
   const currentTheme = document.documentElement.getAttribute('data-theme');
-  let newTheme;
+  const isDark = currentTheme === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
 
-  if (currentTheme === 'dark') {
-    newTheme = 'light';
-    showToast('Day mode - high contrast for sunny days!');
-  } else {
-    newTheme = 'dark';
-    showToast('Night mode enabled');
+  // Get button position for animation origin
+  const btn = elements.themeToggleBtn;
+  const rect = btn.getBoundingClientRect();
+  const overlay = elements.themeTransition;
+
+  // Set CSS variables for animation origin
+  overlay.style.setProperty('--reveal-x', `${window.innerWidth - rect.right + rect.width / 2}px`);
+  overlay.style.setProperty('--reveal-y', `${rect.top + rect.height / 2}px`);
+
+  // Set the reveal color based on target theme
+  const revealColor = newTheme === 'dark' ? '#0f1419' : '#fff9e6';
+  overlay.style.setProperty('--reveal-color', revealColor);
+
+  // Add animation classes
+  btn.classList.add('animating');
+  overlay.classList.remove('fade-out', 'to-dark', 'to-light');
+  overlay.classList.add('transitioning', newTheme === 'dark' ? 'to-dark' : 'to-light');
+
+  // Create stars for night mode transition
+  if (newTheme === 'dark') {
+    createStars();
+    // Add a shooting star after a delay
+    setTimeout(() => createShootingStar(), 400);
   }
 
-  document.documentElement.setAttribute('data-theme', newTheme);
-  localStorage.setItem('holibobsTheme', newTheme);
+  // Apply the theme partway through the animation
+  setTimeout(() => {
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('holibobsTheme', newTheme);
+  }, 400);
+
+  // Clean up animation
+  setTimeout(() => {
+    overlay.classList.add('fade-out');
+    btn.classList.remove('animating');
+  }, 800);
+
+  setTimeout(() => {
+    overlay.classList.remove('transitioning', 'fade-out', 'to-dark', 'to-light');
+    elements.starsContainer.innerHTML = '';
+  }, 1100);
+
+  // Show toast after animation
+  setTimeout(() => {
+    if (newTheme === 'dark') {
+      showToast('Night mode enabled');
+    } else {
+      showToast('Day mode - high contrast for sunny days!');
+    }
+  }, 500);
+}
+
+function createStars() {
+  const container = elements.starsContainer;
+  container.innerHTML = '';
+
+  // Create random stars
+  for (let i = 0; i < 30; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.left = `${Math.random() * 100}%`;
+    star.style.top = `${Math.random() * 100}%`;
+    star.style.width = `${Math.random() * 3 + 1}px`;
+    star.style.height = star.style.width;
+    star.style.animationDelay = `${Math.random() * 1.5}s`;
+    star.style.animationDuration = `${Math.random() * 1 + 1}s`;
+    container.appendChild(star);
+  }
+}
+
+function createShootingStar() {
+  const container = elements.starsContainer;
+  const shootingStar = document.createElement('div');
+  shootingStar.className = 'shooting-star';
+  shootingStar.style.left = `${Math.random() * 50 + 10}%`;
+  shootingStar.style.top = `${Math.random() * 30 + 10}%`;
+  container.appendChild(shootingStar);
+
+  // Remove after animation
+  setTimeout(() => shootingStar.remove(), 1000);
 }
 
 // =============================================
@@ -1825,7 +1898,6 @@ function render() {
 
   // Update home currency card
   setFlagElement(elements.homeCardFlag, state.homeCurrency, 'lg');
-  const homeInfo = state.currencies[state.homeCurrency];
   elements.homeCardCurrency.textContent = `${homeInfo?.symbol || ''} ${state.homeCurrency}`;
   setFlagElement(elements.homeToLocalFlag, state.localCurrency);
   setFlagElement(elements.homeToAltFlag, state.altCurrency);
@@ -1884,6 +1956,50 @@ window.addEventListener('offline', () => {
   updateRateStatus();
   showToast('You are offline. Using cached data.');
 });
+
+// =============================================
+// FOOTER ACTIVITY ANIMATION
+// =============================================
+
+const HOLIDAY_ACTIVITIES = [
+  'sipping margaritas 🍹',
+  'floating down the lazy river 🛟',
+  'lounging by the pool 🏊',
+  'exploring ancient ruins 🏛️',
+  'eating tacos 🌮',
+  'watching the sunset 🌅',
+  'dancing to mariachi 💃',
+  'snorkeling in cenotes 🤿',
+  'bargaining at markets 🛍️',
+  'napping in hammocks 😴',
+  'chasing beach sunsets 🏖️',
+  'dodging iguanas 🦎',
+  'perfecting their tan ☀️'
+];
+
+let currentActivityIndex = 0;
+
+function cycleActivity() {
+  const activityText = document.getElementById('activityText');
+  if (!activityText) return;
+
+  // Fade out
+  activityText.classList.add('fade-out');
+  activityText.classList.remove('fade-in');
+
+  setTimeout(() => {
+    // Change text
+    currentActivityIndex = (currentActivityIndex + 1) % HOLIDAY_ACTIVITIES.length;
+    activityText.textContent = HOLIDAY_ACTIVITIES[currentActivityIndex];
+
+    // Fade in
+    activityText.classList.remove('fade-out');
+    activityText.classList.add('fade-in');
+  }, 400);
+}
+
+// Start cycling activities every 4 seconds
+setInterval(cycleActivity, 4000);
 
 // =============================================
 // START

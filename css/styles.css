@@ -2344,7 +2344,8 @@ button {
 /* Dark theme specific overrides */
 [data-theme="dark"] .amount-input-wrapper input,
 [data-theme="dark"] .compare-input-group input,
-[data-theme="dark"] .price-input-wrapper input {
+[data-theme="dark"] .price-input-wrapper input,
+[data-theme="dark"] .home-card-input-wrapper input {
   background: var(--bg-color);
   color: var(--text-primary);
 }
@@ -2381,34 +2382,204 @@ button {
 /* Theme Toggle Button */
 .theme-toggle {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  z-index: 1001;
 }
 
 .theme-toggle .sun-icon,
 .theme-toggle .moon-icon {
   position: absolute;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+              opacity 0.4s ease;
   pointer-events: none;
 }
 
 .theme-toggle .sun-icon {
-  transform: translateY(0);
+  transform: translateY(0) rotate(0deg) scale(1);
   opacity: 1;
 }
 
 .theme-toggle .moon-icon {
-  transform: translateY(30px);
+  transform: translateY(30px) rotate(-90deg) scale(0.5);
   opacity: 0;
 }
 
 [data-theme="dark"] .theme-toggle .sun-icon {
-  transform: translateY(-30px);
+  transform: translateY(-30px) rotate(180deg) scale(0.5);
   opacity: 0;
 }
 
 [data-theme="dark"] .theme-toggle .moon-icon {
-  transform: translateY(0);
+  transform: translateY(0) rotate(0deg) scale(1);
   opacity: 1;
+}
+
+/* Theme toggle pulse on click */
+.theme-toggle.animating {
+  animation: togglePulse 0.6s ease-out;
+}
+
+@keyframes togglePulse {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+/* =============================================
+   THEME TRANSITION OVERLAY (Circular Reveal)
+   ============================================= */
+.theme-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.theme-transition-overlay.transitioning {
+  pointer-events: all;
+}
+
+.theme-transition-overlay::before {
+  content: '';
+  position: absolute;
+  top: var(--reveal-y, 30px);
+  right: var(--reveal-x, 60px);
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: var(--reveal-color, #0f1419);
+  transform: translate(50%, -50%);
+  transition: none;
+}
+
+.theme-transition-overlay.transitioning::before {
+  animation: circularReveal 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes circularReveal {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    width: 300vmax;
+    height: 300vmax;
+    opacity: 1;
+  }
+}
+
+.theme-transition-overlay.fade-out::before {
+  animation: revealFadeOut 0.3s ease-out forwards;
+}
+
+@keyframes revealFadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Stars Container */
+.stars-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.theme-transition-overlay.to-dark .stars-container {
+  opacity: 1;
+}
+
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: starTwinkle 1.5s ease-in-out infinite;
+}
+
+.star::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+@keyframes starTwinkle {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Shooting star */
+.shooting-star {
+  position: absolute;
+  width: 100px;
+  height: 2px;
+  background: linear-gradient(90deg, white 0%, transparent 100%);
+  transform: rotate(-45deg);
+  animation: shootingStar 1s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes shootingStar {
+  0% {
+    opacity: 0;
+    transform: rotate(-45deg) translateX(0);
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(-45deg) translateX(300px);
+  }
+}
+
+/* Sun rays animation when switching to light */
+.theme-transition-overlay.to-light::after {
+  content: '';
+  position: absolute;
+  top: var(--reveal-y, 30px);
+  right: var(--reveal-x, 60px);
+  width: 60px;
+  height: 60px;
+  transform: translate(50%, -50%);
+  background: radial-gradient(circle, rgba(255,200,50,0.8) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: sunBurst 0.8s ease-out forwards;
+}
+
+@keyframes sunBurst {
+  0% {
+    transform: translate(50%, -50%) scale(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(50%, -50%) scale(3);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(50%, -50%) scale(6);
+    opacity: 0;
+  }
 }
 
 /* Location Suggestion Banner */
@@ -2667,6 +2838,33 @@ button {
   font-size: 13px;
   color: var(--text-muted);
   opacity: 0.8;
+}
+
+.activity-text {
+  display: inline-block;
+  font-weight: 600;
+  color: var(--primary-color);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.activity-text.fade-out {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.activity-text.fade-in {
+  animation: activityFadeIn 0.4s ease forwards;
+}
+
+@keyframes activityFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .footer-meta {
