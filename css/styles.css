@@ -773,7 +773,7 @@ button {
 .home-currency-card {
   background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
   border-radius: var(--radius-lg);
-  padding: 16px;
+  padding: 12px 16px;
   margin-bottom: 12px;
   box-shadow: var(--shadow-md);
 }
@@ -782,12 +782,12 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  margin-bottom: 12px;
+  gap: 0;
+  margin-bottom: 8px;
 }
 
 .home-card-flag {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
 }
 
 .home-card-currency {
@@ -805,15 +805,16 @@ button {
 
 .home-card-input-wrapper {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .home-card-input-wrapper input {
-  width: 100%;
-  padding: 12px 16px;
-  font-size: 2rem;
+  flex: 1;
+  min-width: 0;
+  padding: 8px 12px;
+  font-size: 1.75rem;
   font-weight: 700;
   text-align: center;
   border: none;
@@ -828,15 +829,9 @@ button {
   box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
 }
 
-.home-adjust-row {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
 .home-adjust {
-  width: 52px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-sm);
   background: rgba(255,255,255,0.25);
   color: white;
@@ -847,6 +842,7 @@ button {
   justify-content: center;
   transition: all 0.2s ease;
   border: none;
+  flex-shrink: 0;
 }
 
 .home-adjust:active {
@@ -2457,7 +2453,7 @@ button {
 }
 
 .theme-transition-overlay.transitioning::before {
-  animation: circularReveal 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: circularReveal 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes circularReveal {
@@ -2474,7 +2470,7 @@ button {
 }
 
 .theme-transition-overlay.fade-out::before {
-  animation: revealFadeOut 0.3s ease-out forwards;
+  animation: revealFadeOut 0.5s ease-out forwards;
 }
 
 @keyframes revealFadeOut {
@@ -2553,32 +2549,158 @@ button {
   }
 }
 
-/* Sun rays animation when switching to light */
-.theme-transition-overlay.to-light::after {
-  content: '';
+/* Sunrise animation when switching to light */
+.theme-transition-overlay.to-light .sunrise-container {
   position: absolute;
-  top: var(--reveal-y, 30px);
-  right: var(--reveal-x, 60px);
-  width: 60px;
-  height: 60px;
-  transform: translate(50%, -50%);
-  background: radial-gradient(circle, rgba(255,200,50,0.8) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: sunBurst 0.8s ease-out forwards;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  overflow: hidden;
+  opacity: 1;
 }
 
-@keyframes sunBurst {
+.sunrise-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(
+    to top,
+    #ff6b35 0%,
+    #f7931e 15%,
+    #ffb347 30%,
+    #ffd89b 50%,
+    #fff9e6 80%,
+    #fff9e6 100%
+  );
+  animation: sunriseGradient 1.2s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes sunriseGradient {
   0% {
-    transform: translate(50%, -50%) scale(0);
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  30% {
     opacity: 1;
   }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sunrise-sun {
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff6b0 0%, #ffcc00 40%, #ff9500 100%);
+  transform: translateX(-50%) translateY(200%);
+  box-shadow:
+    0 0 60px 30px rgba(255, 200, 50, 0.6),
+    0 0 100px 60px rgba(255, 150, 50, 0.4),
+    0 0 140px 90px rgba(255, 100, 50, 0.2);
+  animation: sunRise 1.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes sunRise {
+  0% {
+    transform: translateX(-50%) translateY(200%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+.sunrise-rays {
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  width: 300px;
+  height: 300px;
+  transform: translateX(-50%) translateY(50%);
+  animation: raysSpread 1.5s ease-out forwards;
+  opacity: 0;
+}
+
+.sunrise-rays::before,
+.sunrise-rays::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+}
+
+.sunrise-rays::before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(255, 200, 100, 0.3) 10deg,
+    transparent 20deg,
+    transparent 40deg,
+    rgba(255, 200, 100, 0.3) 50deg,
+    transparent 60deg,
+    transparent 80deg,
+    rgba(255, 200, 100, 0.3) 90deg,
+    transparent 100deg,
+    transparent 120deg,
+    rgba(255, 200, 100, 0.3) 130deg,
+    transparent 140deg,
+    transparent 160deg,
+    rgba(255, 200, 100, 0.3) 170deg,
+    transparent 180deg
+  );
+}
+
+@keyframes raysSpread {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(50%) scale(0.5);
+  }
   50% {
-    transform: translate(50%, -50%) scale(3);
     opacity: 0.8;
   }
   100% {
-    transform: translate(50%, -50%) scale(6);
     opacity: 0;
+    transform: translateX(-50%) translateY(50%) scale(2) rotate(15deg);
+  }
+}
+
+/* Flying birds during sunrise */
+.sunrise-birds {
+  position: absolute;
+  top: 30%;
+  left: 10%;
+  font-size: 1.5rem;
+  opacity: 0;
+  animation: birdsFly 2s ease-out 0.5s forwards;
+}
+
+@keyframes birdsFly {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  30% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(80vw, -20vh);
   }
 }
 

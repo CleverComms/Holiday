@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.1';
+const APP_VERSION = '2.5.2';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1399,38 +1399,39 @@ function toggleTheme() {
   overlay.classList.remove('fade-out', 'to-dark', 'to-light');
   overlay.classList.add('transitioning', newTheme === 'dark' ? 'to-dark' : 'to-light');
 
-  // Create stars for night mode transition
+  // Create stars for night mode, sunrise for day mode
   if (newTheme === 'dark') {
     createStars();
-    // Add a shooting star after a delay
-    setTimeout(() => createShootingStar(), 400);
+    setTimeout(() => createShootingStar(), 500);
+  } else {
+    createSunrise();
   }
 
   // Apply the theme partway through the animation
   setTimeout(() => {
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('holibobsTheme', newTheme);
-  }, 400);
+  }, 600);
 
   // Clean up animation
   setTimeout(() => {
     overlay.classList.add('fade-out');
     btn.classList.remove('animating');
-  }, 800);
+  }, 1200);
 
   setTimeout(() => {
     overlay.classList.remove('transitioning', 'fade-out', 'to-dark', 'to-light');
     elements.starsContainer.innerHTML = '';
-  }, 1100);
+  }, 1700);
 
   // Show toast after animation
   setTimeout(() => {
     if (newTheme === 'dark') {
-      showToast('Night mode enabled');
+      showToast('Night mode enabled ✨');
     } else {
-      showToast('Day mode - high contrast for sunny days!');
+      showToast('Good morning! ☀️');
     }
-  }, 500);
+  }, 800);
 }
 
 function createStars() {
@@ -1461,6 +1462,47 @@ function createShootingStar() {
 
   // Remove after animation
   setTimeout(() => shootingStar.remove(), 1000);
+}
+
+function createSunrise() {
+  const container = elements.starsContainer;
+  container.innerHTML = '';
+
+  // Create sunrise container
+  const sunriseContainer = document.createElement('div');
+  sunriseContainer.className = 'sunrise-container';
+
+  // Gradient background
+  const gradient = document.createElement('div');
+  gradient.className = 'sunrise-gradient';
+  sunriseContainer.appendChild(gradient);
+
+  // Sun
+  const sun = document.createElement('div');
+  sun.className = 'sunrise-sun';
+  sunriseContainer.appendChild(sun);
+
+  // Sun rays
+  const rays = document.createElement('div');
+  rays.className = 'sunrise-rays';
+  sunriseContainer.appendChild(rays);
+
+  // Flying birds
+  const birds = document.createElement('div');
+  birds.className = 'sunrise-birds';
+  birds.textContent = '🐦';
+  sunriseContainer.appendChild(birds);
+
+  // Second bird with slight delay
+  const birds2 = document.createElement('div');
+  birds2.className = 'sunrise-birds';
+  birds2.textContent = '🐦';
+  birds2.style.top = '25%';
+  birds2.style.left = '15%';
+  birds2.style.animationDelay = '0.7s';
+  sunriseContainer.appendChild(birds2);
+
+  container.appendChild(sunriseContainer);
 }
 
 // =============================================
