@@ -545,7 +545,7 @@ function updateLockUI() {
     elements.lockIcon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>';
   } else {
     elements.lockToggleBtn.classList.remove('locked');
-    elements.lockText.textContent = 'Lock prices';
+    elements.lockText.textContent = 'Link prices';
     // Show unlocked icon
     elements.lockIcon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 019.9-1"/>';
   }
