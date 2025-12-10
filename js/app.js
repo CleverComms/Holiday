@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.25';
+const APP_VERSION = '2.5.26';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -956,16 +956,39 @@ function calculatePrices() {
   saveState();
 }
 
-// Get short currency name - strip country prefix for unambiguous names
+// Get short currency name - abbreviate country names for common currencies
 function getShortCurrencyName(name) {
   if (!name) return '';
 
-  // Keep full name for ambiguous currencies (Dollar, Krone, Franc, etc.)
-  const keepFull = ['Dollar', 'Krone', 'Krona', 'Franc', 'Rupee', 'Dinar'];
-  const lastWord = name.split(' ').pop();
+  // Country name abbreviations
+  const countryAbbrevs = {
+    'New Zealand': 'NZ',
+    'United States': 'US',
+    'United Kingdom': 'UK',
+    'South African': 'SA',
+    'Hong Kong': 'HK',
+    'Australian': 'AU',
+    'Canadian': 'CA',
+    'Singapore': 'SG',
+    'Saudi': 'Saudi',
+    'United Arab Emirates': 'UAE'
+  };
+
+  // Apply abbreviations
+  let shortName = name;
+  for (const [full, abbrev] of Object.entries(countryAbbrevs)) {
+    if (name.includes(full)) {
+      shortName = name.replace(full, abbrev);
+      break;
+    }
+  }
+
+  // For ambiguous currencies (Dollar, Krone, etc.) keep the abbreviated country prefix
+  const keepFull = ['Dollar', 'Krone', 'Krona', 'Franc', 'Rupee', 'Dinar', 'Rand', 'Peso'];
+  const lastWord = shortName.split(' ').pop();
 
   if (keepFull.includes(lastWord)) {
-    return name; // Keep "US Dollar", "Canadian Dollar", etc.
+    return shortName; // Keep "NZ Dollar", "US Dollar", etc.
   }
 
   // For unique names, use just the currency type
