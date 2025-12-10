@@ -696,10 +696,11 @@ button {
 
 .surcharge-indicator {
   display: block;
-  font-size: 0.7rem;
-  color: rgba(255,255,255,0.7);
+  font-size: 0.65rem;
+  line-height: 1.4;
+  color: rgba(255,255,255,0.85);
   text-align: center;
-  margin-top: 4px;
+  margin-top: 6px;
   transition: all 0.3s ease;
   opacity: 1;
   transform: scale(1);
