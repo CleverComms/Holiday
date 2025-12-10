@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.33';
+const APP_VERSION = '2.5.34';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -559,20 +559,6 @@ function setupEventListeners() {
   // Safety tabs
   elements.countryTab.addEventListener('click', () => switchSafetyTab('country'));
   elements.tipsTab.addEventListener('click', () => switchSafetyTab('tips'));
-
-  // Price card info buttons (clickable currency headers)
-  document.querySelectorAll('.price-card-info').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const currencyType = btn.dataset.currency;
-      if (currencyType === 'local' || currencyType === 'alt') {
-        // Open destination modal to change destination (which sets local/alt currencies)
-        openDestinationModal('main');
-      } else if (currencyType === 'home') {
-        // Open currency modal to change home currency
-        openCurrencyModal('home');
-      }
-    });
-  });
 }
 
 function switchSafetyTab(tab) {
