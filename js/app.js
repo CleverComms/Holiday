@@ -2175,7 +2175,9 @@ function render() {
   updateLockUI();
   updateSurchargeUI();
   calculatePrices();
-  calculateHomeConversions();
+  // Note: Don't call calculateHomeConversions() here - it would sync from home
+  // to local/alt and overwrite user changes. Only sync when user actually
+  // changes the home input.
   renderPaymentInfo();
   renderScams();
   updateRateStatus();
