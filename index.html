@@ -83,17 +83,19 @@
         <div class="price-cards-stack" id="priceComparison">
           <!-- Local Currency Card -->
           <div class="price-card" id="localPriceCard">
-            <button class="price-card-info" data-currency="local">
-              <span class="price-flag" id="localFlag">🇲🇽</span>
-              <div class="price-currency-info">
-                <span class="price-currency" id="localCurrency">MXN</span>
-                <span class="price-currency-name" id="localCurrencyName">Mexican Peso</span>
+            <div class="price-card-row">
+              <button class="price-card-info" data-currency="local">
+                <span class="price-flag" id="localFlag">🇲🇽</span>
+                <div class="price-currency-info">
+                  <span class="price-currency" id="localCurrency">MXN</span>
+                  <span class="price-currency-name" id="localCurrencyName">Mexican Peso</span>
+                </div>
+              </button>
+              <div class="price-card-value">
+                <button class="price-adjust minus" data-target="local">−</button>
+                <input type="number" id="localAmountInput" inputmode="decimal" placeholder="0" value="500">
+                <button class="price-adjust plus" data-target="local">+</button>
               </div>
-            </button>
-            <div class="price-card-value">
-              <button class="price-adjust minus" data-target="local">−</button>
-              <input type="number" id="localAmountInput" inputmode="decimal" placeholder="0" value="500">
-              <button class="price-adjust plus" data-target="local">+</button>
             </div>
             <div class="price-home-value">
               <span class="home-flag" id="localHomeFlag">🇬🇧</span>
@@ -104,17 +106,19 @@
 
           <!-- Alternative Currency Card -->
           <div class="price-card" id="altPriceCard">
-            <button class="price-card-info" data-currency="alt">
-              <span class="price-flag" id="altFlag">🇺🇸</span>
-              <div class="price-currency-info">
-                <span class="price-currency" id="altCurrency">USD</span>
-                <span class="price-currency-name" id="altCurrencyName">US Dollar</span>
+            <div class="price-card-row">
+              <button class="price-card-info" data-currency="alt">
+                <span class="price-flag" id="altFlag">🇺🇸</span>
+                <div class="price-currency-info">
+                  <span class="price-currency" id="altCurrency">USD</span>
+                  <span class="price-currency-name" id="altCurrencyName">US Dollar</span>
+                </div>
+              </button>
+              <div class="price-card-value">
+                <button class="price-adjust minus" data-target="alt">−</button>
+                <input type="number" id="altAmountInput" inputmode="decimal" placeholder="0" value="30">
+                <button class="price-adjust plus" data-target="alt">+</button>
               </div>
-            </button>
-            <div class="price-card-value">
-              <button class="price-adjust minus" data-target="alt">−</button>
-              <input type="number" id="altAmountInput" inputmode="decimal" placeholder="0" value="30">
-              <button class="price-adjust plus" data-target="alt">+</button>
             </div>
             <div class="price-home-value">
               <span class="home-flag" id="altHomeFlag">🇬🇧</span>
@@ -125,17 +129,19 @@
 
           <!-- Home Currency Card -->
           <div class="price-card home" id="homeCurrencyCard">
-            <button class="price-card-info" data-currency="home">
-              <span class="price-flag" id="homeCardFlag">🇬🇧</span>
-              <div class="price-currency-info">
-                <span class="price-currency" id="homeCardCurrency">GBP</span>
-                <span class="price-currency-name" id="homeCurrencyName">British Pound</span>
+            <div class="price-card-row">
+              <button class="price-card-info" data-currency="home">
+                <span class="price-flag" id="homeCardFlag">🇬🇧</span>
+                <div class="price-currency-info">
+                  <span class="price-currency" id="homeCardCurrency">GBP</span>
+                  <span class="price-currency-name" id="homeCurrencyName">British Pound</span>
+                </div>
+              </button>
+              <div class="price-card-value">
+                <button class="price-adjust minus" data-target="home">−</button>
+                <input type="number" id="homeAmountInput" inputmode="decimal" placeholder="0" value="50">
+                <button class="price-adjust plus" data-target="home">+</button>
               </div>
-            </button>
-            <div class="price-card-value">
-              <button class="price-adjust minus" data-target="home">−</button>
-              <input type="number" id="homeAmountInput" inputmode="decimal" placeholder="0" value="50">
-              <button class="price-adjust plus" data-target="home">+</button>
             </div>
             <span class="surcharge-indicator" id="homeSurchargeIndicator"></span>
           </div>
