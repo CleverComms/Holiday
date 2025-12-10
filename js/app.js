@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.4.5';
+const APP_VERSION = '2.4.9';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -133,6 +133,7 @@ const elements = {
   // Toast
   toast: document.getElementById('toast'),
   toastMessage: document.getElementById('toastMessage'),
+  toastIcon: document.getElementById('toastIcon'),
 
   // Setup wizard
   setupModal: document.getElementById('setupModal'),
@@ -223,11 +224,14 @@ async function init() {
   setupEventListeners();
   displayVersion();
 
+  render();
+
   if (isFirstLoad) {
-    showSetupWizard();
-    detectUserLocation(true); // On first load, detect for setup wizard
+    // Mark setup as complete and detect location
+    localStorage.setItem('holibobsSetupComplete', 'true');
+    detectUserLocation(true);
+    showToast('Welcome to HoliBobs! 🦝');
   } else {
-    render();
     // Check if we should offer location detection (non-annoying prompt)
     checkLocationSuggestion();
   }
@@ -527,13 +531,16 @@ function togglePriceLock() {
   state.pricesLocked = !state.pricesLocked;
   updateLockUI();
 
+  const lockedIcon = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>';
+  const unlockedIcon = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 019.9-1"/>';
+
   if (state.pricesLocked) {
     // Sync alt to local when locking
     syncLockedPrices('local');
     calculatePrices();
-    showToast('Prices linked at exchange rate');
+    showToast('Prices linked at exchange rate', 3000, lockedIcon);
   } else {
-    showToast('Prices unlocked');
+    showToast('Prices unlinked', 3000, unlockedIcon);
   }
 }
 
@@ -545,7 +552,7 @@ function updateLockUI() {
     elements.lockIcon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>';
   } else {
     elements.lockToggleBtn.classList.remove('locked');
-    elements.lockText.textContent = 'Lock prices';
+    elements.lockText.textContent = 'Link prices';
     // Show unlocked icon
     elements.lockIcon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 019.9-1"/>';
   }
@@ -758,8 +765,8 @@ function renderDestinationList(filter = '') {
 
   elements.destinationList.innerHTML = filtered.map(([country, data]) => {
     const currency = state.currencies[data.currency];
-    const flagHtml = currency?.code
-      ? `<span class="fi fi-${currency.code} fi-lg"></span>`
+    const flagHtml = data.code
+      ? `<span class="fi fi-${data.code.toLowerCase()} fi-lg"></span>`
       : (currency?.flag || '🌍');
     const inWallet = state.walletCountries.includes(country);
     return `
@@ -805,8 +812,8 @@ function renderWalletSection(filter = '') {
     const data = state.countries[country];
     if (!data) return '';
     const currency = state.currencies[data.currency];
-    const flagHtml = currency?.code
-      ? `<span class="fi fi-${currency.code} fi-lg"></span>`
+    const flagHtml = data.code
+      ? `<span class="fi fi-${data.code.toLowerCase()} fi-lg"></span>`
       : (currency?.flag || '🌍');
     return `
       <div class="wallet-item" data-country="${country}">
@@ -1556,7 +1563,8 @@ async function registerServiceWorker() {
       // Check for updates on launch
       registration.update();
 
-      // Also do a proactive version check after a short delay (helps iOS)
+      // Proactive version check - immediate and delayed (iOS needs both)
+      checkForUpdates();
       setTimeout(checkForUpdates, 3000);
 
       // Listen for new service worker installing
@@ -1642,6 +1650,19 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
+// Check for updates on pageshow (better for iOS PWA cold/warm starts)
+window.addEventListener('pageshow', (event) => {
+  // Always check on pageshow for iOS PWA reliability
+  checkForUpdates();
+
+  // Also trigger SW update check
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.getRegistration().then(reg => {
+      if (reg) reg.update();
+    });
+  }
+});
+
 // Check for updates periodically (every 30 minutes)
 setInterval(checkForUpdates, 30 * 60 * 1000);
 
@@ -1649,8 +1670,14 @@ setInterval(checkForUpdates, 30 * 60 * 1000);
 // TOAST
 // =============================================
 
-function showToast(message, duration = 3000) {
+function showToast(message, duration = 3000, icon = null) {
   elements.toastMessage.textContent = message;
+  if (icon) {
+    elements.toastIcon.innerHTML = icon;
+    elements.toastIcon.style.display = 'block';
+  } else {
+    elements.toastIcon.style.display = 'none';
+  }
   elements.toast.classList.add('active');
   setTimeout(() => elements.toast.classList.remove('active'), duration);
 }

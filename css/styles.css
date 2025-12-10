@@ -565,16 +565,39 @@ button {
   color: rgba(255,255,255,0.7);
 }
 
-.price-input-row {
+.price-input-wrapper {
   display: flex;
-  align-items: center;
-  gap: 4px;
+  flex-direction: column;
+  gap: 6px;
   margin-bottom: 8px;
 }
 
+.price-input-wrapper input {
+  width: 100%;
+  padding: 10px 8px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  text-align: center;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.9);
+  color: var(--text-primary);
+}
+
+.price-input-wrapper input:focus {
+  outline: none;
+  background: white;
+}
+
+.price-adjust-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
 .price-adjust {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 28px;
   border-radius: var(--radius-sm);
   background: rgba(255,255,255,0.2);
   color: white;
@@ -591,24 +614,6 @@ button {
 .price-adjust:active {
   transform: scale(0.9);
   background: rgba(255,255,255,0.3);
-}
-
-.price-input-row input {
-  flex: 1;
-  min-width: 0;
-  padding: 8px 4px;
-  font-size: 1.25rem;
-  font-weight: 700;
-  text-align: center;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.9);
-  color: var(--text-primary);
-}
-
-.price-input-row input:focus {
-  outline: none;
-  background: white;
 }
 
 .price-home-value {
@@ -1992,8 +1997,9 @@ button {
 .toast {
   position: fixed;
   bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
+  left: 16px;
+  right: 16px;
+  transform: translateY(100px);
   background: var(--text-primary);
   color: white;
   padding: 12px 24px;
@@ -2003,11 +2009,21 @@ button {
   transition: all 0.3s ease;
   z-index: 1200;
   box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .toast.active {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
+}
+
+.toast-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 /* =============================================
@@ -2205,7 +2221,7 @@ button {
 /* Dark theme specific overrides */
 [data-theme="dark"] .amount-input-wrapper input,
 [data-theme="dark"] .compare-input-group input,
-[data-theme="dark"] .price-input-row input {
+[data-theme="dark"] .price-input-wrapper input {
   background: var(--bg-color);
   color: var(--text-primary);
 }
