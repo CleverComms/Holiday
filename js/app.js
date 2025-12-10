@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.2';
+const APP_VERSION = '2.5.3';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -630,7 +630,7 @@ function togglePriceLock() {
 function updateLockUI() {
   if (state.pricesLocked) {
     elements.lockToggleBtn.classList.add('locked');
-    elements.lockText.textContent = 'Linked';
+    elements.lockText.textContent = 'Linked Prices';
     // Show locked icon
     elements.lockIcon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>';
   } else {
