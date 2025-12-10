@@ -538,6 +538,8 @@ button {
   display: flex;
   align-items: center;
   gap: 6px;
+  position: relative;
+  z-index: 2;
 }
 
 .price-card-value input {
