@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.4.12';
+const APP_VERSION = '2.5.0';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -18,6 +18,7 @@ let state = {
   altCurrency: 'USD',
   localAmount: 500,
   altAmount: 30,
+  homeAmount: 50, // Amount in home currency for reverse conversion
   pricesLocked: true, // Default to linked prices
   surchargeAmount: 0,
   surchargeType: 'percent', // 'percent' or 'fixed'
@@ -56,6 +57,17 @@ const elements = {
   dealText: document.getElementById('dealText'),
   quickAmounts: document.getElementById('quickAmounts'),
   altPriceCard: document.getElementById('altPriceCard'),
+
+  // Home currency card
+  homeCurrencyCard: document.getElementById('homeCurrencyCard'),
+  homeCardFlag: document.getElementById('homeCardFlag'),
+  homeCardCurrency: document.getElementById('homeCardCurrency'),
+  homeAmountInput: document.getElementById('homeAmountInput'),
+  homeToLocalFlag: document.getElementById('homeToLocalFlag'),
+  homeToLocalAmount: document.getElementById('homeToLocalAmount'),
+  homeToAltFlag: document.getElementById('homeToAltFlag'),
+  homeToAltAmount: document.getElementById('homeToAltAmount'),
+  homeToAltWrapper: document.getElementById('homeToAltWrapper'),
 
   // Lock toggle and surcharge
   lockToggleBtn: document.getElementById('lockToggleBtn'),
@@ -309,6 +321,7 @@ function saveState() {
     altCurrency: state.altCurrency,
     localAmount: state.localAmount,
     altAmount: state.altAmount,
+    homeAmount: state.homeAmount,
     pricesLocked: state.pricesLocked,
     surchargeAmount: state.surchargeAmount,
     surchargeType: state.surchargeType,
@@ -364,6 +377,20 @@ function setupEventListeners() {
       syncLockedPrices('alt');
     }
     calculatePrices();
+  });
+
+  // Home amount input
+  elements.homeAmountInput.addEventListener('input', (e) => {
+    state.homeAmount = parseFloat(e.target.value) || 0;
+    calculateHomeConversions();
+  });
+
+  // +/- buttons for home amount
+  document.querySelectorAll('.home-adjust').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const isPlus = btn.classList.contains('plus');
+      adjustHomeAmount(isPlus ? 1 : -1);
+    });
   });
 
   // +/- buttons (event delegation)
@@ -504,6 +531,54 @@ function setupEventListeners() {
 // =============================================
 // PRICE CALCULATION
 // =============================================
+
+function adjustHomeAmount(direction) {
+  const currentAmount = state.homeAmount;
+  let step = 5;
+  if (currentAmount >= 500) step = 50;
+  else if (currentAmount >= 100) step = 20;
+  else if (currentAmount >= 50) step = 10;
+  else step = 5;
+
+  let newAmount = currentAmount + (direction * step);
+  if (newAmount < 0) newAmount = 0;
+
+  // Round to the nearest step for clean numbers
+  newAmount = Math.round(newAmount / step) * step;
+
+  state.homeAmount = newAmount;
+  elements.homeAmountInput.value = newAmount;
+  calculateHomeConversions();
+}
+
+function calculateHomeConversions() {
+  const { homeAmount, localCurrency, altCurrency, homeCurrency, rates, currencies } = state;
+
+  if (!rates[localCurrency] || !rates[altCurrency] || !rates[homeCurrency]) {
+    return;
+  }
+
+  // Convert home currency to USD first, then to local and alt
+  const homeInUsd = homeAmount / rates[homeCurrency];
+  const homeInLocal = homeInUsd * rates[localCurrency];
+  const homeInAlt = homeInUsd * rates[altCurrency];
+
+  // Get currency info
+  const localInfo = currencies[localCurrency];
+  const altInfo = currencies[altCurrency];
+  const localSymbol = localInfo?.symbol || '';
+  const altSymbol = altInfo?.symbol || '';
+
+  // Format conversions
+  const localFormatted = formatNumber(homeInLocal, localCurrency);
+  const altFormatted = formatNumber(homeInAlt, altCurrency);
+
+  // Update displays
+  elements.homeToLocalAmount.textContent = `≈ ${localSymbol}${localFormatted} ${localCurrency}`;
+  elements.homeToAltAmount.textContent = `≈ ${altSymbol}${altFormatted} ${altCurrency}`;
+
+  saveState();
+}
 
 function adjustPrice(target, direction) {
   const currentAmount = target === 'local' ? state.localAmount : state.altAmount;
@@ -1746,16 +1821,28 @@ function render() {
   // Set input values
   elements.localAmountInput.value = state.localAmount;
   elements.altAmountInput.value = state.altAmount;
+  elements.homeAmountInput.value = state.homeAmount;
+
+  // Update home currency card
+  setFlagElement(elements.homeCardFlag, state.homeCurrency, 'lg');
+  const homeInfo = state.currencies[state.homeCurrency];
+  elements.homeCardCurrency.textContent = `${homeInfo?.symbol || ''} ${state.homeCurrency}`;
+  setFlagElement(elements.homeToLocalFlag, state.localCurrency);
+  setFlagElement(elements.homeToAltFlag, state.altCurrency);
 
   // Show/hide alt card based on destination
   const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;
   const hasAltCurrency = countryInfo?.alsoAccepted && countryInfo.alsoAccepted.length > 0;
   elements.altPriceCard.style.display = hasAltCurrency || !state.destinationCountry ? 'block' : 'none';
 
+  // Show/hide alt conversion in home card based on destination
+  elements.homeToAltWrapper.style.display = hasAltCurrency || !state.destinationCountry ? 'flex' : 'none';
+
   updateQuickAmounts();
   updateLockUI();
   updateSurchargeUI();
   calculatePrices();
+  calculateHomeConversions();
   renderPaymentInfo();
   renderScams();
   updateRateStatus();

@@ -151,6 +151,32 @@
           <span class="deal-text" id="dealText">Local price is better by £0.55</span>
         </div>
 
+        <!-- Home Currency Input Card -->
+        <div class="home-currency-card" id="homeCurrencyCard">
+          <div class="home-card-header">
+            <span class="home-card-flag" id="homeCardFlag">🇬🇧</span>
+            <span class="home-card-currency" id="homeCardCurrency">£ GBP</span>
+            <span class="home-card-label">I want to spend</span>
+          </div>
+          <div class="home-card-input-wrapper">
+            <input type="number" id="homeAmountInput" inputmode="decimal" placeholder="0" value="50">
+            <div class="home-adjust-row">
+              <button class="home-adjust minus" data-target="home">−</button>
+              <button class="home-adjust plus" data-target="home">+</button>
+            </div>
+          </div>
+          <div class="home-conversions">
+            <div class="home-conversion-item local">
+              <span class="conversion-flag" id="homeToLocalFlag">🇲🇽</span>
+              <span class="conversion-amount" id="homeToLocalAmount">≈ 1,064 MXN</span>
+            </div>
+            <div class="home-conversion-item alt" id="homeToAltWrapper">
+              <span class="conversion-flag" id="homeToAltFlag">🇺🇸</span>
+              <span class="conversion-amount" id="homeToAltAmount">≈ $62 USD</span>
+            </div>
+          </div>
+        </div>
+
         <!-- Quick Local Amounts -->
         <div class="quick-amounts" id="quickAmounts">
           <button class="quick-btn" data-amount="50">50</button>
