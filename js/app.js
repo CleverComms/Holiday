@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.10';
+const APP_VERSION = '2.5.11';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -35,6 +35,9 @@ let state = {
 // =============================================
 
 const elements = {
+  // Locale greeting
+  localeGreeting: document.getElementById('localeGreeting'),
+
   // Destination header
   destHeaderBtn: document.getElementById('destHeaderBtn'),
   destHeaderFlag: document.getElementById('destHeaderFlag'),
@@ -408,20 +411,22 @@ function setupEventListeners() {
   });
 
   // Quick amounts - update local and sync others if linked
-  elements.quickAmounts.addEventListener('click', (e) => {
+  elements.quickAmounts?.addEventListener('click', (e) => {
     const btn = e.target.closest('.quick-btn');
-    if (btn) {
-      const amount = parseFloat(btn.dataset.amount);
-      state.localAmount = amount;
-      elements.localAmountInput.value = amount;
+    if (!btn) return;
 
-      // Sync other currencies if linked
-      if (state.pricesLocked) {
-        syncLockedPrices('local');
-      }
+    const amount = parseFloat(btn.dataset.amount);
+    if (isNaN(amount) || amount <= 0) return;
 
-      calculatePrices();
+    state.localAmount = amount;
+    elements.localAmountInput.value = amount;
+
+    // Sync other currencies if linked
+    if (state.pricesLocked) {
+      syncLockedPrices('local');
     }
+
+    calculatePrices();
   });
 
   // Currency modal
@@ -1493,14 +1498,6 @@ function toggleTheme() {
     elements.starsContainer.innerHTML = '';
   }, animDuration + 500);
 
-  // Show toast after animation
-  setTimeout(() => {
-    if (newTheme === 'dark') {
-      showToast('Night mode enabled ✨');
-    } else {
-      showToast('Good morning! ☀️');
-    }
-  }, isToLight ? 1500 : 800);
 }
 
 function createStars() {
@@ -2000,10 +1997,108 @@ function showToast(message, duration = 3000, icon = null) {
 }
 
 // =============================================
+// LOCALE GREETING
+// =============================================
+
+const greetings = {
+  // Format: { morning, afternoon, evening, night, isNonLatin }
+  en: { morning: 'Good morning', afternoon: 'Good afternoon', evening: 'Good evening', night: 'Good night' },
+  es: { morning: 'Buenos días', afternoon: 'Buenas tardes', evening: 'Buenas tardes', night: 'Buenas noches' },
+  fr: { morning: 'Bonjour', afternoon: 'Bon après-midi', evening: 'Bonsoir', night: 'Bonne nuit' },
+  de: { morning: 'Guten Morgen', afternoon: 'Guten Tag', evening: 'Guten Abend', night: 'Gute Nacht' },
+  it: { morning: 'Buongiorno', afternoon: 'Buon pomeriggio', evening: 'Buonasera', night: 'Buonanotte' },
+  pt: { morning: 'Bom dia', afternoon: 'Boa tarde', evening: 'Boa noite', night: 'Boa noite' },
+  nl: { morning: 'Goedemorgen', afternoon: 'Goedemiddag', evening: 'Goedenavond', night: 'Goedenacht' },
+  pl: { morning: 'Dzień dobry', afternoon: 'Dzień dobry', evening: 'Dobry wieczór', night: 'Dobranoc' },
+  sv: { morning: 'God morgon', afternoon: 'God eftermiddag', evening: 'God kväll', night: 'God natt' },
+  da: { morning: 'God morgen', afternoon: 'God eftermiddag', evening: 'God aften', night: 'God nat' },
+  no: { morning: 'God morgen', afternoon: 'God ettermiddag', evening: 'God kveld', night: 'God natt' },
+  fi: { morning: 'Hyvää huomenta', afternoon: 'Hyvää iltapäivää', evening: 'Hyvää iltaa', night: 'Hyvää yötä' },
+  tr: { morning: 'Günaydın', afternoon: 'İyi günler', evening: 'İyi akşamlar', night: 'İyi geceler' },
+  id: { morning: 'Selamat pagi', afternoon: 'Selamat siang', evening: 'Selamat sore', night: 'Selamat malam' },
+  ms: { morning: 'Selamat pagi', afternoon: 'Selamat petang', evening: 'Selamat petang', night: 'Selamat malam' },
+  vi: { morning: 'Chào buổi sáng', afternoon: 'Chào buổi chiều', evening: 'Chào buổi tối', night: 'Chúc ngủ ngon' },
+  tl: { morning: 'Magandang umaga', afternoon: 'Magandang hapon', evening: 'Magandang gabi', night: 'Magandang gabi' },
+  sw: { morning: 'Habari za asubuhi', afternoon: 'Habari za mchana', evening: 'Habari za jioni', night: 'Usiku mwema' },
+  // Non-Latin scripts (with English translations)
+  zh: { morning: '早上好', afternoon: '下午好', evening: '晚上好', night: '晚安', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
+  ja: { morning: 'おはようございます', afternoon: 'こんにちは', evening: 'こんばんは', night: 'おやすみなさい', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
+  ko: { morning: '좋은 아침이에요', afternoon: '안녕하세요', evening: '안녕하세요', night: '안녕히 주무세요', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
+  th: { morning: 'สวัสดีตอนเช้า', afternoon: 'สวัสดีตอนบ่าย', evening: 'สวัสดีตอนเย็น', night: 'ราตรีสวัสดิ์', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
+  ar: { morning: 'صباح الخير', afternoon: 'مساء الخير', evening: 'مساء الخير', night: 'تصبح على خير', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
+  he: { morning: 'בוקר טוב', afternoon: 'צהריים טובים', evening: 'ערב טוב', night: 'לילה טוב', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
+  hi: { morning: 'सुप्रभात', afternoon: 'नमस्ते', evening: 'शुभ संध्या', night: 'शुभ रात्रि', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
+  ru: { morning: 'Доброе утро', afternoon: 'Добрый день', evening: 'Добрый вечер', night: 'Спокойной ночи', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
+  uk: { morning: 'Доброго ранку', afternoon: 'Добрий день', evening: 'Добрий вечір', night: 'На добраніч', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
+  el: { morning: 'Καλημέρα', afternoon: 'Καλό απόγευμα', evening: 'Καλησπέρα', night: 'Καληνύχτα', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
+  bg: { morning: 'Добро утро', afternoon: 'Добър ден', evening: 'Добър вечер', night: 'Лека нощ', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
+};
+
+// Map countries to their primary language
+const countryLanguages = {
+  'Mexico': 'es', 'Spain': 'es', 'Argentina': 'es', 'Colombia': 'es', 'Chile': 'es', 'Peru': 'es', 'Ecuador': 'es', 'Guatemala': 'es', 'Cuba': 'es', 'Dominican Republic': 'es', 'Honduras': 'es', 'El Salvador': 'es', 'Nicaragua': 'es', 'Costa Rica': 'es', 'Panama': 'es', 'Uruguay': 'es', 'Paraguay': 'es', 'Bolivia': 'es', 'Venezuela': 'es',
+  'France': 'fr', 'Belgium': 'fr', 'Switzerland': 'fr', 'Canada': 'fr', 'Monaco': 'fr', 'Luxembourg': 'fr',
+  'Germany': 'de', 'Austria': 'de',
+  'Italy': 'it', 'San Marino': 'it', 'Vatican City': 'it',
+  'Portugal': 'pt', 'Brazil': 'pt',
+  'Netherlands': 'nl',
+  'Poland': 'pl',
+  'Sweden': 'sv',
+  'Denmark': 'da',
+  'Norway': 'no',
+  'Finland': 'fi',
+  'Turkey': 'tr',
+  'Indonesia': 'id',
+  'Malaysia': 'ms',
+  'Vietnam': 'vi',
+  'Philippines': 'tl',
+  'Kenya': 'sw', 'Tanzania': 'sw',
+  'China': 'zh', 'Taiwan': 'zh', 'Hong Kong': 'zh', 'Macau': 'zh', 'Singapore': 'zh',
+  'Japan': 'ja',
+  'South Korea': 'ko',
+  'Thailand': 'th',
+  'Saudi Arabia': 'ar', 'UAE': 'ar', 'Egypt': 'ar', 'Morocco': 'ar', 'Qatar': 'ar', 'Kuwait': 'ar', 'Bahrain': 'ar', 'Oman': 'ar', 'Jordan': 'ar', 'Lebanon': 'ar',
+  'Israel': 'he',
+  'India': 'hi',
+  'Russia': 'ru',
+  'Ukraine': 'uk',
+  'Greece': 'el', 'Cyprus': 'el',
+  'Bulgaria': 'bg',
+};
+
+function updateLocaleGreeting() {
+  const hour = new Date().getHours();
+  let timeOfDay;
+  if (hour >= 5 && hour < 12) timeOfDay = 'morning';
+  else if (hour >= 12 && hour < 17) timeOfDay = 'afternoon';
+  else if (hour >= 17 && hour < 21) timeOfDay = 'evening';
+  else timeOfDay = 'night';
+
+  const country = state.destinationCountry;
+  const langCode = country ? (countryLanguages[country] || 'en') : 'en';
+  const lang = greetings[langCode] || greetings.en;
+
+  let greeting = lang[timeOfDay];
+
+  // Add English translation for non-Latin scripts
+  if (lang.isNonLatin) {
+    const enKey = 'en' + timeOfDay.charAt(0).toUpperCase() + timeOfDay.slice(1);
+    greeting += ` <span class="greeting-translation">(${lang[enKey]})</span>`;
+  }
+
+  if (elements.localeGreeting) {
+    elements.localeGreeting.innerHTML = greeting;
+  }
+}
+
+// =============================================
 // RENDER
 // =============================================
 
 function render() {
+  // Update locale greeting
+  updateLocaleGreeting();
+
   // Update destination header
   if (state.destinationCountry) {
     setCountryFlag(elements.destHeaderFlag, state.destinationCountry, 'lg');

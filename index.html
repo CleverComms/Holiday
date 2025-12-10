@@ -59,6 +59,9 @@
     <main class="main-content">
       <!-- Converter Tab -->
       <section class="tab-content active" id="converterTab">
+        <!-- Locale Greeting -->
+        <div class="locale-greeting" id="localeGreeting">Good morning</div>
+
         <!-- Destination Header -->
         <div class="destination-header" id="destinationHeader">
           <button class="dest-select-btn" id="destHeaderBtn">
@@ -89,7 +92,6 @@
             <div class="price-card-header">
               <span class="price-flag" id="localFlag">🇲🇽</span>
               <span class="price-currency" id="localCurrency">MXN</span>
-              <span class="price-label">Local Price</span>
             </div>
             <span class="price-currency-name" id="localCurrencyName">Mexican Peso</span>
             <div class="price-input-wrapper">
@@ -111,7 +113,6 @@
             <div class="price-card-header">
               <span class="price-flag" id="altFlag">🇺🇸</span>
               <span class="price-currency" id="altCurrency">USD</span>
-              <span class="price-label">Also Quoted</span>
             </div>
             <span class="price-currency-name" id="altCurrencyName">US Dollar</span>
             <div class="price-input-wrapper">
@@ -285,11 +286,11 @@
           </svg>
           <input type="text" id="destinationSearch" placeholder="Search country...">
         </div>
-        <!-- Wallet Section -->
+        <!-- Favourites Section -->
         <div class="wallet-section" id="walletSection" style="display: none;">
           <div class="wallet-header">
-            <span class="wallet-icon">💼</span>
-            <span>My Wallet</span>
+            <span class="wallet-icon">⭐</span>
+            <span>Favourites</span>
           </div>
           <div class="wallet-list" id="walletList">
             <!-- Wallet items will be generated here -->

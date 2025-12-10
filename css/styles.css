@@ -333,6 +333,20 @@ button {
    CONVERTER TAB - HOLIDAY THEME
    ============================================= */
 
+/* Locale Greeting */
+.locale-greeting {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.greeting-translation {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
 /* Destination Header */
 .destination-header {
   margin-bottom: 12px;
