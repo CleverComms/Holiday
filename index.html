@@ -79,6 +79,7 @@
               <span class="price-currency" id="localCurrency">MXN</span>
               <span class="price-label">Local Price</span>
             </div>
+            <span class="price-currency-name" id="localCurrencyName">Mexican Peso</span>
             <div class="price-input-wrapper">
               <input type="number" id="localAmountInput" inputmode="decimal" placeholder="0" value="500">
               <div class="price-adjust-row">
@@ -100,6 +101,7 @@
               <span class="price-currency" id="altCurrency">USD</span>
               <span class="price-label">Also Quoted</span>
             </div>
+            <span class="price-currency-name" id="altCurrencyName">US Dollar</span>
             <div class="price-input-wrapper">
               <input type="number" id="altAmountInput" inputmode="decimal" placeholder="0" value="30">
               <div class="price-adjust-row">
@@ -111,7 +113,7 @@
               <span class="home-flag" id="altHomeFlag">🇬🇧</span>
               <span class="home-amount" id="altHomeAmount">£24.00</span>
             </div>
-            <span class="surcharge-indicator" id="surchargeIndicator"></span>
+            <span class="surcharge-indicator" id="altSurchargeIndicator"></span>
           </div>
         </div>
 
@@ -157,11 +159,13 @@
             <span class="home-card-flag" id="homeCardFlag">🇬🇧</span>
             <span class="home-card-currency" id="homeCardCurrency">£ GBP</span>
           </div>
+          <span class="home-card-currency-name" id="homeCurrencyName">British Pound</span>
           <div class="home-card-input-wrapper">
             <button class="home-adjust minus" data-target="home">−</button>
             <input type="number" id="homeAmountInput" inputmode="decimal" placeholder="0" value="50">
             <button class="home-adjust plus" data-target="home">+</button>
           </div>
+          <span class="surcharge-indicator home-surcharge" id="homeSurchargeIndicator"></span>
         </div>
 
         <!-- Quick Local Amounts -->

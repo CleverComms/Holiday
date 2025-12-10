@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.6';
+const APP_VERSION = '2.5.7';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -45,14 +45,16 @@ const elements = {
   altAmountInput: document.getElementById('altAmountInput'),
   localFlag: document.getElementById('localFlag'),
   localCurrency: document.getElementById('localCurrency'),
+  localCurrencyName: document.getElementById('localCurrencyName'),
   altFlag: document.getElementById('altFlag'),
   altCurrency: document.getElementById('altCurrency'),
+  altCurrencyName: document.getElementById('altCurrencyName'),
   localHomeFlag: document.getElementById('localHomeFlag'),
   localHomeAmount: document.getElementById('localHomeAmount'),
   altHomeFlag: document.getElementById('altHomeFlag'),
   altHomeAmount: document.getElementById('altHomeAmount'),
-  surchargeIndicator: document.getElementById('surchargeIndicator'),
   localSurchargeIndicator: document.getElementById('localSurchargeIndicator'),
+  altSurchargeIndicator: document.getElementById('altSurchargeIndicator'),
   dealIndicator: document.getElementById('dealIndicator'),
   dealText: document.getElementById('dealText'),
   quickAmounts: document.getElementById('quickAmounts'),
@@ -62,7 +64,9 @@ const elements = {
   homeCurrencyCard: document.getElementById('homeCurrencyCard'),
   homeCardFlag: document.getElementById('homeCardFlag'),
   homeCardCurrency: document.getElementById('homeCardCurrency'),
+  homeCurrencyName: document.getElementById('homeCurrencyName'),
   homeAmountInput: document.getElementById('homeAmountInput'),
+  homeSurchargeIndicator: document.getElementById('homeSurchargeIndicator'),
 
   // Lock toggle and surcharge
   lockToggleBtn: document.getElementById('lockToggleBtn'),
@@ -765,8 +769,8 @@ function calculatePrices() {
   elements.localHomeAmount.textContent = `${homeSymbol}${formatNumber(localInHome, homeCurrency)}`;
   elements.altHomeAmount.textContent = `${homeSymbol}${formatNumber(altInHome, homeCurrency)}`;
 
-  // Show surcharge indication if applicable (on both local and alt cards)
-  const surchargeIndicators = [elements.surchargeIndicator, elements.localSurchargeIndicator];
+  // Show surcharge indication if applicable (on all three cards)
+  const surchargeIndicators = [elements.localSurchargeIndicator, elements.altSurchargeIndicator, elements.homeSurchargeIndicator];
 
   if (surchargeAmount > 0) {
     // Calculate the fee amount in home currency (use local price as reference)
@@ -778,9 +782,9 @@ function calculatePrices() {
     const surchargeLabel = surchargeType === 'percent'
       ? `+${surchargeAmount}% fee (${feeFormatted})`
       : `+${homeSymbol}${surchargeAmount} fee`;
-    const oldLabel = elements.surchargeIndicator.textContent;
+    const oldLabel = elements.localSurchargeIndicator?.textContent || '';
 
-    // Update both surcharge indicators
+    // Update all surcharge indicators
     surchargeIndicators.forEach(indicator => {
       if (!indicator) return;
       indicator.classList.remove('animate-out');
@@ -1927,8 +1931,10 @@ function render() {
 
   setFlagElement(elements.localFlag, state.localCurrency, 'lg');
   elements.localCurrency.textContent = `${localInfo?.symbol || ''} ${state.localCurrency}`;
+  elements.localCurrencyName.textContent = localInfo?.name || '';
   setFlagElement(elements.altFlag, state.altCurrency, 'lg');
   elements.altCurrency.textContent = `${altInfo?.symbol || ''} ${state.altCurrency}`;
+  elements.altCurrencyName.textContent = altInfo?.name || '';
 
   setFlagElement(elements.localHomeFlag, state.homeCurrency);
   setFlagElement(elements.altHomeFlag, state.homeCurrency);
@@ -1941,6 +1947,7 @@ function render() {
   // Update home currency card
   setFlagElement(elements.homeCardFlag, state.homeCurrency, 'lg');
   elements.homeCardCurrency.textContent = `${homeInfo?.symbol || ''} ${state.homeCurrency}`;
+  elements.homeCurrencyName.textContent = homeInfo?.name || '';
 
   // Show/hide alt card based on destination
   const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;
