@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.4';
+const APP_VERSION = '2.5.5';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -63,11 +63,6 @@ const elements = {
   homeCardFlag: document.getElementById('homeCardFlag'),
   homeCardCurrency: document.getElementById('homeCardCurrency'),
   homeAmountInput: document.getElementById('homeAmountInput'),
-  homeToLocalFlag: document.getElementById('homeToLocalFlag'),
-  homeToLocalAmount: document.getElementById('homeToLocalAmount'),
-  homeToAltFlag: document.getElementById('homeToAltFlag'),
-  homeToAltAmount: document.getElementById('homeToAltAmount'),
-  homeToAltWrapper: document.getElementById('homeToAltWrapper'),
 
   // Lock toggle and surcharge
   lockToggleBtn: document.getElementById('lockToggleBtn'),
@@ -554,7 +549,7 @@ function adjustHomeAmount(direction) {
 }
 
 function calculateHomeConversions() {
-  const { homeAmount, localCurrency, altCurrency, homeCurrency, rates, currencies } = state;
+  const { homeAmount, localCurrency, altCurrency, homeCurrency, rates } = state;
 
   if (!rates[localCurrency] || !rates[altCurrency] || !rates[homeCurrency]) {
     return;
@@ -564,20 +559,6 @@ function calculateHomeConversions() {
   const homeInUsd = homeAmount / rates[homeCurrency];
   const homeInLocal = homeInUsd * rates[localCurrency];
   const homeInAlt = homeInUsd * rates[altCurrency];
-
-  // Get currency info
-  const localInfo = currencies[localCurrency];
-  const altInfo = currencies[altCurrency];
-  const localSymbol = localInfo?.symbol || '';
-  const altSymbol = altInfo?.symbol || '';
-
-  // Format conversions for display
-  const localFormatted = formatNumber(homeInLocal, localCurrency);
-  const altFormatted = formatNumber(homeInAlt, altCurrency);
-
-  // Update home card displays
-  elements.homeToLocalAmount.textContent = `≈ ${localSymbol}${localFormatted} ${localCurrency}`;
-  elements.homeToAltAmount.textContent = `≈ ${altSymbol}${altFormatted} ${altCurrency}`;
 
   // Update local and alt price cards with rounded values
   const roundedLocal = Math.round(homeInLocal);
@@ -1955,16 +1936,11 @@ function render() {
   // Update home currency card
   setFlagElement(elements.homeCardFlag, state.homeCurrency, 'lg');
   elements.homeCardCurrency.textContent = `${homeInfo?.symbol || ''} ${state.homeCurrency}`;
-  setFlagElement(elements.homeToLocalFlag, state.localCurrency);
-  setFlagElement(elements.homeToAltFlag, state.altCurrency);
 
   // Show/hide alt card based on destination
   const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;
   const hasAltCurrency = countryInfo?.alsoAccepted && countryInfo.alsoAccepted.length > 0;
   elements.altPriceCard.style.display = hasAltCurrency || !state.destinationCountry ? 'block' : 'none';
-
-  // Show/hide alt conversion in home card based on destination
-  elements.homeToAltWrapper.style.display = hasAltCurrency || !state.destinationCountry ? 'flex' : 'none';
 
   updateQuickAmounts();
   updateLockUI();
