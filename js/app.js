@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.27';
+const APP_VERSION = '2.5.28';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1559,8 +1559,12 @@ function initTheme() {
   const savedTheme = localStorage.getItem('holibobsTheme');
   if (savedTheme) {
     document.documentElement.setAttribute('data-theme', savedTheme);
+  } else {
+    // Auto-set based on time of day (dark from 7pm to 7am)
+    const hour = new Date().getHours();
+    const isNightTime = hour >= 19 || hour < 7;
+    document.documentElement.setAttribute('data-theme', isNightTime ? 'dark' : 'light');
   }
-  // If no saved theme, let system preference handle it via CSS
 }
 
 function toggleTheme() {
@@ -1676,6 +1680,12 @@ function createSunrise() {
   }
   sunriseContainer.appendChild(starsLayer);
 
+  // Setting moon (goes down as sun rises)
+  const moon = document.createElement('div');
+  moon.className = 'sunrise-moon';
+  moon.textContent = '🌙';
+  sunriseContainer.appendChild(moon);
+
   // Horizon glow
   const horizon = document.createElement('div');
   horizon.className = 'sunrise-horizon';
@@ -1685,29 +1695,6 @@ function createSunrise() {
   const sun = document.createElement('div');
   sun.className = 'sunrise-sun';
   sunriseContainer.appendChild(sun);
-
-  // Flying birds
-  const birds = document.createElement('div');
-  birds.className = 'sunrise-birds';
-  birds.textContent = '🐦';
-  sunriseContainer.appendChild(birds);
-
-  // Second bird with slight delay
-  const birds2 = document.createElement('div');
-  birds2.className = 'sunrise-birds';
-  birds2.textContent = '🐦';
-  birds2.style.top = '40%';
-  birds2.style.animationDelay = '1s';
-  sunriseContainer.appendChild(birds2);
-
-  // Third bird
-  const birds3 = document.createElement('div');
-  birds3.className = 'sunrise-birds';
-  birds3.textContent = '🐦';
-  birds3.style.top = '32%';
-  birds3.style.animationDelay = '1.3s';
-  birds3.style.fontSize = '1rem';
-  sunriseContainer.appendChild(birds3);
 
   container.appendChild(sunriseContainer);
 }
