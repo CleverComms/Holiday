@@ -1963,6 +1963,7 @@ window.addEventListener('offline', () => {
 
 const HOLIDAY_ACTIVITIES = [
   'sipping margaritas 🍹',
+  'floating down the lazy river 🛟',
   'lounging by the pool 🏊',
   'exploring ancient ruins 🏛️',
   'eating tacos 🌮',
