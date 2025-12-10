@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.16';
+const APP_VERSION = '2.5.17';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -2053,6 +2053,11 @@ const greetings = {
   vi: { morning: 'Chào buổi sáng', afternoon: 'Chào buổi chiều', evening: 'Chào buổi tối', night: 'Chúc ngủ ngon' },
   tl: { morning: 'Magandang umaga', afternoon: 'Magandang hapon', evening: 'Magandang gabi', night: 'Magandang gabi' },
   sw: { morning: 'Habari za asubuhi', afternoon: 'Habari za mchana', evening: 'Habari za jioni', night: 'Usiku mwema' },
+  // Additional languages for multilingual countries
+  mi: { morning: 'Mōrena', afternoon: 'Kia ora', evening: 'Kia ora', night: 'Pō mārie' }, // Māori (New Zealand)
+  cy: { morning: 'Bore da', afternoon: 'Prynhawn da', evening: 'Noswaith dda', night: 'Nos da' }, // Welsh
+  ga: { morning: 'Maidin mhaith', afternoon: 'Tráthnóna maith', evening: 'Tráthnóna maith', night: 'Oíche mhaith' }, // Irish
+  af: { morning: 'Goeie môre', afternoon: 'Goeie middag', evening: 'Goeie naand', night: 'Goeie nag' }, // Afrikaans
   // Non-Latin scripts (with English translations)
   zh: { morning: '早上好', afternoon: '下午好', evening: '晚上好', night: '晚安', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
   ja: { morning: 'おはようございます', afternoon: 'こんにちは', evening: 'こんばんは', night: 'おやすみなさい', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
@@ -2067,10 +2072,23 @@ const greetings = {
   bg: { morning: 'Добро утро', afternoon: 'Добър ден', evening: 'Добър вечер', night: 'Лека нощ', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
 };
 
-// Map countries to their primary language
+// Map countries to their language(s) - arrays for multilingual countries
 const countryLanguages = {
+  // Spanish-speaking
   'Mexico': 'es', 'Spain': 'es', 'Argentina': 'es', 'Colombia': 'es', 'Chile': 'es', 'Peru': 'es', 'Ecuador': 'es', 'Guatemala': 'es', 'Cuba': 'es', 'Dominican Republic': 'es', 'Honduras': 'es', 'El Salvador': 'es', 'Nicaragua': 'es', 'Costa Rica': 'es', 'Panama': 'es', 'Uruguay': 'es', 'Paraguay': 'es', 'Bolivia': 'es', 'Venezuela': 'es',
-  'France': 'fr', 'Belgium': 'fr', 'Switzerland': 'fr', 'Canada': 'fr', 'Monaco': 'fr', 'Luxembourg': 'fr',
+  // Multilingual countries (will randomly select one)
+  'Switzerland': ['de', 'fr', 'it'],
+  'Belgium': ['nl', 'fr', 'de'],
+  'Canada': ['en', 'fr'],
+  'Luxembourg': ['fr', 'de'],
+  'Finland': ['fi', 'sv'],
+  'New Zealand': ['en', 'mi'],
+  'Ireland': ['en', 'ga'],
+  'Wales': ['en', 'cy'],
+  'Singapore': ['en', 'zh', 'ms'],
+  'South Africa': ['en', 'af'],
+  // Single language countries
+  'France': 'fr', 'Monaco': 'fr',
   'Germany': 'de', 'Austria': 'de',
   'Italy': 'it', 'San Marino': 'it', 'Vatican City': 'it',
   'Portugal': 'pt', 'Brazil': 'pt',
@@ -2079,14 +2097,13 @@ const countryLanguages = {
   'Sweden': 'sv',
   'Denmark': 'da',
   'Norway': 'no',
-  'Finland': 'fi',
   'Turkey': 'tr',
   'Indonesia': 'id',
   'Malaysia': 'ms',
   'Vietnam': 'vi',
   'Philippines': 'tl',
   'Kenya': 'sw', 'Tanzania': 'sw',
-  'China': 'zh', 'Taiwan': 'zh', 'Hong Kong': 'zh', 'Macau': 'zh', 'Singapore': 'zh',
+  'China': 'zh', 'Taiwan': 'zh', 'Hong Kong': 'zh', 'Macau': 'zh',
   'Japan': 'ja',
   'South Korea': 'ko',
   'Thailand': 'th',
@@ -2108,7 +2125,16 @@ function updateLocaleGreeting() {
   else timeOfDay = 'night';
 
   const country = state.destinationCountry;
-  const langCode = country ? (countryLanguages[country] || 'en') : 'en';
+  let langSetting = country ? (countryLanguages[country] || 'en') : 'en';
+
+  // Handle multilingual countries - randomly select one language
+  let langCode;
+  if (Array.isArray(langSetting)) {
+    langCode = langSetting[Math.floor(Math.random() * langSetting.length)];
+  } else {
+    langCode = langSetting;
+  }
+
   const lang = greetings[langCode] || greetings.en;
 
   let greeting = lang[timeOfDay];
