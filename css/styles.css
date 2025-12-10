@@ -464,11 +464,11 @@ button {
 .price-cards-stack .price-card {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: var(--radius-lg);
-  padding: 12px 16px;
+  padding: 8px 12px;
   box-shadow: var(--shadow-md);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .price-cards-stack .price-card .price-card-row {
@@ -490,8 +490,8 @@ button {
 .price-card-info {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px;
+  gap: 8px;
+  padding: 4px;
 }
 
 .price-cards-stack .price-flag {
@@ -530,12 +530,12 @@ button {
 
 .price-card-value input {
   width: 90px;
-  padding: 8px 6px;
+  padding: 8px 12px;
   font-size: 1.5rem;
   font-weight: 700;
   text-align: center;
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: 9999px;
   background: rgba(255, 255, 255, 0.9);
   color: var(--text-primary);
   position: relative;
@@ -548,9 +548,9 @@ button {
 }
 
 .price-cards-stack .price-adjust {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-sm);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   background: rgba(255, 255, 255, 0.2);
   color: white;
   font-size: 1.25rem;
@@ -560,10 +560,14 @@ button {
   justify-content: center;
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.1s ease;
   pointer-events: auto;
   position: relative;
   z-index: 5;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.3);
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .price-cards-stack .price-adjust:active {
