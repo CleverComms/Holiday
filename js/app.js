@@ -1958,6 +1958,49 @@ window.addEventListener('offline', () => {
 });
 
 // =============================================
+// FOOTER ACTIVITY ANIMATION
+// =============================================
+
+const HOLIDAY_ACTIVITIES = [
+  'sipping margaritas 🍹',
+  'lounging by the pool 🏊',
+  'exploring ancient ruins 🏛️',
+  'eating tacos 🌮',
+  'watching the sunset 🌅',
+  'dancing to mariachi 💃',
+  'snorkeling in cenotes 🤿',
+  'bargaining at markets 🛍️',
+  'napping in hammocks 😴',
+  'chasing beach sunsets 🏖️',
+  'dodging iguanas 🦎',
+  'perfecting their tan ☀️'
+];
+
+let currentActivityIndex = 0;
+
+function cycleActivity() {
+  const activityText = document.getElementById('activityText');
+  if (!activityText) return;
+
+  // Fade out
+  activityText.classList.add('fade-out');
+  activityText.classList.remove('fade-in');
+
+  setTimeout(() => {
+    // Change text
+    currentActivityIndex = (currentActivityIndex + 1) % HOLIDAY_ACTIVITIES.length;
+    activityText.textContent = HOLIDAY_ACTIVITIES[currentActivityIndex];
+
+    // Fade in
+    activityText.classList.remove('fade-out');
+    activityText.classList.add('fade-in');
+  }, 400);
+}
+
+// Start cycling activities every 4 seconds
+setInterval(cycleActivity, 4000);
+
+// =============================================
 // START
 // =============================================
 

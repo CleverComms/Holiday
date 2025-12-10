@@ -2840,6 +2840,33 @@ button {
   opacity: 0.8;
 }
 
+.activity-text {
+  display: inline-block;
+  font-weight: 600;
+  color: var(--primary-color);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.activity-text.fade-out {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.activity-text.fade-in {
+  animation: activityFadeIn 0.4s ease forwards;
+}
+
+@keyframes activityFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .footer-meta {
   display: flex;
   align-items: center;
