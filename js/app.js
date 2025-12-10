@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.28';
+const APP_VERSION = '2.5.29';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -938,12 +938,13 @@ function calculatePrices() {
     });
   }
 
-  // Update deal indicator - only show alt comparison if country accepts alt currency
+  // Update deal indicator - only show when country accepts multiple currencies
   const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;
   const hasAltCurrency = countryInfo?.alsoAccepted && countryInfo.alsoAccepted.length > 0;
 
   if (hasAltCurrency || !state.destinationCountry) {
     // Show comparison between local and alt
+    elements.dealIndicator.style.display = '';
     const diff = Math.abs(localInHome - altInHome);
     const diffFormatted = `${homeSymbol}${formatNumber(diff, homeCurrency)}`;
 
@@ -958,13 +959,8 @@ function calculatePrices() {
       elements.dealText.textContent = localAmount > 0 || altAmount > 0 ? 'Same price' : 'Enter prices to compare';
     }
   } else {
-    // No alt currency - just show home equivalent info
-    elements.dealIndicator.className = 'deal-indicator';
-    if (localAmount > 0) {
-      elements.dealText.textContent = `${homeSymbol}${formatNumber(localInHome, homeCurrency)} in ${homeCurrency}`;
-    } else {
-      elements.dealText.textContent = 'Enter a price to convert';
-    }
+    // No alt currency - hide the deal indicator entirely
+    elements.dealIndicator.style.display = 'none';
   }
 
   saveState();
