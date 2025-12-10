@@ -2732,18 +2732,18 @@ button {
 .theme-transition-overlay::before {
   content: '';
   position: absolute;
+  left: var(--reveal-x, 50%);
   top: var(--reveal-y, 30px);
-  right: var(--reveal-x, 60px);
   width: 0;
   height: 0;
   border-radius: 50%;
   background: var(--reveal-color, #0f1419);
-  transform: translate(50%, -50%);
+  transform: translate(-50%, -50%);
   transition: none;
 }
 
 .theme-transition-overlay.transitioning::before {
-  animation: circularReveal 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: circularReveal 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes circularReveal {
@@ -2759,13 +2759,21 @@ button {
   }
 }
 
-.theme-transition-overlay.fade-out::before {
-  animation: revealFadeOut 0.5s ease-out forwards;
+.theme-transition-overlay.collapsing::before {
+  animation: circularCollapse 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-@keyframes revealFadeOut {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
+@keyframes circularCollapse {
+  0% {
+    width: 300vmax;
+    height: 300vmax;
+    opacity: 1;
+  }
+  100% {
+    width: 0;
+    height: 0;
+    opacity: 0;
+  }
 }
 
 /* Stars Container */
@@ -2840,13 +2848,18 @@ button {
 }
 
 /* Sunrise animation when switching to light */
-.theme-transition-overlay.to-light .sunrise-container {
+.theme-transition-overlay.to-light .stars-container {
+  opacity: 1;
+}
+
+.sunrise-container {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   overflow: hidden;
+  z-index: 10;
 }
 
 /* Night sky background that fades to day */

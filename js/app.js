@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.29';
+const APP_VERSION = '2.5.30';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1573,9 +1573,11 @@ function toggleTheme() {
   const rect = btn.getBoundingClientRect();
   const overlay = elements.themeTransition;
 
-  // Set CSS variables for animation origin
-  overlay.style.setProperty('--reveal-x', `${window.innerWidth - rect.right + rect.width / 2}px`);
-  overlay.style.setProperty('--reveal-y', `${rect.top + rect.height / 2}px`);
+  // Set CSS variables for animation origin (center of button)
+  const originX = rect.left + rect.width / 2;
+  const originY = rect.top + rect.height / 2;
+  overlay.style.setProperty('--reveal-x', `${originX}px`);
+  overlay.style.setProperty('--reveal-y', `${originY}px`);
 
   // Set the reveal color based on target theme
   const revealColor = newTheme === 'dark' ? '#0f1419' : '#fff9e6';
@@ -1583,12 +1585,11 @@ function toggleTheme() {
 
   // Add animation classes
   btn.classList.add('animating');
-  overlay.classList.remove('fade-out', 'to-dark', 'to-light');
+  overlay.classList.remove('collapsing', 'to-dark', 'to-light');
   overlay.classList.add('transitioning', newTheme === 'dark' ? 'to-dark' : 'to-light');
 
   // Create stars for night mode, sunrise for day mode
   const isToLight = newTheme === 'light';
-  const animDuration = isToLight ? 2200 : 1200; // Sunrise is longer
 
   if (newTheme === 'dark') {
     createStars();
@@ -1601,19 +1602,19 @@ function toggleTheme() {
   setTimeout(() => {
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('holibobsTheme', newTheme);
-  }, isToLight ? 1200 : 600);
+  }, 800);
+
+  // Start collapse animation back to button
+  setTimeout(() => {
+    overlay.classList.add('collapsing');
+  }, isToLight ? 2000 : 1500);
 
   // Clean up animation
   setTimeout(() => {
-    overlay.classList.add('fade-out');
-    btn.classList.remove('animating');
-  }, animDuration);
-
-  setTimeout(() => {
-    overlay.classList.remove('transitioning', 'fade-out', 'to-dark', 'to-light');
+    overlay.classList.remove('transitioning', 'collapsing', 'to-dark', 'to-light');
     elements.starsContainer.innerHTML = '';
-  }, animDuration + 500);
-
+    btn.classList.remove('animating');
+  }, isToLight ? 2800 : 2300);
 }
 
 function createStars() {
