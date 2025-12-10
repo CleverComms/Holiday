@@ -2036,14 +2036,15 @@ button {
   transform: translateX(-50%) translateY(-100px);
   background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
   border-radius: var(--radius-lg);
-  padding: 16px 20px;
+  padding: 20px 24px;
   display: flex;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
   gap: 16px;
   box-shadow: var(--shadow-lg);
   z-index: 600;
   max-width: calc(100% - 32px);
-  min-width: 320px;
   opacity: 0;
   transition: all 0.4s ease;
 }
@@ -2064,9 +2065,7 @@ button {
 }
 
 .update-text {
-  flex: 1;
   color: white;
-  white-space: nowrap;
 }
 
 .update-text strong {
@@ -2081,14 +2080,13 @@ button {
 }
 
 .update-btn {
-  padding: 10px 20px;
+  padding: 10px 24px;
   background: white;
   color: #38a169;
   border-radius: var(--radius-sm);
   font-weight: 700;
   font-size: 0.95rem;
   transition: all 0.2s ease;
-  flex-shrink: 0;
 }
 
 .update-btn:active {
