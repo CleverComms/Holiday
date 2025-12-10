@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.13';
+const APP_VERSION = '2.5.14';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -32,6 +32,8 @@ let state = {
 
 // Guard flag to prevent re-entrant sync calls
 let isSyncing = false;
+let lastSyncTime = 0;
+const SYNC_DEBOUNCE_MS = 100; // Minimum time between syncs
 
 // =============================================
 // DOM ELEMENTS
@@ -421,11 +423,17 @@ function setupEventListeners() {
     const btn = e.target.closest('.quick-btn');
     if (!btn) return;
 
-    const amount = parseFloat(btn.dataset.amount);
-    if (isNaN(amount) || amount <= 0) return;
-
-    // Set flag before any updates to prevent cascading events
+    // Debounce rapid clicks
+    const now = Date.now();
+    if (isSyncing || (now - lastSyncTime) < SYNC_DEBOUNCE_MS) return;
+    lastSyncTime = now;
     isSyncing = true;
+
+    const amount = parseFloat(btn.dataset.amount);
+    if (isNaN(amount) || amount <= 0) {
+      isSyncing = false;
+      return;
+    }
 
     try {
       state.localAmount = amount;
@@ -594,7 +602,9 @@ function switchSafetyTab(tab) {
 // =============================================
 
 function adjustHomeAmount(direction) {
-  if (isSyncing) return;
+  const now = Date.now();
+  if (isSyncing || (now - lastSyncTime) < SYNC_DEBOUNCE_MS) return;
+  lastSyncTime = now;
   isSyncing = true;
 
   try {
@@ -652,7 +662,9 @@ function calculateHomeConversions() {
 }
 
 function adjustPrice(target, direction) {
-  if (isSyncing) return;
+  const now = Date.now();
+  if (isSyncing || (now - lastSyncTime) < SYNC_DEBOUNCE_MS) return;
+  lastSyncTime = now;
   isSyncing = true;
 
   try {
