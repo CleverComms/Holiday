@@ -1992,8 +1992,9 @@ button {
 .toast {
   position: fixed;
   bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
+  left: 16px;
+  right: 16px;
+  transform: translateY(100px);
   background: var(--text-primary);
   color: white;
   padding: 12px 24px;
@@ -2003,11 +2004,21 @@ button {
   transition: all 0.3s ease;
   z-index: 1200;
   box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .toast.active {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
+}
+
+.toast-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 /* =============================================

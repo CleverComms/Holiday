@@ -133,6 +133,7 @@ const elements = {
   // Toast
   toast: document.getElementById('toast'),
   toastMessage: document.getElementById('toastMessage'),
+  toastIcon: document.getElementById('toastIcon'),
 
   // Setup wizard
   setupModal: document.getElementById('setupModal'),
@@ -527,13 +528,16 @@ function togglePriceLock() {
   state.pricesLocked = !state.pricesLocked;
   updateLockUI();
 
+  const lockedIcon = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>';
+  const unlockedIcon = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 019.9-1"/>';
+
   if (state.pricesLocked) {
     // Sync alt to local when locking
     syncLockedPrices('local');
     calculatePrices();
-    showToast('Prices linked at exchange rate');
+    showToast('Prices linked at exchange rate', 3000, lockedIcon);
   } else {
-    showToast('Prices unlocked');
+    showToast('Prices unlinked', 3000, unlockedIcon);
   }
 }
 
@@ -1649,8 +1653,14 @@ setInterval(checkForUpdates, 30 * 60 * 1000);
 // TOAST
 // =============================================
 
-function showToast(message, duration = 3000) {
+function showToast(message, duration = 3000, icon = null) {
   elements.toastMessage.textContent = message;
+  if (icon) {
+    elements.toastIcon.innerHTML = icon;
+    elements.toastIcon.style.display = 'block';
+  } else {
+    elements.toastIcon.style.display = 'none';
+  }
   elements.toast.classList.add('active');
   setTimeout(() => elements.toast.classList.remove('active'), duration);
 }
