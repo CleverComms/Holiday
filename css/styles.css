@@ -538,6 +538,8 @@ button {
   display: flex;
   align-items: center;
   gap: 6px;
+  position: relative;
+  z-index: 2;
 }
 
 .price-card-value input {
@@ -2740,6 +2742,7 @@ button {
   background: var(--reveal-color, #0f1419);
   transform: translate(-50%, -50%);
   transition: none;
+  z-index: 0;
 }
 
 .theme-transition-overlay.transitioning::before {
@@ -2786,6 +2789,7 @@ button {
   overflow: hidden;
   opacity: 0;
   transition: opacity 0.5s ease;
+  z-index: 1;
 }
 
 .theme-transition-overlay.to-dark .stars-container {
