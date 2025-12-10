@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.4.7';
+const APP_VERSION = '2.4.8';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1560,7 +1560,8 @@ async function registerServiceWorker() {
       // Check for updates on launch
       registration.update();
 
-      // Also do a proactive version check after a short delay (helps iOS)
+      // Proactive version check - immediate and delayed (iOS needs both)
+      checkForUpdates();
       setTimeout(checkForUpdates, 3000);
 
       // Listen for new service worker installing
@@ -1643,6 +1644,19 @@ async function checkForUpdates() {
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     checkForUpdates();
+  }
+});
+
+// Check for updates on pageshow (better for iOS PWA cold/warm starts)
+window.addEventListener('pageshow', (event) => {
+  // Always check on pageshow for iOS PWA reliability
+  checkForUpdates();
+
+  // Also trigger SW update check
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.getRegistration().then(reg => {
+      if (reg) reg.update();
+    });
   }
 });
 
