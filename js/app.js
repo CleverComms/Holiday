@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.8';
+const APP_VERSION = '2.5.10';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -407,13 +407,19 @@ function setupEventListeners() {
     });
   });
 
-  // Quick amounts
+  // Quick amounts - update local and sync others if linked
   elements.quickAmounts.addEventListener('click', (e) => {
     const btn = e.target.closest('.quick-btn');
     if (btn) {
       const amount = parseFloat(btn.dataset.amount);
       state.localAmount = amount;
       elements.localAmountInput.value = amount;
+
+      // Sync other currencies if linked
+      if (state.pricesLocked) {
+        syncLockedPrices('local');
+      }
+
       calculatePrices();
     }
   });
@@ -1460,6 +1466,9 @@ function toggleTheme() {
   overlay.classList.add('transitioning', newTheme === 'dark' ? 'to-dark' : 'to-light');
 
   // Create stars for night mode, sunrise for day mode
+  const isToLight = newTheme === 'light';
+  const animDuration = isToLight ? 2200 : 1200; // Sunrise is longer
+
   if (newTheme === 'dark') {
     createStars();
     setTimeout(() => createShootingStar(), 500);
@@ -1471,18 +1480,18 @@ function toggleTheme() {
   setTimeout(() => {
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('holibobsTheme', newTheme);
-  }, 600);
+  }, isToLight ? 1200 : 600);
 
   // Clean up animation
   setTimeout(() => {
     overlay.classList.add('fade-out');
     btn.classList.remove('animating');
-  }, 1200);
+  }, animDuration);
 
   setTimeout(() => {
     overlay.classList.remove('transitioning', 'fade-out', 'to-dark', 'to-light');
     elements.starsContainer.innerHTML = '';
-  }, 1700);
+  }, animDuration + 500);
 
   // Show toast after animation
   setTimeout(() => {
@@ -1491,7 +1500,7 @@ function toggleTheme() {
     } else {
       showToast('Good morning! ☀️');
     }
-  }, 800);
+  }, isToLight ? 1500 : 800);
 }
 
 function createStars() {
@@ -1532,20 +1541,37 @@ function createSunrise() {
   const sunriseContainer = document.createElement('div');
   sunriseContainer.className = 'sunrise-container';
 
-  // Gradient background
-  const gradient = document.createElement('div');
-  gradient.className = 'sunrise-gradient';
-  sunriseContainer.appendChild(gradient);
+  // Night sky background that transitions to day
+  const sky = document.createElement('div');
+  sky.className = 'sunrise-sky';
+  sunriseContainer.appendChild(sky);
 
-  // Sun
+  // Stars container (will fade out)
+  const starsLayer = document.createElement('div');
+  starsLayer.className = 'sunrise-stars';
+
+  // Create random stars for the night sky
+  for (let i = 0; i < 25; i++) {
+    const star = document.createElement('div');
+    star.className = 'sunrise-star';
+    star.style.left = `${Math.random() * 100}%`;
+    star.style.top = `${Math.random() * 60}%`;
+    star.style.width = `${Math.random() * 3 + 1}px`;
+    star.style.height = star.style.width;
+    star.style.animationDelay = `${Math.random() * 1}s`;
+    starsLayer.appendChild(star);
+  }
+  sunriseContainer.appendChild(starsLayer);
+
+  // Horizon glow
+  const horizon = document.createElement('div');
+  horizon.className = 'sunrise-horizon';
+  sunriseContainer.appendChild(horizon);
+
+  // The rising sun
   const sun = document.createElement('div');
   sun.className = 'sunrise-sun';
   sunriseContainer.appendChild(sun);
-
-  // Sun rays
-  const rays = document.createElement('div');
-  rays.className = 'sunrise-rays';
-  sunriseContainer.appendChild(rays);
 
   // Flying birds
   const birds = document.createElement('div');
@@ -1557,10 +1583,18 @@ function createSunrise() {
   const birds2 = document.createElement('div');
   birds2.className = 'sunrise-birds';
   birds2.textContent = '🐦';
-  birds2.style.top = '25%';
-  birds2.style.left = '15%';
-  birds2.style.animationDelay = '0.7s';
+  birds2.style.top = '40%';
+  birds2.style.animationDelay = '1s';
   sunriseContainer.appendChild(birds2);
+
+  // Third bird
+  const birds3 = document.createElement('div');
+  birds3.className = 'sunrise-birds';
+  birds3.textContent = '🐦';
+  birds3.style.top = '32%';
+  birds3.style.animationDelay = '1.3s';
+  birds3.style.fontSize = '1rem';
+  sunriseContainer.appendChild(birds3);
 
   container.appendChild(sunriseContainer);
 }
