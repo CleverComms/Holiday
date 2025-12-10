@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.24';
+const APP_VERSION = '2.5.25';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -2220,22 +2220,37 @@ function updateLocaleGreeting() {
   const country = state.destinationCountry;
   let langSetting = country ? (countryLanguages[country] || 'en') : 'en';
 
-  // Handle multilingual countries - randomly select one language
-  let langCode;
-  if (Array.isArray(langSetting)) {
-    langCode = langSetting[Math.floor(Math.random() * langSetting.length)];
+  // Build array of language codes to display
+  let langCodes = Array.isArray(langSetting) ? langSetting : [langSetting];
+
+  // Get English greeting for reference
+  const enGreeting = greetings.en[timeOfDay];
+
+  // Build greeting parts
+  let greetingParts = [];
+  let hasEnglish = langCodes.includes('en');
+
+  langCodes.forEach(langCode => {
+    const lang = greetings[langCode] || greetings.en;
+    if (langCode !== 'en') {
+      greetingParts.push(lang[timeOfDay]);
+    }
+  });
+
+  // Always include English at the end if there are non-English greetings
+  if (greetingParts.length > 0) {
+    greetingParts.push(enGreeting);
   } else {
-    langCode = langSetting;
+    // Only English
+    greetingParts.push(enGreeting);
   }
 
-  const lang = greetings[langCode] || greetings.en;
-
-  let greeting = lang[timeOfDay];
-
-  // Add English translation for non-Latin scripts
-  if (lang.isNonLatin) {
-    const enKey = 'en' + timeOfDay.charAt(0).toUpperCase() + timeOfDay.slice(1);
-    greeting += ` <span class="greeting-translation">(${lang[enKey]})</span>`;
+  // Join with separator and wrap for scrolling if long
+  let greeting;
+  if (greetingParts.length > 1) {
+    greeting = `<span class="greeting-scroll">${greetingParts.join(' · ')}</span>`;
+  } else {
+    greeting = greetingParts[0];
   }
 
   if (elements.localeGreeting) {

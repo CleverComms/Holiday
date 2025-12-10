@@ -340,6 +340,27 @@ button {
   color: var(--text-muted);
   margin-bottom: 8px;
   font-weight: 500;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.greeting-scroll {
+  display: inline-block;
+  animation: greeting-scroll 12s linear infinite;
+  padding-left: 100%;
+}
+
+.locale-greeting:hover .greeting-scroll {
+  animation-play-state: paused;
+}
+
+@keyframes greeting-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 
 .greeting-translation {
