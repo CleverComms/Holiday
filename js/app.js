@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.39';
+const APP_VERSION = '2.5.40';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -429,13 +429,9 @@ function setupEventListeners() {
     });
   });
 
-  // +/- buttons (true event delegation on container)
-  const priceCardsContainer = document.getElementById('priceComparison');
-  if (priceCardsContainer) {
-    priceCardsContainer.addEventListener('click', (e) => {
-      const btn = e.target.closest('.price-adjust');
-      if (!btn) return;
-
+  // +/- buttons - direct listeners on each button for reliability
+  document.querySelectorAll('.price-adjust').forEach(btn => {
+    const handler = (e) => {
       e.preventDefault();
       e.stopPropagation();
 
@@ -447,8 +443,15 @@ function setupEventListeners() {
       } else {
         adjustPrice(target, isPlus ? 1 : -1);
       }
+    };
+
+    // Handle both click and touchend for maximum compatibility
+    btn.addEventListener('click', handler);
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      handler(e);
     });
-  }
+  });
 
   // Currency modal
   elements.closeCurrencyModal.addEventListener('click', closeCurrencyModal);
