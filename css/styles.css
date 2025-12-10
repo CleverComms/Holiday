@@ -350,10 +350,13 @@ button {
 /* Destination Header */
 .destination-header {
   margin-bottom: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
 }
 
 .dest-select-btn {
-  width: 100%;
+  flex: 1;
   padding: 12px 16px;
   display: flex;
   align-items: center;
@@ -383,6 +386,39 @@ button {
 
 .dest-select-btn .chevron {
   color: #744210;
+}
+
+/* Locate Button */
+.locate-btn {
+  width: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.locate-btn:active {
+  transform: scale(0.95);
+}
+
+.locate-btn svg {
+  width: 24px;
+  height: 24px;
+  color: #744210;
+}
+
+.locate-btn.loading svg {
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 /* Price Comparison */

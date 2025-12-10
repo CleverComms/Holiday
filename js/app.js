@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.17';
+const APP_VERSION = '2.5.18';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -47,6 +47,7 @@ const elements = {
   destHeaderBtn: document.getElementById('destHeaderBtn'),
   destHeaderFlag: document.getElementById('destHeaderFlag'),
   destHeaderName: document.getElementById('destHeaderName'),
+  locateBtn: document.getElementById('locateBtn'),
 
   // Price comparison
   localAmountInput: document.getElementById('localAmountInput'),
@@ -373,6 +374,11 @@ async function loadDataFiles() {
 function setupEventListeners() {
   // Destination header button
   elements.destHeaderBtn.addEventListener('click', () => openDestinationModal('main'));
+
+  // Locate button - trigger GPS location detection
+  if (elements.locateBtn) {
+    elements.locateBtn.addEventListener('click', requestUserLocation);
+  }
 
   // Price inputs
   elements.localAmountInput.addEventListener('input', (e) => {
@@ -1780,6 +1786,50 @@ const COUNTRY_COORD_POINTS = {
   'Chile': [{ lat: -33.4, lng: -70.6 }], // Santiago
   'Oman': [{ lat: 23.6, lng: 58.5 }], // Muscat
 };
+
+// User-triggered location detection (via locate button)
+function requestUserLocation() {
+  if (!navigator.geolocation) {
+    showToast('Location not supported on this device');
+    return;
+  }
+
+  // Visual feedback - add loading state to button
+  if (elements.locateBtn) {
+    elements.locateBtn.classList.add('loading');
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      if (elements.locateBtn) {
+        elements.locateBtn.classList.remove('loading');
+      }
+
+      const { latitude, longitude } = position.coords;
+      const nearestCountry = findNearestCountry(latitude, longitude);
+
+      if (nearestCountry && state.countries[nearestCountry]) {
+        // Directly select the country
+        selectDestination(nearestCountry);
+        showToast(`Location set to ${nearestCountry}`);
+      } else {
+        showToast('Could not determine your location');
+      }
+    },
+    (error) => {
+      if (elements.locateBtn) {
+        elements.locateBtn.classList.remove('loading');
+      }
+
+      if (error.code === error.PERMISSION_DENIED) {
+        showToast('Location permission denied');
+      } else {
+        showToast('Could not get your location');
+      }
+    },
+    { timeout: 10000, enableHighAccuracy: true }
+  );
+}
 
 function detectUserLocation(isSetup = false) {
   // Prevent double detection in same session
