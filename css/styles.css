@@ -1146,10 +1146,22 @@ button {
 }
 
 /* Quick Amounts */
+.quick-amounts-section {
+  margin-bottom: 12px;
+}
+
+.quick-amounts-label {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
 .quick-amounts {
   display: flex;
   gap: 6px;
-  margin-bottom: 12px;
   flex-wrap: wrap;
 }
 

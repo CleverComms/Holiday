@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.9';
+const APP_VERSION = '2.5.10';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -407,13 +407,19 @@ function setupEventListeners() {
     });
   });
 
-  // Quick amounts
+  // Quick amounts - update local and sync others if linked
   elements.quickAmounts.addEventListener('click', (e) => {
     const btn = e.target.closest('.quick-btn');
     if (btn) {
       const amount = parseFloat(btn.dataset.amount);
       state.localAmount = amount;
       elements.localAmountInput.value = amount;
+
+      // Sync other currencies if linked
+      if (state.pricesLocked) {
+        syncLockedPrices('local');
+      }
+
       calculatePrices();
     }
   });
