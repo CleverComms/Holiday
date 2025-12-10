@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.12';
+const APP_VERSION = '2.5.13';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -424,15 +424,36 @@ function setupEventListeners() {
     const amount = parseFloat(btn.dataset.amount);
     if (isNaN(amount) || amount <= 0) return;
 
-    state.localAmount = amount;
-    elements.localAmountInput.value = amount;
+    // Set flag before any updates to prevent cascading events
+    isSyncing = true;
 
-    // Sync other currencies if linked
-    if (state.pricesLocked) {
-      syncLockedPrices('local');
+    try {
+      state.localAmount = amount;
+      elements.localAmountInput.value = amount;
+
+      // Sync other currencies if linked
+      if (state.pricesLocked) {
+        const { localCurrency, altCurrency, homeCurrency, rates } = state;
+        if (rates[localCurrency] && rates[altCurrency] && rates[homeCurrency]) {
+          const localToUsd = 1 / rates[localCurrency];
+          const usdToAlt = rates[altCurrency];
+          const usdToHome = rates[homeCurrency];
+          const localToAlt = localToUsd * usdToAlt;
+
+          let altAmount = amount * localToAlt;
+          state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
+          elements.altAmountInput.value = state.altAmount;
+
+          let homeAmount = amount * localToUsd * usdToHome;
+          state.homeAmount = homeAmount >= 10 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
+          elements.homeAmountInput.value = state.homeAmount;
+        }
+      }
+
+      calculatePrices();
+    } finally {
+      isSyncing = false;
     }
-
-    calculatePrices();
   });
 
   // Currency modal
@@ -573,22 +594,46 @@ function switchSafetyTab(tab) {
 // =============================================
 
 function adjustHomeAmount(direction) {
-  const currentAmount = state.homeAmount;
-  let step = 5;
-  if (currentAmount >= 500) step = 50;
-  else if (currentAmount >= 100) step = 20;
-  else if (currentAmount >= 50) step = 10;
-  else step = 5;
+  if (isSyncing) return;
+  isSyncing = true;
 
-  let newAmount = currentAmount + (direction * step);
-  if (newAmount < 0) newAmount = 0;
+  try {
+    const currentAmount = state.homeAmount;
+    let step = 5;
+    if (currentAmount >= 500) step = 50;
+    else if (currentAmount >= 100) step = 20;
+    else if (currentAmount >= 50) step = 10;
+    else step = 5;
 
-  // Round to the nearest step for clean numbers
-  newAmount = Math.round(newAmount / step) * step;
+    let newAmount = currentAmount + (direction * step);
+    if (newAmount < 0) newAmount = 0;
 
-  state.homeAmount = newAmount;
-  elements.homeAmountInput.value = newAmount;
-  calculateHomeConversions();
+    // Round to the nearest step for clean numbers
+    newAmount = Math.round(newAmount / step) * step;
+
+    state.homeAmount = newAmount;
+    elements.homeAmountInput.value = newAmount;
+
+    // Sync if locked
+    if (state.pricesLocked) {
+      const { localCurrency, altCurrency, homeCurrency, rates } = state;
+      if (rates[localCurrency] && rates[altCurrency] && rates[homeCurrency]) {
+        const homeInUsd = newAmount / rates[homeCurrency];
+
+        let localAmount = homeInUsd * rates[localCurrency];
+        state.localAmount = Math.round(localAmount);
+        elements.localAmountInput.value = state.localAmount;
+
+        let altAmount = homeInUsd * rates[altCurrency];
+        state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
+        elements.altAmountInput.value = state.altAmount;
+      }
+    }
+    calculatePrices();
+    saveState();
+  } finally {
+    isSyncing = false;
+  }
 }
 
 function calculateHomeConversions() {
@@ -607,31 +652,38 @@ function calculateHomeConversions() {
 }
 
 function adjustPrice(target, direction) {
-  const currentAmount = target === 'local' ? state.localAmount : state.altAmount;
-  let step = 10;
-  if (currentAmount >= 1000) step = 100;
-  else if (currentAmount >= 100) step = 50;
-  else if (currentAmount >= 50) step = 10;
-  else step = 5;
+  if (isSyncing) return;
+  isSyncing = true;
 
-  let newAmount = currentAmount + (direction * step);
-  if (newAmount < 0) newAmount = 0;
+  try {
+    const currentAmount = target === 'local' ? state.localAmount : state.altAmount;
+    let step = 10;
+    if (currentAmount >= 1000) step = 100;
+    else if (currentAmount >= 100) step = 50;
+    else if (currentAmount >= 50) step = 10;
+    else step = 5;
 
-  // Round to the nearest step for clean numbers
-  newAmount = Math.round(newAmount / step) * step;
+    let newAmount = currentAmount + (direction * step);
+    if (newAmount < 0) newAmount = 0;
 
-  if (target === 'local') {
-    state.localAmount = newAmount;
-    elements.localAmountInput.value = newAmount;
-  } else {
-    state.altAmount = newAmount;
-    elements.altAmountInput.value = newAmount;
+    // Round to the nearest step for clean numbers
+    newAmount = Math.round(newAmount / step) * step;
+
+    if (target === 'local') {
+      state.localAmount = newAmount;
+      elements.localAmountInput.value = newAmount;
+    } else {
+      state.altAmount = newAmount;
+      elements.altAmountInput.value = newAmount;
+    }
+
+    if (state.pricesLocked) {
+      syncLockedPrices(target);
+    }
+    calculatePrices();
+  } finally {
+    isSyncing = false;
   }
-
-  if (state.pricesLocked) {
-    syncLockedPrices(target);
-  }
-  calculatePrices();
 }
 
 function togglePriceLock() {
@@ -643,8 +695,13 @@ function togglePriceLock() {
 
   if (state.pricesLocked) {
     // Sync alt to local when locking
-    syncLockedPrices('local');
-    calculatePrices();
+    isSyncing = true;
+    try {
+      syncLockedPrices('local');
+      calculatePrices();
+    } finally {
+      isSyncing = false;
+    }
     showToast('Prices linked at exchange rate', 3000, lockedIcon);
   } else {
     showToast('Prices unlinked', 3000, unlockedIcon);
