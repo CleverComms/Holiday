@@ -2063,6 +2063,9 @@ window.addEventListener('pageshow', (event) => {
 // Check for updates periodically (every 30 minutes)
 setInterval(checkForUpdates, 30 * 60 * 1000);
 
+// Update greeting periodically (every 30 minutes)
+setInterval(updateLocaleGreeting, 30 * 60 * 1000);
+
 // =============================================
 // TOAST
 // =============================================
