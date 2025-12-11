@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.46';
+const APP_VERSION = '2.5.47';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -572,8 +572,22 @@ function setupEventListeners() {
   elements.locationYesBtn.addEventListener('click', acceptLocationSuggestion);
   elements.locationNoBtn.addEventListener('click', dismissLocationSuggestion);
 
-  // Update banner
-  elements.updateBtn.addEventListener('click', applyUpdate);
+  // Update banner - handle touch to prevent double-firing on iOS
+  let updateBtnHandled = false;
+  elements.updateBtn.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    if (updateBtnHandled) return;
+    updateBtnHandled = true;
+    setTimeout(() => { updateBtnHandled = false; }, 300);
+    applyUpdate();
+  }, { passive: false });
+  elements.updateBtn.addEventListener('click', (e) => {
+    if (updateBtnHandled) {
+      e.preventDefault();
+      return;
+    }
+    applyUpdate();
+  });
 
   // Lock toggle
   elements.lockToggleBtn.addEventListener('click', togglePriceLock);
