@@ -3,7 +3,7 @@
  * Enables offline functionality and caching
  */
 
-const CACHE_VERSION = '2.5.68';
+const CACHE_VERSION = '2.5.69';
 const CACHE_NAME = `holiday-v${CACHE_VERSION}`;
 const RUNTIME_CACHE = 'holiday-runtime';
 
@@ -23,7 +23,13 @@ const PRECACHE_URLS = [
 
 // External CDN resources to cache for offline use
 const EXTERNAL_URLS = [
-  'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js'
+  'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js',
+  'https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css'
+];
+
+// CDN prefixes to cache dynamically (flag SVGs will be cached on first use)
+const CACHEABLE_CDN_PREFIXES = [
+  'https://cdn.jsdelivr.net/gh/lipis/flag-icons'
 ];
 
 // Install event - cache core assets
@@ -93,6 +99,11 @@ function isExternalCached(url) {
   return EXTERNAL_URLS.some(extUrl => url.href.startsWith(extUrl.split('?')[0]));
 }
 
+// Check if URL is a cacheable CDN resource (for dynamic caching)
+function isCacheableCDN(url) {
+  return CACHEABLE_CDN_PREFIXES.some(prefix => url.href.startsWith(prefix));
+}
+
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
   const { request } = event;
@@ -112,6 +123,12 @@ self.addEventListener('fetch', (event) => {
   // Handle external CDN resources (cache-first)
   if (isExternalCached(url)) {
     event.respondWith(cacheFirst(request));
+    return;
+  }
+
+  // Handle cacheable CDN resources like flag SVGs (cache-first with dynamic caching)
+  if (isCacheableCDN(url)) {
+    event.respondWith(cacheFirstWithStore(request));
     return;
   }
 
@@ -152,6 +169,30 @@ async function cacheFirst(request) {
     }
 
     return new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+  }
+}
+
+// Cache-first with store strategy (for CDN resources like flags)
+// Caches resources on first fetch for offline use
+async function cacheFirstWithStore(request) {
+  const cachedResponse = await caches.match(request);
+
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+
+  try {
+    const networkResponse = await fetch(request, { mode: 'cors' });
+
+    if (networkResponse.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, networkResponse.clone());
+    }
+
+    return networkResponse;
+  } catch (error) {
+    console.error('[SW] CDN fetch failed:', error);
+    return new Response('', { status: 503, statusText: 'Service Unavailable' });
   }
 }
 
