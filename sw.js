@@ -3,7 +3,7 @@
  * Enables offline functionality and caching
  */
 
-const CACHE_VERSION = '2.5.64';
+const CACHE_VERSION = '2.5.65';
 const CACHE_NAME = `holiday-v${CACHE_VERSION}`;
 const RUNTIME_CACHE = 'holiday-runtime';
 
@@ -21,13 +21,36 @@ const PRECACHE_URLS = [
   './manifest.json'
 ];
 
+// External CDN resources to cache for offline use
+const EXTERNAL_URLS = [
+  'https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css',
+  'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js'
+];
+
 // Install event - cache core assets
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('[SW] Pre-caching app shell');
+        // Cache local files first
         return cache.addAll(PRECACHE_URLS);
+      })
+      .then(() => {
+        // Cache external CDN resources (don't fail install if these fail)
+        return caches.open(CACHE_NAME).then((cache) => {
+          return Promise.allSettled(
+            EXTERNAL_URLS.map(url =>
+              fetch(url, { mode: 'cors' })
+                .then(response => {
+                  if (response.ok) {
+                    return cache.put(url, response);
+                  }
+                })
+                .catch(err => console.log('[SW] Could not cache:', url))
+            )
+          );
+        });
       })
       .then(() => {
         console.log('[SW] Pre-caching complete');
@@ -66,6 +89,11 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Check if URL is an external CDN resource we cache
+function isExternalCached(url) {
+  return EXTERNAL_URLS.some(extUrl => url.href.startsWith(extUrl.split('?')[0]));
+}
+
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
   const { request } = event;
@@ -76,14 +104,20 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Skip cross-origin requests except for API
-  if (url.origin !== location.origin && !url.href.includes('exchangerate-api.com')) {
-    return;
-  }
-
   // Handle API requests differently (network-first for fresh rates)
   if (url.href.includes('exchangerate-api.com')) {
     event.respondWith(networkFirst(request));
+    return;
+  }
+
+  // Handle external CDN resources (cache-first)
+  if (isExternalCached(url)) {
+    event.respondWith(cacheFirst(request));
+    return;
+  }
+
+  // Skip other cross-origin requests
+  if (url.origin !== location.origin) {
     return;
   }
 
