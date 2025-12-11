@@ -489,7 +489,7 @@ button {
 }
 
 /* Price Card Info (currency display) */
-.price-card-info {
+.price-cards-stack .price-card-info {
   grid-column: 1;
   grid-row: 1;
   display: flex;
@@ -525,7 +525,7 @@ button {
 }
 
 /* Price Card Value (input + buttons) */
-.price-card-value {
+.price-cards-stack .price-card-value {
   grid-column: 2;
   grid-row: 1;
   display: flex;
