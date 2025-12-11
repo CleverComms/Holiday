@@ -7,9 +7,64 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.49';
+const APP_VERSION = '2.5.50';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
+
+// Currency configuration for smart step sizes and decimal handling
+const ZERO_DECIMAL_CURRENCIES = ['JPY', 'KRW', 'VND', 'IDR', 'CLP', 'COP', 'HUF', 'ISK', 'UGX', 'RWF', 'KHR', 'LAK', 'MMK', 'PYG', 'XOF', 'XAF'];
+const HIGH_VALUE_CURRENCIES = ['GBP', 'USD', 'EUR', 'CHF', 'AUD', 'CAD', 'NZD', 'SGD', 'KWD', 'BHD', 'OMR', 'JOD']; // ~1 USD or more per unit
+
+// Get appropriate step size for a currency based on its value
+function getCurrencyStep(currency, currentAmount) {
+  const isZeroDecimal = ZERO_DECIMAL_CURRENCIES.includes(currency);
+  const isHighValue = HIGH_VALUE_CURRENCIES.includes(currency);
+
+  if (isZeroDecimal) {
+    // Large number currencies like JPY, KRW, VND
+    if (currentAmount >= 100000) return 10000;
+    if (currentAmount >= 10000) return 1000;
+    if (currentAmount >= 1000) return 100;
+    return 100;
+  } else if (isHighValue) {
+    // High-value currencies like GBP, USD, EUR
+    if (currentAmount >= 500) return 50;
+    if (currentAmount >= 100) return 10;
+    if (currentAmount >= 50) return 5;
+    return 1;
+  } else {
+    // Medium-value currencies like MXN, THB, PHP
+    if (currentAmount >= 10000) return 500;
+    if (currentAmount >= 1000) return 100;
+    if (currentAmount >= 100) return 50;
+    if (currentAmount >= 50) return 10;
+    return 10;
+  }
+}
+
+// Get decimal places for a currency
+function getCurrencyDecimals(currency) {
+  return ZERO_DECIMAL_CURRENCIES.includes(currency) ? 0 : 2;
+}
+
+// Format amount with thousand separators
+function formatAmountDisplay(amount, currency) {
+  const decimals = getCurrencyDecimals(currency);
+  const isWholeNumber = amount === Math.floor(amount);
+
+  // For display: show decimals only if needed
+  if (isWholeNumber || decimals === 0) {
+    return amount.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  }
+  return amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// Parse formatted amount back to number
+function parseAmountInput(value) {
+  // Remove thousand separators and parse
+  const cleaned = value.toString().replace(/,/g, '');
+  return parseFloat(cleaned) || 0;
+}
 
 let state = {
   homeCurrency: 'GBP',
@@ -380,12 +435,12 @@ function setupEventListeners() {
     elements.locateBtn.addEventListener('click', requestUserLocation);
   }
 
-  // Price inputs
+  // Price inputs - parse formatted numbers and format on blur
   elements.localAmountInput.addEventListener('input', (e) => {
     if (isSyncing) return;
     isSyncing = true;
     try {
-      state.localAmount = parseFloat(e.target.value) || 0;
+      state.localAmount = parseAmountInput(e.target.value);
       if (state.pricesLocked) {
         syncLockedPrices('local');
       }
@@ -394,12 +449,15 @@ function setupEventListeners() {
       isSyncing = false;
     }
   });
+  elements.localAmountInput.addEventListener('blur', (e) => {
+    e.target.value = formatAmountDisplay(state.localAmount, state.localCurrency);
+  });
 
   elements.altAmountInput.addEventListener('input', (e) => {
     if (isSyncing) return;
     isSyncing = true;
     try {
-      state.altAmount = parseFloat(e.target.value) || 0;
+      state.altAmount = parseAmountInput(e.target.value);
       if (state.pricesLocked) {
         syncLockedPrices('alt');
       }
@@ -408,17 +466,23 @@ function setupEventListeners() {
       isSyncing = false;
     }
   });
+  elements.altAmountInput.addEventListener('blur', (e) => {
+    e.target.value = formatAmountDisplay(state.altAmount, state.altCurrency);
+  });
 
   // Home amount input
   elements.homeAmountInput.addEventListener('input', (e) => {
     if (isSyncing) return;
     isSyncing = true;
     try {
-      state.homeAmount = parseFloat(e.target.value) || 0;
+      state.homeAmount = parseAmountInput(e.target.value);
       calculateHomeConversions();
     } finally {
       isSyncing = false;
     }
+  });
+  elements.homeAmountInput.addEventListener('blur', (e) => {
+    e.target.value = formatAmountDisplay(state.homeAmount, state.homeCurrency);
   });
 
   // +/- buttons for home amount
@@ -639,11 +703,7 @@ function adjustHomeAmount(direction) {
 
   try {
     const currentAmount = state.homeAmount;
-    let step = 5;
-    if (currentAmount >= 500) step = 50;
-    else if (currentAmount >= 100) step = 20;
-    else if (currentAmount >= 50) step = 10;
-    else step = 5;
+    const step = getCurrencyStep(state.homeCurrency, currentAmount);
 
     let newAmount = currentAmount + (direction * step);
     if (newAmount < 0) newAmount = 0;
@@ -652,7 +712,7 @@ function adjustHomeAmount(direction) {
     newAmount = Math.round(newAmount / step) * step;
 
     state.homeAmount = newAmount;
-    elements.homeAmountInput.value = newAmount;
+    elements.homeAmountInput.value = formatAmountDisplay(newAmount, state.homeCurrency);
 
     // Sync if locked
     if (state.pricesLocked) {
@@ -661,12 +721,14 @@ function adjustHomeAmount(direction) {
         const homeInUsd = newAmount / rates[homeCurrency];
 
         let localAmount = homeInUsd * rates[localCurrency];
-        state.localAmount = Math.round(localAmount);
-        elements.localAmountInput.value = state.localAmount;
+        const localDecimals = getCurrencyDecimals(localCurrency);
+        state.localAmount = localDecimals === 0 ? Math.round(localAmount) : Math.round(localAmount * 100) / 100;
+        elements.localAmountInput.value = formatAmountDisplay(state.localAmount, localCurrency);
 
         let altAmount = homeInUsd * rates[altCurrency];
-        state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
-        elements.altAmountInput.value = state.altAmount;
+        const altDecimals = getCurrencyDecimals(altCurrency);
+        state.altAmount = altDecimals === 0 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
+        elements.altAmountInput.value = formatAmountDisplay(state.altAmount, altCurrency);
       }
     }
     calculatePrices();
@@ -694,12 +756,9 @@ function adjustPrice(target, direction) {
   isSyncing = true;
 
   try {
+    const currency = target === 'local' ? state.localCurrency : state.altCurrency;
     const currentAmount = target === 'local' ? state.localAmount : state.altAmount;
-    let step = 10;
-    if (currentAmount >= 1000) step = 100;
-    else if (currentAmount >= 100) step = 50;
-    else if (currentAmount >= 50) step = 10;
-    else step = 5;
+    const step = getCurrencyStep(currency, currentAmount);
 
     let newAmount = currentAmount + (direction * step);
     if (newAmount < 0) newAmount = 0;
@@ -709,10 +768,10 @@ function adjustPrice(target, direction) {
 
     if (target === 'local') {
       state.localAmount = newAmount;
-      elements.localAmountInput.value = newAmount;
+      elements.localAmountInput.value = formatAmountDisplay(newAmount, currency);
     } else {
       state.altAmount = newAmount;
-      elements.altAmountInput.value = newAmount;
+      elements.altAmountInput.value = formatAmountDisplay(newAmount, currency);
     }
 
     if (state.pricesLocked) {
@@ -777,37 +836,42 @@ function syncLockedPrices(source) {
   const usdToHome = rates[homeCurrency];
   const localToAlt = localToUsd * usdToAlt;
 
+  // Get decimal settings for each currency
+  const localDecimals = getCurrencyDecimals(localCurrency);
+  const altDecimals = getCurrencyDecimals(altCurrency);
+  const homeDecimals = getCurrencyDecimals(homeCurrency);
+
   if (source === 'local') {
     // Calculate alt from local
     let altAmount = state.localAmount * localToAlt;
-    state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
-    elements.altAmountInput.value = state.altAmount;
+    state.altAmount = altDecimals === 0 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
+    elements.altAmountInput.value = formatAmountDisplay(state.altAmount, altCurrency);
 
     // Calculate home from local
     let homeAmount = state.localAmount * localToUsd * usdToHome;
-    state.homeAmount = homeAmount >= 10 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
-    elements.homeAmountInput.value = state.homeAmount;
+    state.homeAmount = homeDecimals === 0 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
+    elements.homeAmountInput.value = formatAmountDisplay(state.homeAmount, homeCurrency);
   } else if (source === 'alt') {
     // Calculate local from alt
     let localAmount = state.altAmount / localToAlt;
-    state.localAmount = localAmount >= 10 ? Math.round(localAmount) : Math.round(localAmount * 10) / 10;
-    elements.localAmountInput.value = state.localAmount;
+    state.localAmount = localDecimals === 0 ? Math.round(localAmount) : Math.round(localAmount * 100) / 100;
+    elements.localAmountInput.value = formatAmountDisplay(state.localAmount, localCurrency);
 
     // Calculate home from alt
     let homeAmount = state.altAmount / usdToAlt * usdToHome;
-    state.homeAmount = homeAmount >= 10 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
-    elements.homeAmountInput.value = state.homeAmount;
+    state.homeAmount = homeDecimals === 0 ? Math.round(homeAmount) : Math.round(homeAmount * 100) / 100;
+    elements.homeAmountInput.value = formatAmountDisplay(state.homeAmount, homeCurrency);
   } else if (source === 'home') {
     // Calculate local and alt from home
     const homeInUsd = state.homeAmount / usdToHome;
 
     let localAmount = homeInUsd * rates[localCurrency];
-    state.localAmount = Math.round(localAmount);
-    elements.localAmountInput.value = state.localAmount;
+    state.localAmount = localDecimals === 0 ? Math.round(localAmount) : Math.round(localAmount * 100) / 100;
+    elements.localAmountInput.value = formatAmountDisplay(state.localAmount, localCurrency);
 
     let altAmount = homeInUsd * usdToAlt;
-    state.altAmount = altAmount >= 10 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
-    elements.altAmountInput.value = state.altAmount;
+    state.altAmount = altDecimals === 0 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
+    elements.altAmountInput.value = formatAmountDisplay(state.altAmount, altCurrency);
   }
 }
 
@@ -2351,10 +2415,10 @@ function render() {
   setFlagElement(elements.localHomeFlag, state.homeCurrency);
   setFlagElement(elements.altHomeFlag, state.homeCurrency);
 
-  // Set input values
-  elements.localAmountInput.value = state.localAmount;
-  elements.altAmountInput.value = state.altAmount;
-  elements.homeAmountInput.value = state.homeAmount;
+  // Set input values with formatting
+  elements.localAmountInput.value = formatAmountDisplay(state.localAmount, state.localCurrency);
+  elements.altAmountInput.value = formatAmountDisplay(state.altAmount, state.altCurrency);
+  elements.homeAmountInput.value = formatAmountDisplay(state.homeAmount, state.homeCurrency);
 
   // Update home currency card
   setFlagElement(elements.homeCardFlag, state.homeCurrency, 'lg');
