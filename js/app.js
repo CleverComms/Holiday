@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.76';
+const APP_VERSION = '2.5.77';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -2208,8 +2208,11 @@ async function registerServiceWorker() {
 
       // Handle controller change (new SW took over)
       navigator.serviceWorker.addEventListener('controllerchange', () => {
-        // Reload to get the new version
-        window.location.reload();
+        // Prevent reload loop - only reload if we initiated the update
+        if (isUpdating) {
+          isUpdating = false;
+          window.location.reload();
+        }
       });
 
     } catch (error) {
