@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.42';
+const APP_VERSION = '2.5.43';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -429,25 +429,40 @@ function setupEventListeners() {
     });
   });
 
-  // +/- buttons - simple click handler
-  document.querySelectorAll('.price-adjust').forEach((btn, index) => {
-    btn.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
+  // +/- buttons - handle both touch and click for iOS compatibility
+  document.querySelectorAll('.price-adjust').forEach((btn) => {
+    let handled = false;
 
-      const target = this.dataset.target;
-      const isPlus = this.classList.contains('plus');
+    const doAction = () => {
+      if (handled) return;
+      handled = true;
+      setTimeout(() => { handled = false; }, 300);
 
-      // Visual feedback that click was received
-      this.style.transform = 'scale(0.85)';
-      setTimeout(() => { this.style.transform = ''; }, 100);
+      const target = btn.dataset.target;
+      const isPlus = btn.classList.contains('plus');
+
+      // Visual feedback
+      btn.style.transform = 'scale(0.85)';
+      setTimeout(() => { btn.style.transform = ''; }, 100);
 
       if (target === 'home') {
         adjustHomeAmount(isPlus ? 1 : -1);
       } else {
         adjustPrice(target, isPlus ? 1 : -1);
       }
-    }, false);
+    };
+
+    // Touch handler for iOS - touchend triggers the action
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      doAction();
+    }, { passive: false });
+
+    // Click handler for desktop
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      doAction();
+    });
   });
 
   // Currency modal
