@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.71';
+const APP_VERSION = '2.5.72';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -231,14 +231,11 @@ const elements = {
   settingsBtn: document.getElementById('settingsBtn'),
   closeSettingsModal: document.getElementById('closeSettingsModal'),
   homeSettingBtn: document.getElementById('homeSettingBtn'),
-  destSettingBtn: document.getElementById('destSettingBtn'),
   updateRatesBtn: document.getElementById('updateRatesBtn'),
   settingsLastUpdated: document.getElementById('settingsLastUpdated'),
   homeSettingFlag: document.getElementById('homeSettingFlag'),
   homeSettingCode: document.getElementById('homeSettingCode'),
   homeSettingName: document.getElementById('homeSettingName'),
-  destSettingFlag: document.getElementById('destSettingFlag'),
-  destSettingName: document.getElementById('destSettingName'),
 
   // QR Code Modal
   qrModal: document.getElementById('qrModal'),
@@ -608,10 +605,6 @@ function setupEventListeners() {
   elements.homeSettingBtn.addEventListener('click', () => {
     closeSettingsModal();
     openCurrencyModal('home');
-  });
-  elements.destSettingBtn.addEventListener('click', () => {
-    closeSettingsModal();
-    openDestinationModal('settings');
   });
   elements.updateRatesBtn.addEventListener('click', () => {
     closeSettingsModal();
@@ -1420,15 +1413,6 @@ function updateSettingsDisplay() {
     setFlagElement(elements.homeSettingFlag, state.homeCurrency, 'lg');
     elements.homeSettingCode.textContent = state.homeCurrency;
     elements.homeSettingName.textContent = home.name;
-  }
-
-  if (state.destinationCountry) {
-    setCountryFlag(elements.destSettingFlag, state.destinationCountry, 'lg');
-    elements.destSettingName.textContent = state.destinationCountry;
-  } else {
-    elements.destSettingFlag.innerHTML = '';
-    elements.destSettingFlag.textContent = '🌍';
-    elements.destSettingName.textContent = 'Select destination';
   }
 
   elements.settingsLastUpdated.textContent = formatLastUpdated();
