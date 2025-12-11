@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.51';
+const APP_VERSION = '2.5.52';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -2169,17 +2169,28 @@ async function registerServiceWorker() {
 }
 
 let updateBannerShown = false;
+let isUpdating = false;
+
 function showUpdateBanner() {
-  if (updateBannerShown) return; // Prevent repeated showing
+  // Don't show if we just applied an update (prevents loop)
+  if (sessionStorage.getItem('holibobs_updating')) {
+    sessionStorage.removeItem('holibobs_updating');
+    return;
+  }
+  if (updateBannerShown || isUpdating) return;
   updateBannerShown = true;
   elements.updateBanner.classList.add('active');
 }
 
 function applyUpdate() {
+  isUpdating = true;
+  sessionStorage.setItem('holibobs_updating', 'true');
+  elements.updateBanner.classList.remove('active');
+
   if (waitingServiceWorker) {
     // Tell the waiting service worker to take over
     waitingServiceWorker.postMessage('skipWaiting');
-    elements.updateBanner.classList.remove('active');
+    // controllerchange event will trigger reload
   } else {
     // Fallback: hard reload bypassing cache
     window.location.reload(true);
