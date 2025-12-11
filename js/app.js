@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.72';
+const APP_VERSION = '2.5.73';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -141,6 +141,9 @@ const SYNC_DEBOUNCE_MS = 100; // Minimum time between syncs
 // =============================================
 
 const elements = {
+  // App title
+  appTitle: document.getElementById('appTitle'),
+
   // Locale greeting
   localeGreeting: document.getElementById('localeGreeting'),
 
@@ -339,6 +342,7 @@ function setCountryFlag(element, countryName, size = 'md') {
 
 async function init() {
   initTheme();
+  animateTitle();
   checkFirstLoad();
   loadState();
   await loadDataFiles();
@@ -1700,6 +1704,21 @@ function initTheme() {
     const isNightTime = hour >= 19 || hour < 7;
     document.documentElement.setAttribute('data-theme', isNightTime ? 'dark' : 'light');
   }
+}
+
+// Animate title: "Bob on Holiday" → "HoliBobs"
+function animateTitle() {
+  const title = elements.appTitle;
+  if (!title) return;
+
+  // Start animation
+  title.classList.add('animating');
+
+  // After animation completes, switch to final state
+  setTimeout(() => {
+    title.classList.remove('animating');
+    title.classList.add('animation-done');
+  }, 1600); // 1.2s delay + 0.4s animation
 }
 
 function toggleTheme() {

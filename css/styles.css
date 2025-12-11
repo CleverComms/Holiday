@@ -194,6 +194,63 @@ button {
   letter-spacing: 0.5px;
 }
 
+/* Title animation - "Bob on Holiday" → "HoliBobs" */
+.app-title {
+  position: relative;
+  display: inline-block;
+}
+
+.app-title .title-initial,
+.app-title .title-final {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.app-title .title-final {
+  position: absolute;
+  left: 0;
+  opacity: 0;
+}
+
+.app-title.animating .title-initial {
+  animation: titleFadeOut 0.4s ease-in-out 1.2s forwards;
+}
+
+.app-title.animating .title-final {
+  animation: titleFadeIn 0.4s ease-in-out 1.2s forwards;
+}
+
+.app-title.animation-done .title-initial {
+  display: none;
+}
+
+.app-title.animation-done .title-final {
+  position: static;
+  opacity: 1;
+}
+
+@keyframes titleFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes titleFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .header-actions {
   display: flex;
   gap: 8px;
