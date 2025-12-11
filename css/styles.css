@@ -413,39 +413,6 @@ button {
   color: #744210;
 }
 
-/* Locate Button */
-.locate-btn {
-  width: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-  border: none;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.locate-btn:active {
-  transform: scale(0.95);
-}
-
-.locate-btn svg {
-  width: 24px;
-  height: 24px;
-  color: #744210;
-}
-
-.locate-btn.loading svg {
-  animation: pulse 1s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
 /* Price Comparison */
 .price-comparison {
   display: grid;
@@ -1858,6 +1825,39 @@ button {
 
 .modal-search input:focus {
   outline: none;
+}
+
+/* GPS Location option in modal */
+.locate-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: calc(100% - 40px);
+  margin: 0 20px 16px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: var(--radius-md);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.locate-option:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.locate-option:active {
+  transform: translateY(0);
+}
+
+.locate-option svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
 }
 
 .currency-list, .destination-list {
