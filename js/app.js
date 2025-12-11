@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.64';
+const APP_VERSION = '2.5.67';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -2017,22 +2017,18 @@ function requestUserLocation() {
     return;
   }
 
-  // Visual feedback - add loading state to button
-  if (elements.locateBtn) {
-    elements.locateBtn.classList.add('loading');
-  }
+  // Close the destination modal if open
+  closeDestinationModal();
+
+  // Show loading toast
+  showToast('Detecting location...');
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
-      if (elements.locateBtn) {
-        elements.locateBtn.classList.remove('loading');
-      }
-
       const { latitude, longitude } = position.coords;
       const nearestCountry = findNearestCountry(latitude, longitude);
 
       if (nearestCountry && state.countries[nearestCountry]) {
-        // Directly select the country
         selectDestination(nearestCountry);
         showToast(`Location set to ${nearestCountry}`);
       } else {
@@ -2040,10 +2036,6 @@ function requestUserLocation() {
       }
     },
     (error) => {
-      if (elements.locateBtn) {
-        elements.locateBtn.classList.remove('loading');
-      }
-
       if (error.code === error.PERMISSION_DENIED) {
         showToast('Location permission denied');
       } else {
