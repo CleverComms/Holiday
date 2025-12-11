@@ -2466,12 +2466,14 @@ button {
   z-index: 600;
   max-width: calc(100% - 32px);
   opacity: 0;
+  pointer-events: none;
   transition: all 0.4s ease;
 }
 
 .update-banner.active {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
+  pointer-events: auto;
 }
 
 .update-bob {
