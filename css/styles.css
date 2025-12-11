@@ -469,18 +469,15 @@ button {
   border-radius: var(--radius-lg);
   padding: 8px 12px;
   box-shadow: var(--shadow-md);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 6px 8px;
+  align-items: center;
 }
 
 .price-cards-stack .price-card .price-card-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  position: relative;
-  z-index: 1;
+  display: contents;
 }
 
 .price-cards-stack .price-card.home {
@@ -583,9 +580,11 @@ button {
 
 /* Home equivalent row */
 .price-cards-stack .price-home-value {
+  grid-column: 2;
+  grid-row: 2;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 6px;
   padding: 6px 8px;
   background: rgba(0, 0, 0, 0.15);
@@ -605,10 +604,14 @@ button {
 
 /* Surcharge indicator in cards */
 .price-cards-stack .surcharge-indicator {
+  grid-column: 1;
+  grid-row: 2;
   font-size: 0.7rem;
-  line-height: 1.4;
+  line-height: 1.2;
   color: rgba(255, 255, 255, 0.85);
-  text-align: right;
+  text-align: left;
+  white-space: nowrap;
+  align-self: center;
 }
 
 /* Controls row */
@@ -2671,6 +2674,11 @@ button {
 [data-theme="dark"] .home-card-input-wrapper input {
   background: var(--bg-color);
   color: var(--text-primary);
+}
+
+[data-theme="dark"] .price-card-value input {
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a202c;
 }
 
 [data-theme="dark"] .tips-box {
