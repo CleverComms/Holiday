@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.60';
+const APP_VERSION = '2.5.61';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -206,7 +206,7 @@ const elements = {
   qrModal: document.getElementById('qrModal'),
   closeQrModal: document.getElementById('closeQrModal'),
   shareQrBtn: document.getElementById('shareQrBtn'),
-  qrCanvas: document.getElementById('qrCanvas'),
+  qrContainer: document.getElementById('qrContainer'),
   qrUrl: document.getElementById('qrUrl'),
   qrCopyBtn: document.getElementById('qrCopyBtn'),
 
@@ -1407,26 +1407,25 @@ function generateQrCode() {
   const url = 'https://holibobs.clevercomms.com/';
   elements.qrUrl.textContent = url;
 
-  // Generate QR code using qrcode library
-  if (typeof QRCode !== 'undefined' && elements.qrCanvas) {
-    // Clear any previous QR code
-    const ctx = elements.qrCanvas.getContext('2d');
-    ctx.clearRect(0, 0, elements.qrCanvas.width, elements.qrCanvas.height);
-
-    QRCode.toCanvas(elements.qrCanvas, url, {
+  // Generate QR code as SVG
+  if (typeof QRCode !== 'undefined' && elements.qrContainer) {
+    QRCode.toString(url, {
+      type: 'svg',
       width: 200,
       margin: 2,
       color: {
         dark: '#1a1a2e',
         light: '#ffffff'
       }
-    }, function(error) {
+    }, function(error, svgString) {
       if (error) {
         console.error('QR code generation error:', error);
+        return;
       }
+      elements.qrContainer.innerHTML = svgString;
     });
   } else {
-    console.log('QRCode library not available or canvas not found');
+    console.log('QRCode library not available or container not found');
   }
 }
 
