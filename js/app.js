@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.63';
+const APP_VERSION = '2.5.64';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1059,12 +1059,16 @@ function calculatePrices() {
     const totalAlt = altAmount + feeInAlt;
     const totalHome = (localAmount / rates[localCurrency] * rates[homeCurrency]) + feeInHome;
 
+    // Calculate home currency equivalents for local and alt totals
+    const totalLocalInHome = totalLocal / rates[localCurrency] * rates[homeCurrency];
+    const totalAltInHome = totalAlt / rates[altCurrency] * rates[homeCurrency];
+
     // Format fee label prefix
     const feePrefix = surchargeType === 'percent' ? `+${surchargeAmount}%` : `+${homeSymbol}${surchargeAmount}`;
 
-    // Create labels for each card with its relevant currency
-    const localLabel = `${feePrefix} fee: ${localSymbol}${formatNumber(feeInLocal, localCurrency)}<br>Total: ${localSymbol}${formatNumber(totalLocal, localCurrency)}`;
-    const altLabel = `${feePrefix} fee: ${altSymbol}${formatNumber(feeInAlt, altCurrency)}<br>Total: ${altSymbol}${formatNumber(totalAlt, altCurrency)}`;
+    // Create labels for each card with its relevant currency (local/alt include home equivalent)
+    const localLabel = `${feePrefix} fee: ${localSymbol}${formatNumber(feeInLocal, localCurrency)}<br>Total: ${localSymbol}${formatNumber(totalLocal, localCurrency)} (${homeSymbol}${formatNumber(totalLocalInHome, homeCurrency)})`;
+    const altLabel = `${feePrefix} fee: ${altSymbol}${formatNumber(feeInAlt, altCurrency)}<br>Total: ${altSymbol}${formatNumber(totalAlt, altCurrency)} (${homeSymbol}${formatNumber(totalAltInHome, homeCurrency)})`;
     const homeLabel = `${feePrefix} fee: ${homeSymbol}${formatNumber(feeInHome, homeCurrency)}<br>Total: ${homeSymbol}${formatNumber(totalHome, homeCurrency)}`;
 
     // Update each indicator with its specific label
