@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.43';
+const APP_VERSION = '2.5.44';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -429,40 +429,55 @@ function setupEventListeners() {
     });
   });
 
-  // +/- buttons - handle both touch and click for iOS compatibility
-  document.querySelectorAll('.price-adjust').forEach((btn) => {
-    let handled = false;
+  // +/- buttons - document-level delegation for iOS Safari compatibility
+  // iOS Safari has issues with button touch events; document-level works better
+  let buttonHandled = false;
 
-    const doAction = () => {
-      if (handled) return;
-      handled = true;
-      setTimeout(() => { handled = false; }, 300);
+  document.addEventListener('touchend', (e) => {
+    const btn = e.target.closest('.price-adjust');
+    if (!btn) return;
 
-      const target = btn.dataset.target;
-      const isPlus = btn.classList.contains('plus');
+    e.preventDefault();
+    if (buttonHandled) return;
+    buttonHandled = true;
+    setTimeout(() => { buttonHandled = false; }, 300);
 
-      // Visual feedback
-      btn.style.transform = 'scale(0.85)';
-      setTimeout(() => { btn.style.transform = ''; }, 100);
+    const target = btn.dataset.target;
+    const isPlus = btn.classList.contains('plus');
 
-      if (target === 'home') {
-        adjustHomeAmount(isPlus ? 1 : -1);
-      } else {
-        adjustPrice(target, isPlus ? 1 : -1);
-      }
-    };
+    // Visual feedback
+    btn.style.transform = 'scale(0.85)';
+    setTimeout(() => { btn.style.transform = ''; }, 100);
 
-    // Touch handler for iOS - touchend triggers the action
-    btn.addEventListener('touchend', (e) => {
-      e.preventDefault();
-      doAction();
-    }, { passive: false });
+    if (target === 'home') {
+      adjustHomeAmount(isPlus ? 1 : -1);
+    } else {
+      adjustPrice(target, isPlus ? 1 : -1);
+    }
+  }, { passive: false });
 
-    // Click handler for desktop
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      doAction();
-    });
+  // Click handler for desktop (document level)
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.price-adjust');
+    if (!btn) return;
+
+    e.preventDefault();
+    if (buttonHandled) return;
+    buttonHandled = true;
+    setTimeout(() => { buttonHandled = false; }, 300);
+
+    const target = btn.dataset.target;
+    const isPlus = btn.classList.contains('plus');
+
+    // Visual feedback
+    btn.style.transform = 'scale(0.85)';
+    setTimeout(() => { btn.style.transform = ''; }, 100);
+
+    if (target === 'home') {
+      adjustHomeAmount(isPlus ? 1 : -1);
+    } else {
+      adjustPrice(target, isPlus ? 1 : -1);
+    }
   });
 
   // Currency modal
