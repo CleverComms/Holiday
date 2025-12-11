@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.61';
+const APP_VERSION = '2.5.62';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -72,6 +72,44 @@ function parseAmountInput(value) {
   // Remove thousand separators and trailing decimal points, then parse
   const cleaned = value.toString().replace(/,/g, '').replace(/\.$/,'');
   return parseFloat(cleaned) || 0;
+}
+
+// Auto-size input font to fit content
+function autoSizeInput(input) {
+  if (!input) return;
+
+  const minFontSize = 14;
+  const maxFontSize = 24;
+  const inputWidth = input.offsetWidth - 32; // Account for padding
+
+  // Create a temporary span to measure text width
+  const span = document.createElement('span');
+  span.style.visibility = 'hidden';
+  span.style.position = 'absolute';
+  span.style.whiteSpace = 'nowrap';
+  span.style.fontFamily = getComputedStyle(input).fontFamily;
+  span.style.fontWeight = '700';
+  span.textContent = input.value || '0';
+  document.body.appendChild(span);
+
+  // Start with max font size and scale down if needed
+  let fontSize = maxFontSize;
+  span.style.fontSize = fontSize + 'px';
+
+  while (span.offsetWidth > inputWidth && fontSize > minFontSize) {
+    fontSize -= 1;
+    span.style.fontSize = fontSize + 'px';
+  }
+
+  document.body.removeChild(span);
+  input.style.fontSize = fontSize + 'px';
+}
+
+// Auto-size all price inputs
+function autoSizeAllInputs() {
+  autoSizeInput(elements.localAmountInput);
+  autoSizeInput(elements.altAmountInput);
+  autoSizeInput(elements.homeAmountInput);
 }
 
 let state = {
@@ -459,6 +497,7 @@ function setupEventListeners() {
   });
   elements.localAmountInput.addEventListener('blur', (e) => {
     e.target.value = formatAmountDisplay(state.localAmount, state.localCurrency);
+    autoSizeInput(e.target);
   });
 
   elements.altAmountInput.addEventListener('input', (e) => {
@@ -476,6 +515,7 @@ function setupEventListeners() {
   });
   elements.altAmountInput.addEventListener('blur', (e) => {
     e.target.value = formatAmountDisplay(state.altAmount, state.altCurrency);
+    autoSizeInput(e.target);
   });
 
   // Home amount input
@@ -491,6 +531,7 @@ function setupEventListeners() {
   });
   elements.homeAmountInput.addEventListener('blur', (e) => {
     e.target.value = formatAmountDisplay(state.homeAmount, state.homeCurrency);
+    autoSizeInput(e.target);
   });
 
   // +/- buttons for home amount
@@ -721,6 +762,7 @@ function adjustHomeAmount(direction) {
 
     state.homeAmount = newAmount;
     elements.homeAmountInput.value = formatAmountDisplay(newAmount, state.homeCurrency);
+    autoSizeInput(elements.homeAmountInput);
 
     // Sync if locked
     if (state.pricesLocked) {
@@ -737,6 +779,8 @@ function adjustHomeAmount(direction) {
         const altDecimals = getCurrencyDecimals(altCurrency);
         state.altAmount = altDecimals === 0 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
         elements.altAmountInput.value = formatAmountDisplay(state.altAmount, altCurrency);
+
+        autoSizeAllInputs();
       }
     }
     calculatePrices();
@@ -777,9 +821,11 @@ function adjustPrice(target, direction) {
     if (target === 'local') {
       state.localAmount = newAmount;
       elements.localAmountInput.value = formatAmountDisplay(newAmount, currency);
+      autoSizeInput(elements.localAmountInput);
     } else {
       state.altAmount = newAmount;
       elements.altAmountInput.value = formatAmountDisplay(newAmount, currency);
+      autoSizeInput(elements.altAmountInput);
     }
 
     if (state.pricesLocked) {
@@ -881,6 +927,9 @@ function syncLockedPrices(source) {
     state.altAmount = altDecimals === 0 ? Math.round(altAmount) : Math.round(altAmount * 100) / 100;
     elements.altAmountInput.value = formatAmountDisplay(state.altAmount, altCurrency);
   }
+
+  // Auto-size all inputs after syncing
+  autoSizeAllInputs();
 }
 
 function toggleSurchargeRow() {
@@ -2466,6 +2515,9 @@ function render() {
   renderScams();
   updateRateStatus();
   updateSettingsDisplay();
+
+  // Auto-size inputs after render
+  autoSizeAllInputs();
 }
 
 function updateSurchargeUI() {
