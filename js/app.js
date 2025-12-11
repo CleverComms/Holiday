@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.50';
+const APP_VERSION = '2.5.51';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -2168,7 +2168,10 @@ async function registerServiceWorker() {
   }
 }
 
+let updateBannerShown = false;
 function showUpdateBanner() {
+  if (updateBannerShown) return; // Prevent repeated showing
+  updateBannerShown = true;
   elements.updateBanner.classList.add('active');
 }
 

@@ -2500,8 +2500,10 @@ button {
   transform: translateY(0);
 }
 
-.update-bob {
-  font-size: 1.8rem;
+.update-bob-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
   animation: bobExcited 0.5s ease-in-out infinite;
 }
 
