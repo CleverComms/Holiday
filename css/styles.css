@@ -230,6 +230,7 @@ button {
 .app-title.animation-done .title-final {
   position: static;
   opacity: 1;
+  visibility: visible;
 }
 
 @keyframes titleFadeOut {
