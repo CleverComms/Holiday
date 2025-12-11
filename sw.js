@@ -3,7 +3,7 @@
  * Enables offline functionality and caching
  */
 
-const CACHE_VERSION = '2.5.69';
+const CACHE_VERSION = '2.5.70';
 const CACHE_NAME = `holiday-v${CACHE_VERSION}`;
 const RUNTIME_CACHE = 'holiday-runtime';
 
@@ -27,7 +27,23 @@ const EXTERNAL_URLS = [
   'https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css'
 ];
 
-// CDN prefixes to cache dynamically (flag SVGs will be cached on first use)
+// All country codes used in the app - pre-cache these flag SVGs
+const FLAG_CODES = [
+  'us', 'eu', 'gb', 'jp', 'au', 'ca', 'ch', 'cn', 'in', 'mx', 'br', 'za', 'kr', 'sg', 'hk',
+  'no', 'se', 'dk', 'nz', 'th', 'ph', 'id', 'my', 'vn', 'tr', 'ru', 'pl', 'cz', 'hu', 'il',
+  'ae', 'sa', 'eg', 'cl', 'co', 'pe', 'ar', 'tw', 'ma', 'hr', 'ro', 'bg', 'is', 'jm', 'ke',
+  'ng', 'gh', 'do', 'cr', 'gt', 'pa', 'lk', 'np', 'pk', 'bd', 'mm', 'kh', 'la', 'fj', 'pf',
+  'qa', 'kw', 'bh', 'om', 'jo', 'mu', 'sc', 'cu', 'bs', 'bb', 'aw', 'cw', 'bm', 'ky', 'tz',
+  'rw', 'et', 'bw', 'na', 'zm', 'ug', 'mz', 'mg', 'tn', 'dz', 'es', 'fr', 'it', 'de', 'gr',
+  'pt', 'nl', 'be', 'at', 'ie', 'fi', 'mv', 'pr', 'zw', 'sn'
+];
+
+// Generate flag SVG URLs
+const FLAG_URLS = FLAG_CODES.map(code =>
+  `https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/flags/4x3/${code}.svg`
+);
+
+// CDN prefixes to cache dynamically (fallback for any missed flags)
 const CACHEABLE_CDN_PREFIXES = [
   'https://cdn.jsdelivr.net/gh/lipis/flag-icons'
 ];
@@ -44,8 +60,10 @@ self.addEventListener('install', (event) => {
       .then(() => {
         // Cache external CDN resources (don't fail install if these fail)
         return caches.open(CACHE_NAME).then((cache) => {
+          const allExternalUrls = [...EXTERNAL_URLS, ...FLAG_URLS];
+          console.log(`[SW] Caching ${allExternalUrls.length} external resources including flags`);
           return Promise.allSettled(
-            EXTERNAL_URLS.map(url =>
+            allExternalUrls.map(url =>
               fetch(url, { mode: 'cors' })
                 .then(response => {
                   if (response.ok) {
@@ -58,7 +76,7 @@ self.addEventListener('install', (event) => {
         });
       })
       .then(() => {
-        console.log('[SW] Pre-caching complete');
+        console.log('[SW] Pre-caching complete - app ready for offline use');
         return self.skipWaiting();
       })
       .catch((error) => {
