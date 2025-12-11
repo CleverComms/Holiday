@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.70';
+const APP_VERSION = '2.5.71';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1094,11 +1094,14 @@ function calculatePrices() {
     });
   }
 
-  // Update deal indicator - only show when country accepts multiple currencies
+  // Update deal indicator - only show when country accepts multiple currencies and prices not linked
   const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;
   const hasAltCurrency = countryInfo?.alsoAccepted && countryInfo.alsoAccepted.length > 0;
 
-  if (hasAltCurrency || !state.destinationCountry) {
+  // Hide deal indicator when prices are linked (comparison is meaningless when values are locked together)
+  if (state.pricesLocked) {
+    elements.dealIndicator.style.display = 'none';
+  } else if (hasAltCurrency || !state.destinationCountry) {
     // Show comparison between local and alt
     elements.dealIndicator.style.display = '';
     const diff = Math.abs(localInHome - altInHome);
