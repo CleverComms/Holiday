@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.73';
+const APP_VERSION = '2.5.74';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1711,14 +1711,17 @@ function animateTitle() {
   const title = elements.appTitle;
   if (!title) return;
 
-  // Start animation
-  title.classList.add('animating');
+  // Use requestAnimationFrame to ensure DOM is ready
+  requestAnimationFrame(() => {
+    // Start animation
+    title.classList.add('animating');
 
-  // After animation completes, switch to final state
-  setTimeout(() => {
-    title.classList.remove('animating');
-    title.classList.add('animation-done');
-  }, 1600); // 1.2s delay + 0.4s animation
+    // After animation completes, switch to final state
+    setTimeout(() => {
+      title.classList.remove('animating');
+      title.classList.add('animation-done');
+    }, 1700); // 1.2s delay + 0.4s animation + buffer
+  });
 }
 
 function toggleTheme() {
