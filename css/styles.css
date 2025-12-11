@@ -342,6 +342,7 @@ button {
   font-weight: 500;
   overflow: hidden;
   white-space: nowrap;
+  pointer-events: none;
 }
 
 .greeting-scroll {
@@ -459,6 +460,8 @@ button {
   flex-direction: column;
   gap: 10px;
   margin-bottom: 12px;
+  position: relative;
+  z-index: 10;
 }
 
 .price-cards-stack .price-card {
@@ -494,6 +497,7 @@ button {
   align-items: center;
   gap: 8px;
   padding: 4px;
+  pointer-events: none;
 }
 
 .price-cards-stack .price-flag {
@@ -586,6 +590,7 @@ button {
   padding: 6px 8px;
   background: rgba(0, 0, 0, 0.15);
   border-radius: var(--radius-sm);
+  pointer-events: none;
 }
 
 .price-cards-stack .price-home-value .home-flag {
@@ -2461,12 +2466,14 @@ button {
   z-index: 600;
   max-width: calc(100% - 32px);
   opacity: 0;
+  pointer-events: none;
   transition: all 0.4s ease;
 }
 
 .update-banner.active {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
+  pointer-events: auto;
 }
 
 .update-bob {
