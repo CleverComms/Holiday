@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.40';
+const APP_VERSION = '2.5.41';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -649,9 +649,7 @@ function calculateHomeConversions() {
 }
 
 function adjustPrice(target, direction) {
-  const now = Date.now();
-  if (isSyncing || (now - lastSyncTime) < SYNC_DEBOUNCE_MS) return;
-  lastSyncTime = now;
+  if (isSyncing) return;
   isSyncing = true;
 
   try {
@@ -680,6 +678,7 @@ function adjustPrice(target, direction) {
       syncLockedPrices(target);
     }
     calculatePrices();
+    saveState();
   } finally {
     isSyncing = false;
   }
