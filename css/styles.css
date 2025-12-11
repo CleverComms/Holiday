@@ -211,6 +211,7 @@ button {
   left: 0;
   top: 0;
   opacity: 0;
+  visibility: hidden;
 }
 
 .app-title.animating .title-initial {
@@ -218,6 +219,7 @@ button {
 }
 
 .app-title.animating .title-final {
+  visibility: visible;
   animation: titleFadeIn 0.4s ease-in-out 1.2s forwards;
 }
 
