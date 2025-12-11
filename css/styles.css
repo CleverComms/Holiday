@@ -1807,6 +1807,7 @@ button {
   background: var(--bg-color);
   margin: 16px 20px;
   border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
 }
 
 .modal-search svg {
