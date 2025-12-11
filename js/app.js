@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.67';
+const APP_VERSION = '2.5.68';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -305,39 +305,26 @@ let locationDetectionDone = false; // Prevent double location detection
 
 function renderFlag(currencyCode, size = 'md') {
   const currency = state.currencies[currencyCode];
-  if (!currency || !currency.code) {
-    // Fallback to emoji if no ISO code
-    return currency?.flag || '🌍';
-  }
-
-  // Use flag-icons CSS library
-  const sizeClass = size === 'lg' ? 'fi-lg' : (size === 'sm' ? 'fi-sm' : '');
-  return `<span class="fi fi-${currency.code} ${sizeClass}"></span>`;
+  // Use emoji flags for reliable offline support
+  return currency?.flag || '🌍';
 }
 
 function setFlagElement(element, currencyCode, size = 'md') {
   if (!element) return;
   const currency = state.currencies[currencyCode];
-  if (!currency || !currency.code) {
-    // Fallback to emoji
-    element.innerHTML = '';
-    element.textContent = currency?.flag || '🌍';
-  } else {
-    const sizeClass = size === 'lg' ? 'fi-lg' : (size === 'sm' ? 'fi-sm' : '');
-    element.innerHTML = `<span class="fi fi-${currency.code} ${sizeClass}"></span>`;
-  }
+  // Use emoji flags for reliable offline support
+  element.innerHTML = '';
+  element.textContent = currency?.flag || '🌍';
 }
 
 function setCountryFlag(element, countryName, size = 'md') {
   if (!element) return;
   const countryData = state.countries[countryName];
-  if (countryData && countryData.code) {
-    // Use country code directly (e.g., "FR" for France) instead of currency code
-    const sizeClass = size === 'lg' ? 'fi-lg' : (size === 'sm' ? 'fi-sm' : '');
-    element.innerHTML = `<span class="fi fi-${countryData.code.toLowerCase()} ${sizeClass}"></span>`;
-  } else if (countryData) {
-    // Fallback to currency flag if no country code
-    setFlagElement(element, countryData.currency, size);
+  if (countryData) {
+    // Use emoji flag from currency data for offline support
+    const currency = state.currencies[countryData.currency];
+    element.innerHTML = '';
+    element.textContent = currency?.flag || countryData.flag || '🌍';
   } else {
     element.innerHTML = '';
     element.textContent = '🌍';
@@ -1205,9 +1192,7 @@ function renderDestinationList(filter = '') {
 
   elements.destinationList.innerHTML = filtered.map(([country, data]) => {
     const currency = state.currencies[data.currency];
-    const flagHtml = data.code
-      ? `<span class="fi fi-${data.code.toLowerCase()} fi-lg"></span>`
-      : (currency?.flag || '🌍');
+    const flagHtml = currency?.flag || '🌍';
     const inWallet = state.walletCountries.includes(country);
     return `
       <div class="destination-item" data-country="${country}">
@@ -1252,9 +1237,7 @@ function renderWalletSection(filter = '') {
     const data = state.countries[country];
     if (!data) return '';
     const currency = state.currencies[data.currency];
-    const flagHtml = data.code
-      ? `<span class="fi fi-${data.code.toLowerCase()} fi-lg"></span>`
-      : (currency?.flag || '🌍');
+    const flagHtml = currency?.flag || '🌍';
     return `
       <div class="wallet-item" data-country="${country}">
         <span class="flag">${flagHtml}</span>
@@ -1373,9 +1356,7 @@ function renderCurrencyList(filter = '') {
   });
 
   elements.currencyList.innerHTML = filtered.map(([code, currency]) => {
-    const flagHtml = currency.code
-      ? `<span class="fi fi-${currency.code} fi-lg"></span>`
-      : currency.flag;
+    const flagHtml = currency.flag || '🌍';
     return `
       <div class="currency-item" data-code="${code}">
         <span class="flag">${flagHtml}</span>

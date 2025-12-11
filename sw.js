@@ -3,7 +3,7 @@
  * Enables offline functionality and caching
  */
 
-const CACHE_VERSION = '2.5.67';
+const CACHE_VERSION = '2.5.68';
 const CACHE_NAME = `holiday-v${CACHE_VERSION}`;
 const RUNTIME_CACHE = 'holiday-runtime';
 
@@ -23,7 +23,6 @@ const PRECACHE_URLS = [
 
 // External CDN resources to cache for offline use
 const EXTERNAL_URLS = [
-  'https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css',
   'https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js'
 ];
 
