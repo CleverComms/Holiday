@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.53';
+const APP_VERSION = '2.5.55';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -50,19 +50,27 @@ function getCurrencyDecimals(currency) {
 // Format amount with thousand separators
 function formatAmountDisplay(amount, currency) {
   const decimals = getCurrencyDecimals(currency);
-  const isWholeNumber = amount === Math.floor(amount);
 
-  // For display: show decimals only if needed
-  if (isWholeNumber || decimals === 0) {
-    return amount.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  // Clean up the number - remove floating point artifacts
+  const cleanAmount = Math.round(amount * 100) / 100;
+  const isWholeNumber = cleanAmount === Math.floor(cleanAmount);
+
+  // Zero decimal currencies (JPY, KRW, etc.) - never show decimals
+  if (decimals === 0) {
+    return Math.round(cleanAmount).toLocaleString('en-US', { maximumFractionDigits: 0 });
   }
-  return amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  // For other currencies: show whole numbers cleanly, decimals with 2 places
+  if (isWholeNumber) {
+    return cleanAmount.toLocaleString('en-US', { maximumFractionDigits: 0 });
+  }
+  return cleanAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 // Parse formatted amount back to number
 function parseAmountInput(value) {
-  // Remove thousand separators and parse
-  const cleaned = value.toString().replace(/,/g, '');
+  // Remove thousand separators and trailing decimal points, then parse
+  const cleaned = value.toString().replace(/,/g, '').replace(/\.$/,'');
   return parseFloat(cleaned) || 0;
 }
 
