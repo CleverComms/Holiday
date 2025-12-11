@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.58';
+const APP_VERSION = '2.5.59';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1403,36 +1403,35 @@ function closeQrModal() {
 }
 
 function generateQrCode() {
-  const url = window.location.href;
+  // Use the canonical URL for sharing
+  const url = 'https://holibobs.clevercomms.com/';
   elements.qrUrl.textContent = url;
 
   // Generate QR code using qrcode library
   if (typeof QRCode !== 'undefined' && elements.qrCanvas) {
-    try {
-      QRCode.toCanvas(elements.qrCanvas, url, {
-        width: 200,
-        margin: 2,
-        color: {
-          dark: '#1a1a2e',
-          light: '#ffffff'
-        }
-      }, function(error) {
-        if (error) {
-          console.error('QR code generation error:', error);
-          // Fallback: show URL prominently
-          elements.qrCanvas.style.display = 'none';
-        }
-      });
-    } catch (e) {
-      console.error('QR code error:', e);
-    }
+    // Clear any previous QR code
+    const ctx = elements.qrCanvas.getContext('2d');
+    ctx.clearRect(0, 0, elements.qrCanvas.width, elements.qrCanvas.height);
+
+    QRCode.toCanvas(elements.qrCanvas, url, {
+      width: 200,
+      margin: 2,
+      color: {
+        dark: '#1a1a2e',
+        light: '#ffffff'
+      }
+    }, function(error) {
+      if (error) {
+        console.error('QR code generation error:', error);
+      }
+    });
   } else {
     console.log('QRCode library not available or canvas not found');
   }
 }
 
 function copyShareUrl() {
-  const url = window.location.origin + window.location.pathname;
+  const url = 'https://holibobs.clevercomms.com/';
   navigator.clipboard.writeText(url).then(() => {
     showToast('Link copied to clipboard!');
   }).catch(() => {
