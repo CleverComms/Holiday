@@ -136,6 +136,17 @@
   100% { left: 100%; }
 }
 
+.splash-version {
+  position: absolute;
+  bottom: 24px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
 /* Reset & Base */
 *, *::before, *::after {
   box-sizing: border-box;
