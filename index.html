@@ -322,7 +322,10 @@
           <div class="setting-group">
             <label>What can I call you?</label>
             <p class="setting-description">Optional - personalise your greetings</p>
-            <input type="text" class="setting-input" id="userNameInput" placeholder="Your name" maxlength="20">
+            <div class="setting-input-wrapper">
+              <input type="text" class="setting-input" id="userNameInput" placeholder="Your name" maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" data-form-type="other">
+              <span class="input-saved-tick" id="nameSavedTick">✓</span>
+            </div>
           </div>
 
           <div class="setting-group">

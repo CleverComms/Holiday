@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.80';
+const APP_VERSION = '2.5.81';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -235,6 +235,7 @@ const elements = {
   settingsBtn: document.getElementById('settingsBtn'),
   closeSettingsModal: document.getElementById('closeSettingsModal'),
   userNameInput: document.getElementById('userNameInput'),
+  nameSavedTick: document.getElementById('nameSavedTick'),
   homeSettingBtn: document.getElementById('homeSettingBtn'),
   updateRatesBtn: document.getElementById('updateRatesBtn'),
   settingsLastUpdated: document.getElementById('settingsLastUpdated'),
@@ -614,10 +615,20 @@ function setupEventListeners() {
     openCurrencyModal('home');
   });
   if (elements.userNameInput) {
+    let nameTimeout;
     elements.userNameInput.addEventListener('input', (e) => {
       state.userName = e.target.value.trim();
       saveState();
       updateLocaleGreeting();
+
+      // Show tick to indicate saved
+      if (elements.nameSavedTick) {
+        clearTimeout(nameTimeout);
+        elements.nameSavedTick.classList.add('show');
+        nameTimeout = setTimeout(() => {
+          elements.nameSavedTick.classList.remove('show');
+        }, 1500);
+      }
     });
   }
   elements.updateRatesBtn.addEventListener('click', () => {
