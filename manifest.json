@@ -8,7 +8,7 @@
   "theme_color": "#ff6b6b",
   "orientation": "portrait-primary",
   "scope": "./",
-  "lang": "en",
+  "lang": "en-GB",
   "categories": ["finance", "travel", "utilities"],
   "icons": [
     {
