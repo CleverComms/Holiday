@@ -668,8 +668,9 @@ button {
 }
 
 .price-card-value input {
-  width: 110px;
-  padding: 8px 16px;
+  width: 120px;
+  height: 44px;
+  padding: 0 12px;
   font-size: 1.5rem;
   font-weight: 700;
   text-align: center;
@@ -679,6 +680,8 @@ button {
   color: var(--text-primary);
   position: relative;
   z-index: 3;
+  box-sizing: border-box;
+  line-height: 44px;
 }
 
 .price-card-value input:focus {
