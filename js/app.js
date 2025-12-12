@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.104';
+const APP_VERSION = '2.5.105';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1399,7 +1399,7 @@ function selectDestination(country) {
 function animatePriceCards() {
   const flipCount = 10; // Number of random flips per card
   const flipDuration = 70; // ms per flip
-  const cardStagger = 180; // ms delay between each card starting
+  const cardStagger = 280; // ms delay between each card starting
 
   // Check if the final destination should show an alt card
   const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;
