@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.100';
+const APP_VERSION = '2.5.101';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1389,10 +1389,11 @@ function selectDestination(country) {
 }
 
 // Click-clack / split-flap train station sign animation
-// Cycles through random countries before landing on the final selection
+// Cascading effect: each card starts after the previous one
 function animatePriceCards() {
-  const flipCount = 12; // Number of random flips before final
-  const flipDuration = 80; // ms per flip
+  const flipCount = 10; // Number of random flips per card
+  const flipDuration = 70; // ms per flip
+  const cardStagger = 180; // ms delay between each card starting
 
   // Check if the final destination should show an alt card
   const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;
@@ -1442,46 +1443,73 @@ function animatePriceCards() {
     }
   };
 
-  // Animate through random countries
-  for (let i = 0; i < flipCount; i++) {
-    setTimeout(() => {
-      const randomCountry = getRandomCountry();
-      const countryData = state.countries[randomCountry];
+  const updateHomeCardDisplay = (currency) => {
+    const info = state.currencies[currency];
+    setFlagElement(elements.homeCardFlag, currency, 'lg');
+    elements.homeCardCurrency.textContent = `${info?.symbol || ''} ${currency}`;
+    elements.homeCurrencyName.textContent = getShortCurrencyName(info?.name);
+  };
 
-      if (countryData) {
-        // Update local card with random country's currency
-        updateCardDisplay(countryData.currency, true);
-        triggerFlip(elements.localPriceCard);
-
-        // Only animate alt card if destination actually has alt currency
-        if (shouldShowAlt) {
-          const altCountry = getRandomCountry();
-          const altData = state.countries[altCountry];
-          if (altData) {
-            updateCardDisplay(altData.currency, false);
-            setTimeout(() => triggerFlip(elements.altPriceCard), 30);
-          }
+  // Animate a single card through random values
+  const animateCard = (card, updateFn, startDelay, isFinal) => {
+    for (let i = 0; i < flipCount; i++) {
+      setTimeout(() => {
+        const randomCountry = getRandomCountry();
+        const countryData = state.countries[randomCountry];
+        if (countryData) {
+          updateFn(countryData.currency);
+          triggerFlip(card);
         }
+      }, startDelay + (i * flipDuration));
+    }
+
+    // Final flip to actual value
+    setTimeout(() => {
+      if (isFinal) {
+        render(); // Restore all correct values on last card's final flip
       }
-    }, i * flipDuration);
+      triggerFlip(card);
+    }, startDelay + (flipCount * flipDuration));
+  };
+
+  // Calculate stagger delays
+  const localDelay = 0;
+  const altDelay = cardStagger;
+  const homeDelay = shouldShowAlt ? cardStagger * 2 : cardStagger;
+
+  // Start cascading animation - local card first
+  animateCard(
+    elements.localPriceCard,
+    (currency) => updateCardDisplay(currency, true),
+    localDelay,
+    false
+  );
+
+  // Alt card second (if visible)
+  if (shouldShowAlt) {
+    animateCard(
+      elements.altPriceCard,
+      (currency) => updateCardDisplay(currency, false),
+      altDelay,
+      false
+    );
   }
 
-  // Final flip to actual destination
-  setTimeout(() => {
-    render(); // Restore correct values
-    triggerFlip(elements.localPriceCard);
-    if (shouldShowAlt) {
-      setTimeout(() => triggerFlip(elements.altPriceCard), 30);
-    }
-    setTimeout(() => triggerFlip(elements.homeCurrencyCard), 60);
+  // Home card last - this one triggers render() on final flip
+  animateCard(
+    elements.homeCurrencyCard,
+    updateHomeCardDisplay,
+    homeDelay,
+    true
+  );
 
-    // Clean up animation classes
-    setTimeout(() => {
-      [elements.localPriceCard, elements.altPriceCard, elements.homeCurrencyCard].forEach(card => {
-        if (card) card.classList.remove('flip-animation');
-      });
-    }, 400);
-  }, flipCount * flipDuration);
+  // Clean up animation classes after all animations complete
+  const totalDuration = homeDelay + (flipCount * flipDuration) + 400;
+  setTimeout(() => {
+    [elements.localPriceCard, elements.altPriceCard, elements.homeCurrencyCard].forEach(card => {
+      if (card) card.classList.remove('flip-animation');
+    });
+  }, totalDuration);
 }
 
 // =============================================
