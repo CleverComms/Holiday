@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.82';
+const APP_VERSION = '2.5.83';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -171,6 +171,7 @@ const elements = {
   altSurchargeIndicator: document.getElementById('altSurchargeIndicator'),
   dealIndicator: document.getElementById('dealIndicator'),
   dealText: document.getElementById('dealText'),
+  localPriceCard: document.getElementById('localPriceCard'),
   altPriceCard: document.getElementById('altPriceCard'),
 
   // Home currency card
@@ -1345,8 +1346,32 @@ function selectDestination(country) {
   if (currentModalContext === 'setup') {
     updateSetupDisplay();
   } else {
+    // Trigger click-clack flip animation on currency cards
+    animatePriceCards();
     render();
   }
+}
+
+// Click-clack / split-flap train station sign animation
+function animatePriceCards() {
+  const cards = [elements.localPriceCard, elements.altPriceCard, elements.homeCurrencyCard];
+
+  cards.forEach((card, index) => {
+    if (!card) return;
+
+    // Stagger the animations for a cascading effect
+    setTimeout(() => {
+      card.classList.remove('flip-animation');
+      // Force reflow to restart animation
+      void card.offsetWidth;
+      card.classList.add('flip-animation');
+
+      // Remove class after animation completes
+      setTimeout(() => {
+        card.classList.remove('flip-animation');
+      }, 600);
+    }, index * 100); // 100ms stagger between each card
+  });
 }
 
 // =============================================
