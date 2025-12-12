@@ -412,6 +412,12 @@ button {
   padding-left: 100%;
 }
 
+.greeting-scroll-rtl {
+  padding-left: 0;
+  padding-right: 100%;
+  animation-name: greeting-scroll-rtl;
+}
+
 .locale-greeting:hover .greeting-scroll {
   animation-play-state: paused;
 }
@@ -422,6 +428,15 @@ button {
   }
   100% {
     transform: translateX(-100%);
+  }
+}
+
+@keyframes greeting-scroll-rtl {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(100%);
   }
 }
 
@@ -927,6 +942,19 @@ button {
   color: rgba(255,255,255,0.85);
   text-align: center;
   margin-top: 6px;
+  opacity: 0;
+  transform: translateY(-5px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.surcharge-indicator.animate {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.surcharge-indicator.animate-out {
+  opacity: 0;
+  transform: translateY(5px);
 }
 
 .surcharge-indicator:empty {
@@ -2092,6 +2120,26 @@ button {
 
 .setting-btn:hover {
   border-color: var(--primary-color);
+}
+
+.setting-input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg-color);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.setting-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.setting-input::placeholder {
+  color: var(--text-secondary);
 }
 
 .setting-btn span:first-child {

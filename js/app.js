@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.79';
+const APP_VERSION = '2.5.80';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -128,7 +128,8 @@ let state = {
   currencies: {},
   countries: {},
   scams: {},
-  lastRateUpdate: null
+  lastRateUpdate: null,
+  userName: '' // User's name for personalized greetings
 };
 
 // Guard flag to prevent re-entrant sync calls
@@ -233,6 +234,7 @@ const elements = {
   settingsModal: document.getElementById('settingsModal'),
   settingsBtn: document.getElementById('settingsBtn'),
   closeSettingsModal: document.getElementById('closeSettingsModal'),
+  userNameInput: document.getElementById('userNameInput'),
   homeSettingBtn: document.getElementById('homeSettingBtn'),
   updateRatesBtn: document.getElementById('updateRatesBtn'),
   settingsLastUpdated: document.getElementById('settingsLastUpdated'),
@@ -434,7 +436,8 @@ function saveState() {
     surchargeType: state.surchargeType,
     walletCountries: state.walletCountries,
     rates: state.rates,
-    lastRateUpdate: state.lastRateUpdate
+    lastRateUpdate: state.lastRateUpdate,
+    userName: state.userName
   };
   localStorage.setItem('holibobsState', JSON.stringify(toSave));
 }
@@ -610,6 +613,13 @@ function setupEventListeners() {
     closeSettingsModal();
     openCurrencyModal('home');
   });
+  if (elements.userNameInput) {
+    elements.userNameInput.addEventListener('input', (e) => {
+      state.userName = e.target.value.trim();
+      saveState();
+      updateLocaleGreeting();
+    });
+  }
   elements.updateRatesBtn.addEventListener('click', () => {
     closeSettingsModal();
     updateExchangeRates();
@@ -1412,6 +1422,11 @@ function closeSettingsModal() {
 }
 
 function updateSettingsDisplay() {
+  // Populate user name
+  if (elements.userNameInput) {
+    elements.userNameInput.value = state.userName || '';
+  }
+
   const home = state.currencies[state.homeCurrency];
   if (home) {
     setFlagElement(elements.homeSettingFlag, state.homeCurrency, 'lg');
@@ -2364,8 +2379,8 @@ const greetings = {
   ja: { morning: 'おはようございます', afternoon: 'こんにちは', evening: 'こんばんは', night: 'おやすみなさい', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
   ko: { morning: '좋은 아침이에요', afternoon: '안녕하세요', evening: '안녕하세요', night: '안녕히 주무세요', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
   th: { morning: 'สวัสดีตอนเช้า', afternoon: 'สวัสดีตอนบ่าย', evening: 'สวัสดีตอนเย็น', night: 'ราตรีสวัสดิ์', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
-  ar: { morning: 'صباح الخير', afternoon: 'مساء الخير', evening: 'مساء الخير', night: 'تصبح على خير', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
-  he: { morning: 'בוקר טוב', afternoon: 'צהריים טובים', evening: 'ערב טוב', night: 'לילה טוב', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
+  ar: { morning: 'صباح الخير', afternoon: 'مساء الخير', evening: 'مساء الخير', night: 'تصبح على خير', isNonLatin: true, isRTL: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
+  he: { morning: 'בוקר טוב', afternoon: 'צהריים טובים', evening: 'ערב טוב', night: 'לילה טוב', isNonLatin: true, isRTL: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
   hi: { morning: 'सुप्रभात', afternoon: 'नमस्ते', evening: 'शुभ संध्या', night: 'शुभ रात्रि', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
   ru: { morning: 'Доброе утро', afternoon: 'Добрый день', evening: 'Добрый вечер', night: 'Спокойной ночи', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
   uk: { morning: 'Доброго ранку', afternoon: 'Добрий день', evening: 'Добрий вечір', night: 'На добраніч', isNonLatin: true, enMorning: 'Good morning', enAfternoon: 'Good afternoon', enEvening: 'Good evening', enNight: 'Good night' },
@@ -2434,9 +2449,14 @@ function updateLocaleGreeting() {
   // Get English greeting for reference
   const enGreeting = greetings.en[timeOfDay];
 
+  // Check if any language is RTL
+  const hasRTL = langCodes.some(code => greetings[code]?.isRTL);
+
+  // Get user's name for personalized greeting
+  const userName = state.userName || '';
+
   // Build greeting parts
   let greetingParts = [];
-  let hasEnglish = langCodes.includes('en');
 
   langCodes.forEach(langCode => {
     const lang = greetings[langCode] || greetings.en;
@@ -2446,19 +2466,26 @@ function updateLocaleGreeting() {
   });
 
   // Always include English at the end if there are non-English greetings
+  // Add name to English greeting for Latin script languages
+  let englishWithName = enGreeting;
+  if (userName) {
+    englishWithName = `${enGreeting}, ${userName}`;
+  }
+
   if (greetingParts.length > 0) {
-    greetingParts.push(enGreeting);
+    greetingParts.push(englishWithName);
   } else {
     // Only English
-    greetingParts.push(enGreeting);
+    greetingParts.push(englishWithName);
   }
 
   // Join with separator and wrap for scrolling if long
   let greeting;
+  const scrollClass = hasRTL ? 'greeting-scroll greeting-scroll-rtl' : 'greeting-scroll';
   if (greetingParts.length > 1) {
-    greeting = `<span class="greeting-scroll">${greetingParts.join(' · ')}</span>`;
+    greeting = `<span class="${scrollClass}">👋 ${greetingParts.join(' · ')}</span>`;
   } else {
-    greeting = greetingParts[0];
+    greeting = `👋 ${greetingParts[0]}`;
   }
 
   if (elements.localeGreeting) {
