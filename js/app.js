@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.93';
+const APP_VERSION = '2.5.94';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1385,7 +1385,9 @@ function animatePriceCards() {
 
   // Hide alt card immediately if destination doesn't use it
   if (!shouldShowAlt) {
-    elements.altPriceCard.style.display = 'none';
+    elements.altPriceCard.classList.add('card-hidden');
+  } else {
+    elements.altPriceCard.classList.remove('card-hidden');
   }
 
   // Get random countries to cycle through
@@ -2677,7 +2679,12 @@ function render() {
   // Show/hide alt card based on destination
   const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;
   const hasAltCurrency = countryInfo?.alsoAccepted && countryInfo.alsoAccepted.length > 0;
-  elements.altPriceCard.style.display = hasAltCurrency || !state.destinationCountry ? 'block' : 'none';
+  // Use classList to toggle visibility (works with CSS !important)
+  if (hasAltCurrency || !state.destinationCountry) {
+    elements.altPriceCard.classList.remove('card-hidden');
+  } else {
+    elements.altPriceCard.classList.add('card-hidden');
+  }
 
   updateLockUI();
   updateSurchargeUI();
