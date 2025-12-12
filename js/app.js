@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.84';
+const APP_VERSION = '2.5.85';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1340,18 +1340,25 @@ function selectDestination(country) {
     }
 
     // Set local amount to ~$10 USD equivalent, rounded up to whole number
-    const usdRate = state.rates['USD'] || 1;
-    const localRate = state.rates[state.localCurrency] || 1;
-    const tenUsdInLocal = (10 / usdRate) * localRate;
-    state.localAmount = Math.ceil(tenUsdInLocal);
+    const localRate = state.rates[state.localCurrency];
+    if (localRate) {
+      state.localAmount = Math.ceil(10 * localRate);
 
-    // Sync other values based on new local amount
-    if (state.pricesLocked) {
-      const altRate = state.rates[state.altCurrency] || 1;
-      state.altAmount = (state.localAmount / localRate) * altRate;
+      // Sync alt amount (also ~$10 USD equivalent)
+      const altRate = state.rates[state.altCurrency];
+      if (altRate) {
+        state.altAmount = Math.ceil(10 * altRate);
+      }
+
+      // Sync home amount
+      const homeRate = state.rates[state.homeCurrency];
+      if (homeRate) {
+        state.homeAmount = 10 * homeRate;
+      }
+
+      // Reset surcharge when changing country
+      state.surchargeAmount = 0;
     }
-    const homeRate = state.rates[state.homeCurrency] || 1;
-    state.homeAmount = (state.localAmount / localRate) * homeRate;
   }
 
   saveState();
