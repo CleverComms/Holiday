@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.110';
+const APP_VERSION = '2.5.111';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1637,7 +1637,7 @@ function closeQrModal() {
 
 function generateQrCode() {
   // Use the canonical URL for sharing
-  const url = 'https://holibobs.clevercomms.com/';
+  const url = 'https://holibobs.app/';
 
   if (elements.qrUrl) {
     elements.qrUrl.textContent = url;
@@ -1674,7 +1674,7 @@ function generateQrCode() {
 }
 
 function copyShareUrl() {
-  const url = 'https://holibobs.clevercomms.com/';
+  const url = 'https://holibobs.app/';
   navigator.clipboard.writeText(url).then(() => {
     showToast('Link copied to clipboard!');
   }).catch(() => {
