@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.88';
+const APP_VERSION = '2.5.89';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1376,14 +1376,12 @@ function selectDestination(country) {
 // Click-clack / split-flap train station sign animation
 // Cycles through random countries before landing on the final selection
 function animatePriceCards() {
-  const flipCount = 5; // Number of random flips before final
-  const flipDuration = 120; // ms per flip
-  const finalState = {
-    localCurrency: state.localCurrency,
-    altCurrency: state.altCurrency,
-    localAmount: state.localAmount,
-    altAmount: state.altAmount
-  };
+  const flipCount = 12; // Number of random flips before final
+  const flipDuration = 80; // ms per flip
+
+  // Check if the final destination should show an alt card
+  const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;
+  const shouldShowAlt = countryInfo?.alsoAccepted && countryInfo.alsoAccepted.length > 0;
 
   // Get random countries to cycle through
   const countryNames = Object.keys(state.countries);
@@ -1398,6 +1396,7 @@ function animatePriceCards() {
   };
 
   const triggerFlip = (card) => {
+    if (!card) return;
     card.classList.remove('flip-animation');
     void card.offsetWidth;
     card.classList.add('flip-animation');
@@ -1432,12 +1431,14 @@ function animatePriceCards() {
         updateCardDisplay(countryData.currency, true);
         triggerFlip(elements.localPriceCard);
 
-        // Update alt card with a different random currency
-        const altCountry = getRandomCountry();
-        const altData = state.countries[altCountry];
-        if (altData && elements.altPriceCard.style.display !== 'none') {
-          updateCardDisplay(altData.currency, false);
-          setTimeout(() => triggerFlip(elements.altPriceCard), 30);
+        // Only animate alt card if destination actually has alt currency
+        if (shouldShowAlt) {
+          const altCountry = getRandomCountry();
+          const altData = state.countries[altCountry];
+          if (altData) {
+            updateCardDisplay(altData.currency, false);
+            setTimeout(() => triggerFlip(elements.altPriceCard), 30);
+          }
         }
       }
     }, i * flipDuration);
@@ -1447,7 +1448,7 @@ function animatePriceCards() {
   setTimeout(() => {
     render(); // Restore correct values
     triggerFlip(elements.localPriceCard);
-    if (elements.altPriceCard.style.display !== 'none') {
+    if (shouldShowAlt) {
       setTimeout(() => triggerFlip(elements.altPriceCard), 30);
     }
     setTimeout(() => triggerFlip(elements.homeCurrencyCard), 60);
