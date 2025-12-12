@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.90';
+const APP_VERSION = '2.5.91';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1382,6 +1382,11 @@ function animatePriceCards() {
   // Check if the final destination should show an alt card
   const countryInfo = state.destinationCountry ? state.countries[state.destinationCountry] : null;
   const shouldShowAlt = countryInfo?.alsoAccepted && countryInfo.alsoAccepted.length > 0;
+
+  // Hide alt card immediately if destination doesn't use it
+  if (!shouldShowAlt) {
+    elements.altPriceCard.style.display = 'none';
+  }
 
   // Get random countries to cycle through
   const countryNames = Object.keys(state.countries);
