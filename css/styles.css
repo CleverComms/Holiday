@@ -2122,9 +2122,15 @@ button {
   border-color: var(--primary-color);
 }
 
+.setting-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
 .setting-input {
   width: 100%;
   padding: 14px 16px;
+  padding-right: 40px;
   background: var(--bg-color);
   border: 2px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -2140,6 +2146,22 @@ button {
 
 .setting-input::placeholder {
   color: var(--text-secondary);
+}
+
+.input-saved-tick {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #4CAF50;
+  font-size: 1.2rem;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.input-saved-tick.show {
+  opacity: 1;
 }
 
 .setting-btn span:first-child {
