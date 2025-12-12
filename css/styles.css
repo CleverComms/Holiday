@@ -821,6 +821,34 @@ button {
   box-shadow: var(--shadow-md);
   text-align: center;
   min-width: 0; /* Allow shrinking */
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+/* Click-clack / split-flap animation */
+.price-card.flip-animation {
+  animation: clickClackFlip 0.6s ease-in-out;
+}
+
+@keyframes clickClackFlip {
+  0% {
+    transform: rotateX(0deg);
+  }
+  25% {
+    transform: rotateX(-90deg);
+  }
+  50% {
+    transform: rotateX(-90deg);
+  }
+  75% {
+    transform: rotateX(10deg);
+  }
+  85% {
+    transform: rotateX(-5deg);
+  }
+  100% {
+    transform: rotateX(0deg);
+  }
 }
 
 .price-card.local {
