@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.6.2';
+const APP_VERSION = '2.6.3';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -560,56 +560,76 @@ function setupEventListeners() {
     });
   });
 
-  // +/- buttons - document-level delegation for iOS Safari compatibility
-  // iOS Safari has issues with button touch events; document-level works better
-  let buttonHandled = false;
+  // +/- buttons with press-and-hold support
+  let holdInterval = null;
+  let holdTimeout = null;
+  let activeBtn = null;
 
-  document.addEventListener('touchend', (e) => {
-    const btn = e.target.closest('.price-adjust');
-    if (!btn) return;
-
-    e.preventDefault();
-    if (buttonHandled) return;
-    buttonHandled = true;
-    setTimeout(() => { buttonHandled = false; }, 100);
-
+  const doAdjust = (btn) => {
     const target = btn.dataset.target;
     const isPlus = btn.classList.contains('plus');
-
-    // Visual feedback
-    btn.style.transform = 'scale(0.85)';
-    setTimeout(() => { btn.style.transform = ''; }, 80);
 
     if (target === 'home') {
       adjustHomeAmount(isPlus ? 1 : -1);
     } else {
       adjustPrice(target, isPlus ? 1 : -1);
     }
+  };
+
+  const startHold = (btn) => {
+    if (activeBtn) return;
+    activeBtn = btn;
+
+    // Visual feedback
+    btn.style.transform = 'scale(0.85)';
+
+    // Immediate first adjustment
+    doAdjust(btn);
+
+    // Start repeating after 400ms delay
+    holdTimeout = setTimeout(() => {
+      holdInterval = setInterval(() => {
+        doAdjust(btn);
+      }, 80); // Repeat every 80ms
+    }, 400);
+  };
+
+  const stopHold = () => {
+    if (activeBtn) {
+      activeBtn.style.transform = '';
+      activeBtn = null;
+    }
+    if (holdTimeout) {
+      clearTimeout(holdTimeout);
+      holdTimeout = null;
+    }
+    if (holdInterval) {
+      clearInterval(holdInterval);
+      holdInterval = null;
+    }
+  };
+
+  // Touch events for mobile
+  document.addEventListener('touchstart', (e) => {
+    const btn = e.target.closest('.price-adjust');
+    if (!btn) return;
+    e.preventDefault();
+    startHold(btn);
   }, { passive: false });
 
-  // Click handler for desktop (document level)
-  document.addEventListener('click', (e) => {
+  document.addEventListener('touchend', stopHold, { passive: false });
+  document.addEventListener('touchcancel', stopHold, { passive: false });
+
+  // Mouse events for desktop
+  document.addEventListener('mousedown', (e) => {
     const btn = e.target.closest('.price-adjust');
     if (!btn) return;
-
     e.preventDefault();
-    if (buttonHandled) return;
-    buttonHandled = true;
-    setTimeout(() => { buttonHandled = false; }, 100);
-
-    const target = btn.dataset.target;
-    const isPlus = btn.classList.contains('plus');
-
-    // Visual feedback
-    btn.style.transform = 'scale(0.85)';
-    setTimeout(() => { btn.style.transform = ''; }, 80);
-
-    if (target === 'home') {
-      adjustHomeAmount(isPlus ? 1 : -1);
-    } else {
-      adjustPrice(target, isPlus ? 1 : -1);
-    }
+    startHold(btn);
   });
+
+  document.addEventListener('mouseup', stopHold);
+  document.addEventListener('mouseleave', stopHold);
 
   // Currency modal
   elements.closeCurrencyModal.addEventListener('click', closeCurrencyModal);
