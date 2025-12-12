@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.97';
+const APP_VERSION = '2.5.98';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -142,6 +142,9 @@ const SYNC_DEBOUNCE_MS = 100; // Minimum time between syncs
 // =============================================
 
 const elements = {
+  // Splash screen
+  splashScreen: document.getElementById('splashScreen'),
+
   // App title
   appTitle: document.getElementById('appTitle'),
 
@@ -368,6 +371,18 @@ async function init() {
   checkRateUpdates();
   registerServiceWorker();
   setupAddToHomeScreen();
+
+  // Hide splash screen once app is ready
+  hideSplashScreen();
+}
+
+function hideSplashScreen() {
+  if (elements.splashScreen) {
+    // Small delay to ensure everything is rendered
+    setTimeout(() => {
+      elements.splashScreen.classList.add('hidden');
+    }, 300);
+  }
 }
 
 function checkFirstLoad() {

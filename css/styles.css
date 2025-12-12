@@ -65,6 +65,77 @@
   --shadow-xl: 0 20px 40px rgba(0,0,0,0.6);
 }
 
+/* Splash Screen */
+.splash-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-gradient, var(--bg-color));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.splash-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.splash-logo {
+  width: 100px;
+  height: 100px;
+  animation: splashBounce 1s ease-in-out infinite;
+}
+
+.splash-text {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.splash-loader {
+  width: 40px;
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.splash-loader::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 40%;
+  background: var(--primary-color);
+  border-radius: 2px;
+  animation: splashLoad 1s ease-in-out infinite;
+}
+
+@keyframes splashBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes splashLoad {
+  0% { left: -40%; }
+  100% { left: 100%; }
+}
+
 /* Reset & Base */
 *, *::before, *::after {
   box-sizing: border-box;
