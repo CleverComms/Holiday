@@ -907,6 +907,22 @@ button {
   text-decoration: underline;
 }
 
+.clear-prices-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+}
+
+.clear-prices-btn:active {
+  background: var(--border-color);
+}
+
 .surcharge-adjust {
   width: 28px;
   height: 28px;
