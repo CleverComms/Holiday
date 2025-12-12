@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.103';
+const APP_VERSION = '2.5.104';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1732,6 +1732,9 @@ function renderScams() {
       } else {
         elements.countryScams.innerHTML = '';
       }
+
+      // Switch to country tab when country-specific info is available
+      switchSafetyTab('country');
     } else {
       // Country selected but no specific safety info - hide country tab, show general tips
       hideCountryTabShowGeneral();
