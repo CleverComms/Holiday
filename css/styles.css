@@ -519,6 +519,11 @@ button {
   align-items: center;
 }
 
+/* Hidden state for price cards (overrides grid !important) */
+.price-cards-stack .price-card.card-hidden {
+  display: none !important;
+}
+
 .price-cards-stack .price-card .price-card-row {
   display: contents !important;
 }
