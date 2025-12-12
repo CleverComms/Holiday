@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.78';
+const APP_VERSION = '2.5.79';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1439,10 +1439,16 @@ function closeQrModal() {
 function generateQrCode() {
   // Use the canonical URL for sharing
   const url = 'https://holibobs.clevercomms.com/';
-  elements.qrUrl.textContent = url;
+
+  if (elements.qrUrl) {
+    elements.qrUrl.textContent = url;
+  }
 
   // Generate QR code as SVG
   if (typeof QRCode !== 'undefined' && elements.qrContainer) {
+    // Clear previous QR code
+    elements.qrContainer.innerHTML = '';
+
     QRCode.toString(url, {
       type: 'svg',
       width: 200,
@@ -1454,12 +1460,17 @@ function generateQrCode() {
     }, function(error, svgString) {
       if (error) {
         console.error('QR code generation error:', error);
+        elements.qrContainer.innerHTML = '<p style="color: var(--text-secondary);">Could not generate QR code</p>';
         return;
       }
       elements.qrContainer.innerHTML = svgString;
     });
   } else {
     console.log('QRCode library not available or container not found');
+    if (elements.qrContainer) {
+      // Fallback: use an image-based QR code service
+      elements.qrContainer.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}" alt="QR Code" style="width: 200px; height: 200px;">`;
+    }
   }
 }
 
