@@ -834,13 +834,12 @@ button {
   box-shadow: var(--shadow-md);
   text-align: center;
   min-width: 0; /* Allow shrinking */
-  transform-style: preserve-3d;
-  perspective: 800px;
   position: relative;
-  overflow: hidden;
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
-/* Split-flap horizontal divider line */
+/* Split-flap display - horizontal split line */
 .price-card::before {
   content: '';
   position: absolute;
@@ -848,30 +847,18 @@ button {
   right: 0;
   top: 50%;
   height: 2px;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(0, 0, 0, 0.3) 10%,
-    rgba(0, 0, 0, 0.4) 50%,
-    rgba(0, 0, 0, 0.3) 90%,
-    transparent 100%);
-  z-index: 5;
-  opacity: 0;
-  transition: opacity 0.15s ease;
+  background: rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  z-index: 10;
   pointer-events: none;
-}
-
-/* Show the split line during animation */
-.price-card.flip-animation::before {
-  opacity: 1;
 }
 
 /* Click-clack / split-flap animation */
 .price-card.flip-animation {
-  animation: clickClackFlip 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-origin: center 50%;
+  animation: splitFlapBounce 0.1s ease-out;
 }
 
-/* Top half overlay that flips */
+/* Top half flap that rotates down */
 .price-card.flip-animation::after {
   content: '';
   position: absolute;
@@ -882,45 +869,32 @@ button {
   background: inherit;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   transform-origin: center bottom;
-  animation: topHalfFlip 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 4;
+  animation: flapDown 0.1s ease-in forwards;
+  z-index: 15;
   pointer-events: none;
+  backface-visibility: hidden;
 }
 
-@keyframes clickClackFlip {
+/* Quick bounce when flap lands */
+@keyframes splitFlapBounce {
   0% {
-    transform: rotateX(0deg);
-  }
-  30% {
-    transform: rotateX(-3deg);
+    transform: translateY(0);
   }
   50% {
-    transform: rotateX(0deg);
-  }
-  70% {
-    transform: rotateX(2deg);
+    transform: translateY(-1px);
   }
   100% {
-    transform: rotateX(0deg);
+    transform: translateY(0);
   }
 }
 
-@keyframes topHalfFlip {
+/* Top flap rotating down quickly */
+@keyframes flapDown {
   0% {
     transform: rotateX(0deg);
-    opacity: 1;
-  }
-  40% {
-    transform: rotateX(-90deg);
-    opacity: 0.7;
-  }
-  50% {
-    transform: rotateX(-90deg);
-    opacity: 0;
   }
   100% {
     transform: rotateX(-90deg);
-    opacity: 0;
   }
 }
 

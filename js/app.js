@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.86';
+const APP_VERSION = '2.5.88';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1374,25 +1374,91 @@ function selectDestination(country) {
 }
 
 // Click-clack / split-flap train station sign animation
+// Cycles through random countries before landing on the final selection
 function animatePriceCards() {
-  const cards = [elements.localPriceCard, elements.altPriceCard, elements.homeCurrencyCard];
+  const flipCount = 5; // Number of random flips before final
+  const flipDuration = 120; // ms per flip
+  const finalState = {
+    localCurrency: state.localCurrency,
+    altCurrency: state.altCurrency,
+    localAmount: state.localAmount,
+    altAmount: state.altAmount
+  };
 
-  cards.forEach((card, index) => {
-    if (!card) return;
+  // Get random countries to cycle through
+  const countryNames = Object.keys(state.countries);
+  if (countryNames.length < 2) {
+    render();
+    return;
+  }
 
-    // Stagger the animations for a cascading effect
+  const getRandomCountry = () => {
+    const idx = Math.floor(Math.random() * countryNames.length);
+    return countryNames[idx];
+  };
+
+  const triggerFlip = (card) => {
+    card.classList.remove('flip-animation');
+    void card.offsetWidth;
+    card.classList.add('flip-animation');
+  };
+
+  const updateCardDisplay = (currency, isLocal) => {
+    const info = state.currencies[currency];
+    const rate = state.rates[currency] || 1;
+    const amount = Math.ceil(10 * rate);
+
+    if (isLocal) {
+      setFlagElement(elements.localFlag, currency, 'lg');
+      elements.localCurrency.textContent = `${info?.symbol || ''} ${currency}`;
+      elements.localCurrencyName.textContent = getShortCurrencyName(info?.name);
+      elements.localAmountInput.value = formatAmountDisplay(amount, currency);
+    } else {
+      setFlagElement(elements.altFlag, currency, 'lg');
+      elements.altCurrency.textContent = `${info?.symbol || ''} ${currency}`;
+      elements.altCurrencyName.textContent = getShortCurrencyName(info?.name);
+      elements.altAmountInput.value = formatAmountDisplay(amount, currency);
+    }
+  };
+
+  // Animate through random countries
+  for (let i = 0; i < flipCount; i++) {
     setTimeout(() => {
-      card.classList.remove('flip-animation');
-      // Force reflow to restart animation
-      void card.offsetWidth;
-      card.classList.add('flip-animation');
+      const randomCountry = getRandomCountry();
+      const countryData = state.countries[randomCountry];
 
-      // Remove class after animation completes
-      setTimeout(() => {
-        card.classList.remove('flip-animation');
-      }, 600);
-    }, index * 100); // 100ms stagger between each card
-  });
+      if (countryData) {
+        // Update local card with random country's currency
+        updateCardDisplay(countryData.currency, true);
+        triggerFlip(elements.localPriceCard);
+
+        // Update alt card with a different random currency
+        const altCountry = getRandomCountry();
+        const altData = state.countries[altCountry];
+        if (altData && elements.altPriceCard.style.display !== 'none') {
+          updateCardDisplay(altData.currency, false);
+          setTimeout(() => triggerFlip(elements.altPriceCard), 30);
+        }
+      }
+    }, i * flipDuration);
+  }
+
+  // Final flip to actual destination
+  setTimeout(() => {
+    render(); // Restore correct values
+    triggerFlip(elements.localPriceCard);
+    if (elements.altPriceCard.style.display !== 'none') {
+      setTimeout(() => triggerFlip(elements.altPriceCard), 30);
+    }
+    setTimeout(() => triggerFlip(elements.homeCurrencyCard), 60);
+
+    // Clean up animation classes
+    setTimeout(() => {
+      [elements.localPriceCard, elements.altPriceCard, elements.homeCurrencyCard].forEach(card => {
+        if (card) card.classList.remove('flip-animation');
+      });
+    }, 400);
+  }, flipCount * flipDuration);
 }
 
 // =============================================
