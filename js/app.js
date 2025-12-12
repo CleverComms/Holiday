@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.106';
+const APP_VERSION = '2.5.107';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -144,6 +144,7 @@ const SYNC_DEBOUNCE_MS = 100; // Minimum time between syncs
 const elements = {
   // Splash screen
   splashScreen: document.getElementById('splashScreen'),
+  splashVersion: document.getElementById('splashVersion'),
 
   // App title
   appTitle: document.getElementById('appTitle'),
@@ -393,6 +394,9 @@ function checkFirstLoad() {
 function displayVersion() {
   if (elements.appVersion) {
     elements.appVersion.textContent = `v${APP_VERSION}`;
+  }
+  if (elements.splashVersion) {
+    elements.splashVersion.textContent = `v${APP_VERSION}`;
   }
 }
 
