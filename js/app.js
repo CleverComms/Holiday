@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.108';
+const APP_VERSION = '2.5.110';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -570,14 +570,14 @@ function setupEventListeners() {
     e.preventDefault();
     if (buttonHandled) return;
     buttonHandled = true;
-    setTimeout(() => { buttonHandled = false; }, 300);
+    setTimeout(() => { buttonHandled = false; }, 100);
 
     const target = btn.dataset.target;
     const isPlus = btn.classList.contains('plus');
 
     // Visual feedback
     btn.style.transform = 'scale(0.85)';
-    setTimeout(() => { btn.style.transform = ''; }, 100);
+    setTimeout(() => { btn.style.transform = ''; }, 80);
 
     if (target === 'home') {
       adjustHomeAmount(isPlus ? 1 : -1);
@@ -594,14 +594,14 @@ function setupEventListeners() {
     e.preventDefault();
     if (buttonHandled) return;
     buttonHandled = true;
-    setTimeout(() => { buttonHandled = false; }, 300);
+    setTimeout(() => { buttonHandled = false; }, 100);
 
     const target = btn.dataset.target;
     const isPlus = btn.classList.contains('plus');
 
     // Visual feedback
     btn.style.transform = 'scale(0.85)';
-    setTimeout(() => { btn.style.transform = ''; }, 100);
+    setTimeout(() => { btn.style.transform = ''; }, 80);
 
     if (target === 'home') {
       adjustHomeAmount(isPlus ? 1 : -1);
