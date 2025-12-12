@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.91';
+const APP_VERSION = '2.5.92';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -2384,13 +2384,21 @@ function showUpdateBanner() {
   const updateTime = sessionStorage.getItem('holibobs_update_time');
   if (updateTime) {
     const elapsed = Date.now() - parseInt(updateTime, 10);
-    // Block banner for 30 seconds after update to let new SW take over
-    if (elapsed < 30000) {
+    // Block banner for 60 seconds after update to let new SW fully take over
+    if (elapsed < 60000) {
       console.log('[Update] Skipping banner - recently updated');
       return;
     }
     sessionStorage.removeItem('holibobs_update_time');
   }
+
+  // Also check if we already have the latest version stored
+  const lastUpdatedVersion = sessionStorage.getItem('holibobs_last_version');
+  if (lastUpdatedVersion === APP_VERSION) {
+    console.log('[Update] Already on latest version');
+    return;
+  }
+
   if (updateBannerShown || isUpdating) return;
   updateBannerShown = true;
   elements.updateBanner.classList.add('active');
@@ -2399,6 +2407,7 @@ function showUpdateBanner() {
 function applyUpdate() {
   isUpdating = true;
   sessionStorage.setItem('holibobs_update_time', Date.now().toString());
+  sessionStorage.setItem('holibobs_last_version', APP_VERSION);
   elements.updateBanner.classList.remove('active');
 
   if (waitingServiceWorker) {
