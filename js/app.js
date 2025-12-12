@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.101';
+const APP_VERSION = '2.5.102';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1378,6 +1378,12 @@ function selectDestination(country) {
 
   saveState();
   closeDestinationModal();
+
+  // Update destination header immediately (before animation starts)
+  if (state.destinationCountry) {
+    setCountryFlag(elements.destHeaderFlag, state.destinationCountry, 'lg');
+    elements.destHeaderName.textContent = state.destinationCountry;
+  }
 
   if (currentModalContext === 'setup') {
     updateSetupDisplay();
