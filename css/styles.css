@@ -1825,6 +1825,13 @@ button {
   font-weight: bold;
 }
 
+.general-tips-note {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  margin: 0;
+}
+
 .scam-cards {
   display: flex;
   flex-direction: column;
