@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.94';
+const APP_VERSION = '2.5.95';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1681,10 +1681,46 @@ function renderScams() {
         elements.countryScams.innerHTML = '';
       }
     } else {
-      showNoCountryMessage();
+      // Country selected but no specific safety info - show general tips
+      showGeneralTipsForCountry();
     }
   } else {
     showNoCountryMessage();
+  }
+}
+
+// Show general safety tips when country has no specific info
+function showGeneralTipsForCountry() {
+  const countryData = state.countries[state.destinationCountry];
+  const flag = countryData?.code ? '' : '🌍';
+
+  // Update tab with country name
+  if (countryData?.code) {
+    elements.countryTabFlag.innerHTML = `<span class="fi fi-${countryData.code.toLowerCase()}"></span>`;
+  } else {
+    elements.countryTabFlag.textContent = flag;
+  }
+  elements.countryTabText.textContent = `${state.destinationCountry} Safety`;
+
+  // Hide "no country" message
+  elements.noCountryMessage.style.display = 'none';
+
+  // Show general tips as country tips
+  elements.countryTips.style.display = 'block';
+  elements.countryTips.innerHTML = `<p class="general-tips-note">General travel safety tips:</p>`;
+
+  // Show general scams in country scams section
+  if (state.scams.general) {
+    elements.countryScams.innerHTML = state.scams.general.map(scam => `
+      <div class="scam-card ${scam.severity}">
+        <div class="scam-header">
+          <span class="scam-icon">${scam.icon}</span>
+          <span class="scam-title">${scam.name}</span>
+          <span class="scam-severity">${scam.severity}</span>
+        </div>
+        <p class="scam-description">${scam.description}</p>
+      </div>
+    `).join('');
   }
 }
 
