@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.6.1';
+const APP_VERSION = '2.6.2';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -190,6 +190,7 @@ const elements = {
   lockToggleBtn: document.getElementById('lockToggleBtn'),
   lockIcon: document.getElementById('lockIcon'),
   lockText: document.getElementById('lockText'),
+  clearPricesBtn: document.getElementById('clearPricesBtn'),
   surchargeToggleBtn: document.getElementById('surchargeToggleBtn'),
   surchargeRow: document.getElementById('surchargeRow'),
   surchargePresets: document.getElementById('surchargePresets'),
@@ -734,6 +735,7 @@ function setupEventListeners() {
 
   // Lock toggle
   elements.lockToggleBtn.addEventListener('click', togglePriceLock);
+  elements.clearPricesBtn.addEventListener('click', clearPrices);
 
   // Surcharge controls
   elements.surchargeToggleBtn.addEventListener('click', toggleSurchargeRow);
@@ -890,6 +892,35 @@ function togglePriceLock() {
   } else {
     showToast('Prices unlinked', 3000, unlockedIcon);
   }
+}
+
+function clearPrices() {
+  // Reset all amounts to 0
+  state.localAmount = 0;
+  state.altAmount = 0;
+  state.homeAmount = 0;
+  state.surchargeAmount = 0;
+
+  // Update inputs
+  elements.localAmountInput.value = '';
+  elements.altAmountInput.value = '';
+  elements.homeAmountInput.value = '';
+
+  // Reset surcharge UI
+  document.querySelectorAll('.surcharge-preset').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.value === '0');
+  });
+  elements.surchargeInput.value = '0';
+
+  // Update display
+  render();
+  autoSizeAllInputs();
+
+  // Focus on local currency input
+  setTimeout(() => {
+    elements.localAmountInput.focus();
+    elements.localAmountInput.select();
+  }, 50);
 }
 
 function updateLockUI() {
