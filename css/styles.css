@@ -910,17 +910,19 @@ button {
 .clear-prices-btn {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  background: transparent;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm);
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
 }
 
 .clear-prices-btn:active {
-  background: var(--border-color);
+  transform: scale(0.98);
 }
 
 .surcharge-adjust {
