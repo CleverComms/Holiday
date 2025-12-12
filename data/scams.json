@@ -95,7 +95,7 @@
         "Download offline maps before arriving",
         "Keep copies of important documents",
         "Use ride-sharing apps in cities",
-        "Don't flash expensive jewelry or electronics"
+        "Don't flash expensive jewellery or electronics"
       ]
     },
     "Thailand": {
@@ -589,7 +589,7 @@
         }
       ],
       "tips": [
-        "Don't wear flashy jewelry or watches",
+        "Don't wear flashy jewellery or watches",
         "Use ride-sharing apps exclusively",
         "Avoid walking with visible phones",
         "Stay in well-lit, populated areas",
@@ -672,7 +672,7 @@
           "icon": "🚕"
         },
         {
-          "name": "Massage Parlor Scams",
+          "name": "Massage Parlour Scams",
           "description": "Additional services charged without consent. Only use hotel-recommended or verified establishments.",
           "severity": "medium",
           "icon": "💆"
