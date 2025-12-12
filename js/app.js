@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.5.92';
+const APP_VERSION = '2.5.93';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1368,8 +1368,8 @@ function selectDestination(country) {
     updateSetupDisplay();
   } else {
     // Trigger click-clack flip animation on currency cards
+    // Note: animatePriceCards() calls render() at the end of animation
     animatePriceCards();
-    render();
   }
 }
 
