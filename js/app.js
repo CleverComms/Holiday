@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.6.5';
+const APP_VERSION = '2.6.6';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -2785,6 +2785,13 @@ function render() {
     elements.altPriceCard.classList.remove('card-hidden');
   } else {
     elements.altPriceCard.classList.add('card-hidden');
+  }
+
+  // Hide home card if local currency matches home currency
+  if (state.localCurrency === state.homeCurrency && state.destinationCountry) {
+    elements.homeCurrencyCard.classList.add('card-hidden');
+  } else {
+    elements.homeCurrencyCard.classList.remove('card-hidden');
   }
 
   updateLockUI();
