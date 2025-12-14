@@ -2338,6 +2338,18 @@ button {
   font-size: 1rem;
   color: var(--text-primary);
   transition: all 0.2s ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Hide search field decorations */
+.setting-input::-webkit-search-decoration,
+.setting-input::-webkit-search-cancel-button,
+.setting-input::-webkit-search-results-button,
+.setting-input::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  display: none;
 }
 
 .setting-input:focus {
