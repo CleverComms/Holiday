@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.6.10';
+const APP_VERSION = '2.6.11';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -241,7 +241,7 @@ const elements = {
   settingsBtn: document.getElementById('settingsBtn'),
   closeSettingsModal: document.getElementById('closeSettingsModal'),
   userNameInput: document.getElementById('userNameInput'),
-  nameSavedTick: document.getElementById('nameSavedTick'),
+  nameSaveStatus: document.getElementById('nameSaveStatus'),
   homeSettingBtn: document.getElementById('homeSettingBtn'),
   updateRatesBtn: document.getElementById('updateRatesBtn'),
   settingsLastUpdated: document.getElementById('settingsLastUpdated'),
@@ -656,19 +656,33 @@ function setupEventListeners() {
     openCurrencyModal('home');
   });
   if (elements.userNameInput) {
-    let nameTimeout;
+    let nameSaveTimeout;
+    let nameSavedTimeout;
     elements.userNameInput.addEventListener('input', (e) => {
       state.userName = e.target.value.trim();
       saveState();
       updateLocaleGreeting();
 
-      // Show tick to indicate saved
-      if (elements.nameSavedTick) {
-        clearTimeout(nameTimeout);
-        elements.nameSavedTick.classList.add('show');
-        nameTimeout = setTimeout(() => {
-          elements.nameSavedTick.classList.remove('show');
-        }, 1500);
+      // Show saving status
+      if (elements.nameSaveStatus) {
+        clearTimeout(nameSaveTimeout);
+        clearTimeout(nameSavedTimeout);
+
+        // Show "saving..."
+        elements.nameSaveStatus.textContent = 'saving…';
+        elements.nameSaveStatus.classList.remove('saved');
+        elements.nameSaveStatus.classList.add('show');
+
+        // After brief delay, show "saved"
+        nameSaveTimeout = setTimeout(() => {
+          elements.nameSaveStatus.textContent = 'saved';
+          elements.nameSaveStatus.classList.add('saved');
+
+          // Hide after a moment
+          nameSavedTimeout = setTimeout(() => {
+            elements.nameSaveStatus.classList.remove('show');
+          }, 1500);
+        }, 400);
       }
     });
   }
