@@ -2796,13 +2796,6 @@ function render() {
     elements.homeCurrencyCard.classList.remove('card-hidden');
   }
 
-  // Hide home card if local currency matches home currency
-  if (state.localCurrency === state.homeCurrency && state.destinationCountry) {
-    elements.homeCurrencyCard.style.display = 'none';
-  } else {
-    elements.homeCurrencyCard.style.display = 'block';
-  }
-
   updateLockUI();
   updateSurchargeUI();
   calculatePrices();
