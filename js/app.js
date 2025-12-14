@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.6.8';
+const APP_VERSION = '2.6.10';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -2516,11 +2516,13 @@ function applyUpdate() {
   if (waitingServiceWorker) {
     // Tell the waiting service worker to take over
     waitingServiceWorker.postMessage('skipWaiting');
-    // controllerchange event will trigger reload
-  } else {
-    // Fallback: hard reload bypassing cache
-    window.location.reload(true);
   }
+
+  // Force reload after short delay to ensure update is applied
+  // This guarantees reload even if controllerchange doesn't fire
+  setTimeout(() => {
+    window.location.reload();
+  }, 500);
 }
 
 // Proactive version check (helps iOS PWA updates)
