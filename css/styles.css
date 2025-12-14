@@ -2361,20 +2361,24 @@ button {
   color: var(--text-secondary);
 }
 
-.input-saved-tick {
+.input-save-status {
   position: absolute;
   right: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: #4CAF50;
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-size: 0.7rem;
+  font-weight: 500;
   opacity: 0;
   transition: opacity 0.3s ease;
+  color: var(--text-secondary);
 }
 
-.input-saved-tick.show {
+.input-save-status.show {
   opacity: 1;
+}
+
+.input-save-status.saved {
+  color: #4CAF50;
 }
 
 .setting-btn span:first-child {
