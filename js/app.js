@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.6.13';
+const APP_VERSION = '2.6.15';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -1519,9 +1519,10 @@ function animatePriceCards() {
     elements.homeCurrencyName.textContent = getShortCurrencyName(info?.name);
   };
 
-  // Animate a single card through random values
-  const animateCard = (card, updateFn, startDelay, isFinal) => {
-    for (let i = 0; i < flipCount; i++) {
+  // Animate a single card through random values, landing on finalCurrency
+  const animateCard = (card, updateFn, startDelay, finalCurrency, isFinal) => {
+    // Show random currencies for all but the last flip
+    for (let i = 0; i < flipCount - 1; i++) {
       setTimeout(() => {
         const randomCountry = getRandomCountry();
         const countryData = state.countries[randomCountry];
@@ -1532,13 +1533,15 @@ function animatePriceCards() {
       }, startDelay + (i * flipDuration));
     }
 
-    // Final flip to actual value
+    // Final flip lands on the correct currency (no flash)
     setTimeout(() => {
-      if (isFinal) {
-        render(); // Restore all correct values on last card's final flip
-      }
+      updateFn(finalCurrency);
       triggerFlip(card);
-    }, startDelay + (flipCount * flipDuration));
+      if (isFinal) {
+        // Small delay then render to sync all values
+        setTimeout(() => render(), 50);
+      }
+    }, startDelay + ((flipCount - 1) * flipDuration));
   };
 
   // Calculate stagger delays
@@ -1546,11 +1549,17 @@ function animatePriceCards() {
   const altDelay = cardStagger;
   const homeDelay = shouldShowAlt ? cardStagger * 2 : cardStagger;
 
+  // Get final currencies
+  const finalLocalCurrency = state.localCurrency;
+  const finalAltCurrency = countryInfo?.alsoAccepted?.[0] || 'USD';
+  const finalHomeCurrency = state.homeCurrency;
+
   // Start cascading animation - local card first
   animateCard(
     elements.localPriceCard,
     (currency) => updateCardDisplay(currency, true),
     localDelay,
+    finalLocalCurrency,
     false
   );
 
@@ -1560,6 +1569,7 @@ function animatePriceCards() {
       elements.altPriceCard,
       (currency) => updateCardDisplay(currency, false),
       altDelay,
+      finalAltCurrency,
       false
     );
   }
@@ -1569,6 +1579,7 @@ function animatePriceCards() {
     elements.homeCurrencyCard,
     updateHomeCardDisplay,
     homeDelay,
+    finalHomeCurrency,
     true
   );
 
