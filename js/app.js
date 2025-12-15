@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.6.18';
+const APP_VERSION = '2.6.19';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -432,11 +432,20 @@ function updateOnboardingCurrencyDisplay() {
 }
 
 function completeOnboarding() {
-  // Save the name if provided
+  // Validate name is provided
   const name = elements.onboardingName?.value?.trim() || '';
-  if (name) {
-    state.userName = name;
+  if (!name) {
+    // Highlight the input field
+    elements.onboardingName.classList.add('input-error');
+    elements.onboardingName.focus();
+    setTimeout(() => {
+      elements.onboardingName.classList.remove('input-error');
+    }, 2000);
+    return;
   }
+
+  // Save the name
+  state.userName = name;
 
   // Save the home currency
   state.homeCurrency = onboardingCurrency;
@@ -456,7 +465,7 @@ function completeOnboarding() {
   hideOnboarding();
 
   // Show welcome toast
-  showToast(`Welcome${name ? ' ' + name : ''} to HoliBobs! 🦝`);
+  showToast(`Welcome ${name} to HoliBobs! 🦝`);
 
   // Detect location for destination suggestion
   detectUserLocation(true);
