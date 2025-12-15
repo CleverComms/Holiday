@@ -41,6 +41,43 @@
     <div class="splash-version" id="splashVersion"></div>
   </div>
 
+  <!-- First-time Onboarding Screen -->
+  <div class="onboarding-screen" id="onboardingScreen">
+    <div class="onboarding-content">
+      <img src="icons/icon.svg" alt="Bob" class="onboarding-logo">
+      <h1 class="onboarding-title">Welcome to HoliBobs!</h1>
+      <p class="onboarding-subtitle">Your travel currency companion</p>
+
+      <div class="onboarding-form">
+        <div class="onboarding-field">
+          <label for="onboardingName">What can I call you?</label>
+          <p class="onboarding-tip">Optional – we'll use this to personalise your greetings</p>
+          <input type="search" id="onboardingName" class="onboarding-input" placeholder="Your name" maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false" data-form-type="other" data-1p-ignore data-lpignore="true">
+        </div>
+
+        <div class="onboarding-field">
+          <label for="onboardingCurrency">What's your home currency?</label>
+          <p class="onboarding-tip">This is the currency you'll be converting to</p>
+          <button class="onboarding-currency-btn" id="onboardingCurrencyBtn">
+            <span id="onboardingCurrencyFlag">🏠</span>
+            <span id="onboardingCurrencyCode">GBP</span>
+            <span id="onboardingCurrencyName">British Pound</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <button class="onboarding-start-btn" id="onboardingStartBtn">
+        Let's Go!
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
   <div class="app-container">
     <!-- Header -->
     <header class="app-header">

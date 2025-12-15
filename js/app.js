@@ -7,7 +7,7 @@
 // STATE & CONFIGURATION
 // =============================================
 
-const APP_VERSION = '2.6.16';
+const APP_VERSION = '2.6.17';
 const RATE_UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
 const EXCHANGE_API_URL = 'https://api.exchangerate-api.com/v4/latest/USD';
 
@@ -145,6 +145,15 @@ const elements = {
   // Splash screen
   splashScreen: document.getElementById('splashScreen'),
   splashVersion: document.getElementById('splashVersion'),
+
+  // Onboarding screen
+  onboardingScreen: document.getElementById('onboardingScreen'),
+  onboardingName: document.getElementById('onboardingName'),
+  onboardingCurrencyBtn: document.getElementById('onboardingCurrencyBtn'),
+  onboardingCurrencyFlag: document.getElementById('onboardingCurrencyFlag'),
+  onboardingCurrencyCode: document.getElementById('onboardingCurrencyCode'),
+  onboardingCurrencyName: document.getElementById('onboardingCurrencyName'),
+  onboardingStartBtn: document.getElementById('onboardingStartBtn'),
 
   // App title
   appTitle: document.getElementById('appTitle'),
@@ -356,19 +365,10 @@ async function init() {
   loadState();
   await loadDataFiles();
   setupEventListeners();
+  setupOnboardingListeners();
   displayVersion();
 
   render();
-
-  if (isFirstLoad) {
-    // Mark setup as complete and detect location
-    localStorage.setItem('holibobsSetupComplete', 'true');
-    detectUserLocation(true);
-    showToast('Welcome to HoliBobs! 🦝');
-  } else {
-    // Check if we should offer location detection (non-annoying prompt)
-    checkLocationSuggestion();
-  }
 
   checkRateUpdates();
   registerServiceWorker();
@@ -383,6 +383,14 @@ function hideSplashScreen() {
     // Small delay to ensure everything is rendered
     setTimeout(() => {
       elements.splashScreen.classList.add('hidden');
+
+      // Show onboarding for first-time users
+      if (isFirstLoad) {
+        showOnboarding();
+      } else {
+        // Check if we should offer location detection
+        checkLocationSuggestion();
+      }
     }, 300);
   }
 }
@@ -390,6 +398,82 @@ function hideSplashScreen() {
 function checkFirstLoad() {
   const hasVisited = localStorage.getItem('holibobsSetupComplete');
   isFirstLoad = !hasVisited;
+}
+
+// =============================================
+// ONBOARDING
+// =============================================
+
+let onboardingCurrency = 'GBP'; // Default for onboarding
+
+function showOnboarding() {
+  if (!elements.onboardingScreen) return;
+
+  // Set default currency display
+  updateOnboardingCurrencyDisplay();
+
+  // Show the onboarding screen
+  elements.onboardingScreen.classList.add('active');
+}
+
+function hideOnboarding() {
+  if (elements.onboardingScreen) {
+    elements.onboardingScreen.classList.remove('active');
+  }
+}
+
+function updateOnboardingCurrencyDisplay() {
+  const info = state.currencies[onboardingCurrency];
+  if (info && elements.onboardingCurrencyFlag) {
+    setFlagElement(elements.onboardingCurrencyFlag, onboardingCurrency, 'lg');
+    elements.onboardingCurrencyCode.textContent = onboardingCurrency;
+    elements.onboardingCurrencyName.textContent = info.name;
+  }
+}
+
+function completeOnboarding() {
+  // Save the name if provided
+  const name = elements.onboardingName?.value?.trim() || '';
+  if (name) {
+    state.userName = name;
+  }
+
+  // Save the home currency
+  state.homeCurrency = onboardingCurrency;
+
+  // Mark setup as complete
+  localStorage.setItem('holibobsSetupComplete', 'true');
+
+  // Save state
+  saveState();
+
+  // Update UI
+  render();
+  updateLocaleGreeting();
+  updateSettingsDisplay();
+
+  // Hide onboarding
+  hideOnboarding();
+
+  // Show welcome toast
+  showToast(`Welcome${name ? ' ' + name : ''} to HoliBobs! 🦝`);
+
+  // Detect location for destination suggestion
+  detectUserLocation(true);
+}
+
+function setupOnboardingListeners() {
+  // Currency button - open currency modal for home selection
+  if (elements.onboardingCurrencyBtn) {
+    elements.onboardingCurrencyBtn.addEventListener('click', () => {
+      openCurrencyModal('onboarding');
+    });
+  }
+
+  // Start button - complete onboarding
+  if (elements.onboardingStartBtn) {
+    elements.onboardingStartBtn.addEventListener('click', completeOnboarding);
+  }
 }
 
 function displayVersion() {
@@ -1651,13 +1735,18 @@ function filterCurrencies(e) {
 function selectCurrency(code) {
   if (currentModalContext === 'home' || currentModalContext === 'setupHome') {
     state.homeCurrency = code;
+  } else if (currentModalContext === 'onboarding') {
+    onboardingCurrency = code;
   }
-  saveState();
+
   closeCurrencyModal();
 
   if (currentModalContext === 'setupHome') {
     updateSetupDisplay();
+  } else if (currentModalContext === 'onboarding') {
+    updateOnboardingCurrencyDisplay();
   } else {
+    saveState();
     render();
   }
 }
